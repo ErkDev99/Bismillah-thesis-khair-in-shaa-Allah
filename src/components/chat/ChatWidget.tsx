@@ -11,6 +11,8 @@ interface Message {
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [promptDismissed, setPromptDismissed] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -23,10 +25,39 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Show prompt after 3 seconds (only if not dismissed and chat not open)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!promptDismissed && !isOpen) {
+        setShowPrompt(true);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [promptDismissed, isOpen]);
+
+  // Hide prompt when chat opens
+  useEffect(() => {
+    if (isOpen) {
+      setShowPrompt(false);
+    }
+  }, [isOpen]);
+
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const handleDismissPrompt = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening chat when clicking X
+    setShowPrompt(false);
+    setPromptDismissed(true);
+  };
+
+  const handlePromptClick = () => {
+    setShowPrompt(false);
+    setIsOpen(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +112,44 @@ export default function ChatWidget() {
 
   return (
     <>
+      {/* Proactive Chat Prompt */}
+      {showPrompt && !isOpen && (
+        <div
+          onClick={handlePromptClick}
+          style={{ position: 'fixed', bottom: '100px', right: '24px' }}
+          className="z-50 bg-white rounded-2xl shadow-2xl p-4 max-w-[280px] cursor-pointer border border-gray-100"
+        >
+          {/* Close button */}
+          <button
+            onClick={handleDismissPrompt}
+            className="absolute -top-2 -right-2 w-6 h-6 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors"
+            aria-label="Dismiss"
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          
+          {/* Avatar and message */}
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-900 mb-1">Need help planning your trip?</p>
+              <p className="text-xs text-gray-500">Click to chat with our travel assistant!</p>
+            </div>
+          </div>
+          
+          {/* Small arrow pointing to button */}
+          <div 
+            className="absolute -bottom-2 right-8 w-4 h-4 bg-white border-r border-b border-gray-100 transform rotate-45"
+          />
+        </div>
+      )}
+
       {/* Chat Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -139,12 +208,21 @@ export default function ChatWidget() {
                 />
               </svg>
             </div>
-            <div>
+            <div className="flex-1">
               <h3 className="font-semibold">Wanderlust Assistant</h3>
               <p className="text-emerald-200 text-xs">
                 {isLoading ? "Typing..." : "Online"}
               </p>
             </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="w-8 h-8 hover:bg-emerald-500 rounded-full flex items-center justify-center transition-colors"
+              aria-label="Close chat"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
 
           {/* Messages */}
