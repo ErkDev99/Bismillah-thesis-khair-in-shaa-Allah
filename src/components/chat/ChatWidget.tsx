@@ -49,7 +49,7 @@ export default function ChatWidget() {
   }, [messages]);
 
   const handleDismissPrompt = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent opening chat when clicking X
+    e.stopPropagation();
     setShowPrompt(false);
     setPromptDismissed(true);
   };
@@ -117,12 +117,12 @@ export default function ChatWidget() {
         <div
           onClick={handlePromptClick}
           style={{ position: 'fixed', bottom: '100px', right: '24px' }}
-          className="z-50 bg-white rounded-2xl shadow-2xl p-4 max-w-[280px] cursor-pointer border border-gray-100"
+          className="z-50 bg-stone-900 p-4 max-w-[280px] cursor-pointer border border-amber-500/30 shadow-2xl"
         >
           {/* Close button */}
           <button
             onClick={handleDismissPrompt}
-            className="absolute -top-2 -right-2 w-6 h-6 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors"
+            className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 hover:bg-stone-700 flex items-center justify-center text-stone-400 hover:text-amber-400 transition-colors border border-amber-500/30"
             aria-label="Dismiss"
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,20 +132,20 @@ export default function ChatWidget() {
           
           {/* Avatar and message */}
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shrink-0">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900 mb-1">Need help planning your trip?</p>
-              <p className="text-xs text-gray-500">Click to chat with our travel assistant!</p>
+              <p className="text-sm font-medium text-amber-100 mb-1">Need help planning your trip?</p>
+              <p className="text-xs text-stone-400">Click to chat with our travel assistant!</p>
             </div>
           </div>
           
           {/* Small arrow pointing to button */}
           <div 
-            className="absolute -bottom-2 right-8 w-4 h-4 bg-white border-r border-b border-gray-100 transform rotate-45"
+            className="absolute -bottom-2 right-8 w-4 h-4 bg-stone-900 border-r border-b border-amber-500/30 transform rotate-45"
           />
         </div>
       )}
@@ -154,7 +154,7 @@ export default function ChatWidget() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         style={{ position: 'fixed', bottom: '24px', right: '24px' }}
-        className="z-50 w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+        className="z-50 w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? (
@@ -190,10 +190,10 @@ export default function ChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div style={{ position: 'fixed', bottom: '96px', right: '24px' }} className="z-50 w-[350px] sm:w-[400px] h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200">
+        <div style={{ position: 'fixed', bottom: '96px', right: '24px' }} className="z-50 w-[350px] sm:w-[400px] h-[500px] bg-stone-50 dark:bg-stone-900 shadow-2xl flex flex-col overflow-hidden border border-amber-500/30">
           {/* Header */}
-          <div className="bg-emerald-600 text-white px-4 py-3 flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+          <div className="bg-stone-900 dark:bg-black text-white px-4 py-3 flex items-center gap-3 border-b border-amber-500/20">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -209,14 +209,14 @@ export default function ChatWidget() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold">Wanderlust Assistant</h3>
-              <p className="text-emerald-200 text-xs">
+              <h3 className="font-semibold font-serif">Wanderlust Assistant</h3>
+              <p className="text-amber-400/70 text-xs uppercase tracking-wider">
                 {isLoading ? "Typing..." : "Online"}
               </p>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 hover:bg-emerald-500 rounded-full flex items-center justify-center transition-colors"
+              className="w-8 h-8 hover:bg-amber-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-amber-400"
               aria-label="Close chat"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,7 +226,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-stone-100 dark:bg-stone-950">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -235,10 +235,10 @@ export default function ChatWidget() {
                 }`}
               >
                 <div
-                  className={`max-w-[80%] px-4 py-2 rounded-2xl ${
+                  className={`max-w-[80%] px-4 py-2 ${
                     message.role === "user"
-                      ? "bg-emerald-600 text-white rounded-br-md"
-                      : "bg-white text-gray-800 shadow-sm border border-gray-100 rounded-bl-md"
+                      ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
+                      : "bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-stone-700"
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -247,15 +247,15 @@ export default function ChatWidget() {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-white text-gray-800 shadow-sm border border-gray-100 px-4 py-2 rounded-2xl rounded-bl-md">
+                <div className="bg-white dark:bg-stone-800 text-stone-800 shadow-sm border border-stone-200 dark:border-stone-700 px-4 py-2">
                   <div className="flex gap-1">
-                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                    <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
                     <span
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
                       style={{ animationDelay: "0.1s" }}
                     />
                     <span
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
                       style={{ animationDelay: "0.2s" }}
                     />
                   </div>
@@ -268,7 +268,7 @@ export default function ChatWidget() {
           {/* Input */}
           <form
             onSubmit={handleSubmit}
-            className="p-3 bg-white border-t border-gray-200"
+            className="p-3 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-700"
           >
             <div className="flex gap-2">
               <input
@@ -276,13 +276,13 @@ export default function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about tours, destinations..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+                className="flex-1 px-4 py-2 border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-sm"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="w-10 h-10 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-300 text-white rounded-full flex items-center justify-center transition-colors"
+                className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-stone-300 disabled:to-stone-300 dark:disabled:from-stone-600 dark:disabled:to-stone-600 text-white flex items-center justify-center transition-colors"
               >
                 <svg
                   className="w-5 h-5"
