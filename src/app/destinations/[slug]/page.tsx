@@ -1,3 +1,10 @@
+// src/app/destinations/[slug]/page.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Server Component — individual destination detail page.
+// Style: Luxury / Art Deco — amber + stone palette, serif headings,
+// geometric diamond ornaments, wide tracking, dark mode throughout.
+// ─────────────────────────────────────────────────────────────────────────────
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -6,6 +13,32 @@ import {
   type Destination,
 } from "@/lib/data/destinations";
 import { getToursByDestination, type Tour } from "@/lib/data/tours";
+
+// ─── Shared gradient palette (warm / luxury tones) ───────────────────────────
+const GRADIENTS = [
+  "from-amber-800 via-amber-900 to-stone-950",
+  "from-stone-700 via-stone-800 to-stone-950",
+  "from-amber-700 via-orange-800 to-amber-950",
+  "from-stone-600 via-stone-700 to-stone-900",
+  "from-amber-600 via-amber-700 to-stone-900",
+  "from-stone-800 via-stone-900 to-black",
+];
+
+// ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
+function DiamondDivider({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`flex items-center justify-center gap-2 ${className}`}
+      aria-hidden="true"
+    >
+      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
+      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    </div>
+  );
+}
 
 // Generate static params for all destinations
 export async function generateStaticParams() {
@@ -31,38 +64,85 @@ export async function generateMetadata({
   return {
     title: `${destination.name}, ${destination.country} | Wanderlust`,
     description: destination.description,
+    openGraph: {
+      title: `${destination.name}, ${destination.country} | Wanderlust`,
+      description: destination.description,
+      type: "website",
+      siteName: "Wanderlust",
+    },
   };
 }
 
-// Hero Section
+// ═════════════════════════════════════════════════════════════════════════════
+// DESTINATION HEADER (HERO)
+// ═════════════════════════════════════════════════════════════════════════════
 function DestinationHero({ destination }: { destination: Destination }) {
   return (
-    <section className="relative h-[60vh] min-h-[500px] flex items-end">
+    <section
+      className="relative h-[50vh] min-h-[400px] flex items-end"
+      aria-label={`${destination.name} hero`}
+    >
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-950">
-        {/* Uncomment when you have images:
-        <Image
-          src={destination.image}
-          alt={destination.name}
-          fill
-          className="object-cover"
-          priority
-        />
-        */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-br from-stone-800 via-stone-900 to-stone-950">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
       </div>
+
+      {/* Art Deco geometric pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
+        <svg width="100%" height="100%">
+          <pattern
+            id="dest-hero-deco"
+            width="80"
+            height="80"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M40 0 L80 40 L40 80 L0 40 Z"
+              fill="none"
+              stroke="white"
+              strokeWidth="1"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              r="12"
+              fill="none"
+              stroke="white"
+              strokeWidth="0.5"
+            />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#dest-hero-deco)" />
+        </svg>
+      </div>
+
+      {/* Radial glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-amber-500/10 rounded-full blur-3xl"
+        aria-hidden="true"
+      />
+
+      {/* Corner accents */}
+      <div
+        className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-amber-500/30 z-10"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-amber-500/30 z-10"
+        aria-hidden="true"
+      />
 
       {/* Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 pb-12">
         <Link
           href="/destinations"
-          className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 transition-colors"
+          className="inline-flex items-center gap-2 text-amber-400/80 hover:text-amber-400 mb-4 transition-colors uppercase tracking-wider text-sm font-medium"
         >
           <svg
             className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -74,20 +154,20 @@ function DestinationHero({ destination }: { destination: Destination }) {
           Back to Destinations
         </Link>
 
-        <div className="flex items-center gap-3 mb-4">
-          <span className="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-sm font-medium">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
+          <span className="px-3 py-1 text-sm font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
             {destination.country}
           </span>
-          <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">
+          <span className="px-3 py-1 text-sm font-medium bg-white/10 text-white/90 border border-white/20 uppercase tracking-wider">
             {destination.tourCount} tours available
           </span>
         </div>
 
-        <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-serif">
           {destination.name}
         </h1>
 
-        <p className="text-xl text-gray-200 max-w-3xl">
+        <p className="text-lg md:text-xl text-stone-300 max-w-3xl leading-relaxed">
           {destination.description}
         </p>
       </div>
@@ -95,30 +175,63 @@ function DestinationHero({ destination }: { destination: Destination }) {
   );
 }
 
-// Quick Facts Card
+// ═════════════════════════════════════════════════════════════════════════════
+// QUICK FACTS CARD (STICKY SIDEBAR)
+// ═════════════════════════════════════════════════════════════════════════════
 function QuickFactsCard({ destination }: { destination: Destination }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Facts</h3>
+    <div className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-lg p-6 sticky top-24">
+      {/* Art Deco corner accents */}
+      <div
+        className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40"
+        aria-hidden="true"
+      />
 
-      <div className="space-y-4 mb-6">
+      <p className="text-xs text-amber-700 dark:text-amber-400 uppercase tracking-[0.2em] mb-1">
+        Know Before You Go
+      </p>
+      <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif">
+        Quick Facts
+      </h3>
+
+      <div className="space-y-3 mb-5">
         {destination.quickFacts.map((fact, index) => (
-          <div key={index} className="flex justify-between">
-            <span className="text-gray-500">{fact.label}</span>
-            <span className="font-medium text-gray-900">{fact.value}</span>
+          <div
+            key={index}
+            className="flex justify-between items-baseline gap-3 text-sm"
+          >
+            <span className="text-stone-600 dark:text-stone-400 uppercase tracking-wider text-xs">
+              {fact.label}
+            </span>
+            <span className="font-semibold text-stone-900 dark:text-amber-100 text-right">
+              {fact.value}
+            </span>
           </div>
         ))}
       </div>
 
-      <hr className="my-4" />
+      <DiamondDivider className="my-5" />
 
-      <div className="space-y-3 text-sm">
+      <div className="space-y-4 text-sm">
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"
+            className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -128,8 +241,10 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
             />
           </svg>
           <div>
-            <span className="font-medium text-gray-900">Languages: </span>
-            <span className="text-gray-600">
+            <span className="font-semibold text-stone-900 dark:text-amber-100">
+              Languages:{" "}
+            </span>
+            <span className="text-stone-600 dark:text-stone-300">
               {destination.languages.join(", ")}
             </span>
           </div>
@@ -137,10 +252,11 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
 
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"
+            className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -150,17 +266,22 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
             />
           </svg>
           <div>
-            <span className="font-medium text-gray-900">Currency: </span>
-            <span className="text-gray-600">{destination.currency}</span>
+            <span className="font-semibold text-stone-900 dark:text-amber-100">
+              Currency:{" "}
+            </span>
+            <span className="text-stone-600 dark:text-stone-300">
+              {destination.currency}
+            </span>
           </div>
         </div>
 
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"
+            className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -170,17 +291,21 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
             />
           </svg>
           <div>
-            <span className="font-medium text-gray-900">Timezone: </span>
-            <span className="text-gray-600">{destination.timezone}</span>
+            <span className="font-semibold text-stone-900 dark:text-amber-100">
+              Timezone:{" "}
+            </span>
+            <span className="text-stone-600 dark:text-stone-300">
+              {destination.timezone}
+            </span>
           </div>
         </div>
       </div>
 
-      <hr className="my-4" />
+      <DiamondDivider className="my-5" />
 
       <Link
         href="/contact"
-        className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 rounded-lg font-semibold transition-colors"
+        className="block w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white text-center py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900"
       >
         Plan Your Visit
       </Link>
@@ -188,28 +313,57 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
   );
 }
 
-// Overview Section
+// ═════════════════════════════════════════════════════════════════════════════
+// OVERVIEW SECTION
+// ═════════════════════════════════════════════════════════════════════════════
 function OverviewSection({ destination }: { destination: Destination }) {
   return (
-    <section className="mb-12">
-      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+    <section className="mb-12" aria-labelledby="overview-heading">
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+        About This Place
+      </p>
+      <h2
+        id="overview-heading"
+        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+      >
         About {destination.name}
       </h2>
-      <p className="text-gray-600 leading-relaxed mb-6">
+      <DiamondDivider className="mb-6 !justify-start" />
+      <p className="text-stone-600 dark:text-stone-300 leading-relaxed mb-6">
         {destination.longDescription}
       </p>
 
       {/* Highlights */}
-      <div className="bg-emerald-50 rounded-xl p-6">
-        <h3 className="font-semibold text-gray-900 mb-4">Highlights</h3>
+      <div className="relative bg-amber-50/60 dark:bg-stone-900/60 border border-amber-300/40 dark:border-amber-700/30 p-6">
+        <div
+          className="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-amber-500/40"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-amber-500/40"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-amber-500/40"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-amber-500/40"
+          aria-hidden="true"
+        />
+
+        <h3 className="font-semibold text-stone-900 dark:text-amber-100 mb-4 font-serif uppercase tracking-wider text-sm">
+          Highlights
+        </h3>
         <ul className="grid md:grid-cols-2 gap-3">
           {destination.highlights.map((highlight, index) => (
-            <li key={index} className="flex items-center gap-3">
+            <li key={index} className="flex items-start gap-3">
               <svg
-                className="w-5 h-5 text-emerald-600 shrink-0"
+                className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -218,7 +372,9 @@ function OverviewSection({ destination }: { destination: Destination }) {
                   d="M5 13l4 4L19 7"
                 />
               </svg>
-              <span className="text-gray-700">{highlight}</span>
+              <span className="text-stone-700 dark:text-stone-300">
+                {highlight}
+              </span>
             </li>
           ))}
         </ul>
@@ -227,23 +383,53 @@ function OverviewSection({ destination }: { destination: Destination }) {
   );
 }
 
-// Best Time & Weather Section
+// ═════════════════════════════════════════════════════════════════════════════
+// WEATHER SECTION
+// ═════════════════════════════════════════════════════════════════════════════
 function WeatherSection({ destination }: { destination: Destination }) {
   return (
-    <section className="mb-12">
-      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+    <section className="mb-12" aria-labelledby="weather-heading">
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+        When to Visit
+      </p>
+      <h2
+        id="weather-heading"
+        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+      >
         Best Time to Visit
       </h2>
-      <p className="text-gray-600 mb-6">{destination.bestTimeToVisit}</p>
+      <DiamondDivider className="mb-6 !justify-start" />
+      <p className="text-stone-600 dark:text-stone-300 leading-relaxed mb-6">
+        {destination.bestTimeToVisit}
+      </p>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="bg-orange-50 rounded-xl p-5">
+        {/* Summer */}
+        <div className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-5 group hover:border-amber-400 dark:hover:border-amber-600 transition-colors">
+          <div
+            className="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+
           <div className="flex items-center gap-3 mb-2">
             <svg
-              className="w-6 h-6 text-orange-500"
+              className="w-6 h-6 text-amber-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -252,18 +438,41 @@ function WeatherSection({ destination }: { destination: Destination }) {
                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
               />
             </svg>
-            <h3 className="font-semibold text-gray-900">Summer</h3>
+            <h3 className="font-semibold text-stone-900 dark:text-amber-100 font-serif uppercase tracking-wider text-sm">
+              Summer
+            </h3>
           </div>
-          <p className="text-gray-600">{destination.weather.summer}</p>
+          <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
+            {destination.weather.summer}
+          </p>
         </div>
 
-        <div className="bg-blue-50 rounded-xl p-5">
+        {/* Winter */}
+        <div className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-5 group hover:border-amber-400 dark:hover:border-amber-600 transition-colors">
+          <div
+            className="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
+            aria-hidden="true"
+          />
+
           <div className="flex items-center gap-3 mb-2">
             <svg
-              className="w-6 h-6 text-blue-500"
+              className="w-6 h-6 text-stone-600 dark:text-stone-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -272,84 +481,153 @@ function WeatherSection({ destination }: { destination: Destination }) {
                 d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
               />
             </svg>
-            <h3 className="font-semibold text-gray-900">Winter</h3>
+            <h3 className="font-semibold text-stone-900 dark:text-amber-100 font-serif uppercase tracking-wider text-sm">
+              Winter
+            </h3>
           </div>
-          <p className="text-gray-600">{destination.weather.winter}</p>
+          <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
+            {destination.weather.winter}
+          </p>
         </div>
       </div>
     </section>
   );
 }
 
-// Things to Do Section
+// ═════════════════════════════════════════════════════════════════════════════
+// THINGS TO DO SECTION
+// ═════════════════════════════════════════════════════════════════════════════
 function ThingsToDoSection({ destination }: { destination: Destination }) {
   return (
-    <section className="mb-12">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Things to Do</h2>
+    <section className="mb-12" aria-labelledby="things-heading">
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+        Experiences
+      </p>
+      <h2
+        id="things-heading"
+        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+      >
+        Things to Do
+      </h2>
+      <DiamondDivider className="mb-6 !justify-start" />
       <div className="grid md:grid-cols-2 gap-6">
         {destination.thingsToDo.map((activity, index) => (
-          <div
+          <article
             key={index}
-            className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+            className="relative group bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
           >
-            {/* Image Placeholder */}
-            <div className="h-48 bg-gradient-to-br from-emerald-200 to-emerald-400">
-              {/* Uncomment when you have images:
-              <Image
-                src={activity.image}
-                alt={activity.title}
-                width={400}
-                height={200}
-                className="w-full h-full object-cover"
-              />
-              */}
-            </div>
+            <div
+              className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+
+            {/* Image Placeholder — cycles through warm gradient palette */}
+            <div
+              className={`h-48 bg-gradient-to-br ${
+                GRADIENTS[index % GRADIENTS.length]
+              }`}
+              aria-hidden="true"
+            />
             <div className="p-5">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
+              <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-2 font-serif">
                 {activity.title}
               </h3>
-              <p className="text-gray-600 text-sm">{activity.description}</p>
+              <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
+                {activity.description}
+              </p>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </section>
   );
 }
 
-// Related Tours Section
+// ═════════════════════════════════════════════════════════════════════════════
+// RELATED TOURS SECTION
+// ═════════════════════════════════════════════════════════════════════════════
 function RelatedToursSection({ tours }: { tours: Tour[] }) {
   if (tours.length === 0) return null;
 
   return (
-    <section className="mb-12">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+    <section className="mb-12" aria-labelledby="related-heading">
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+        Curated Journeys
+      </p>
+      <h2
+        id="related-heading"
+        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+      >
         Tours in This Destination
       </h2>
+      <DiamondDivider className="mb-6 !justify-start" />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tours.slice(0, 3).map((tour) => (
-          <Link key={tour.id} href={`/tours/${tour.slug}`} className="group">
-            <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
-              <div className="relative h-40 bg-gradient-to-br from-emerald-200 to-emerald-400">
-                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-emerald-700">
-                  ${tour.price}
-                </div>
+        {tours.slice(0, 3).map((tour, index) => (
+          <Link
+            key={tour.id}
+            href={`/tours/${tour.slug}`}
+            aria-label={`View details for ${tour.title}`}
+            className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
+          >
+            <div
+              className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
+              aria-hidden="true"
+            />
+
+            <div
+              className={`relative h-40 bg-gradient-to-br ${
+                GRADIENTS[(index + 1) % GRADIENTS.length]
+              }`}
+              aria-hidden="true"
+            >
+              <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-amber-300 text-sm font-bold font-serif px-3 py-1 uppercase tracking-wider">
+                ${tour.price.toLocaleString()}
               </div>
-              <div className="p-4">
-                <h3 className="font-bold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
-                  {tour.title}
-                </h3>
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>{tour.duration}</span>
-                  <div className="flex items-center gap-1">
-                    <svg
-                      className="w-4 h-4 text-yellow-400 fill-current"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    <span>{tour.rating}</span>
-                  </div>
+            </div>
+            <div className="p-4 flex flex-col flex-1">
+              <h3 className="font-bold text-stone-900 dark:text-amber-100 mb-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors font-serif">
+                {tour.title}
+              </h3>
+              <div className="flex items-center justify-between text-sm text-stone-600 dark:text-stone-400 mt-auto pt-2 border-t border-stone-200 dark:border-stone-700">
+                <span>{tour.duration}</span>
+                <div
+                  className="flex items-center gap-1"
+                  aria-label={`Rated ${tour.rating} out of 5`}
+                >
+                  <svg
+                    className="w-4 h-4 text-amber-400 fill-current"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span className="font-semibold text-stone-900 dark:text-amber-100">
+                    {tour.rating}
+                  </span>
                 </div>
               </div>
             </div>
@@ -361,14 +639,15 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
         <div className="text-center mt-8">
           <Link
             href="/tours"
-            className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold"
+            className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
           >
             View All Tours
             <svg
-              className="w-5 h-5"
+              className="w-5 h-5 group-hover:translate-x-1 transition-transform"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -384,7 +663,9 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
   );
 }
 
-// Main Destination Detail Page
+// ═════════════════════════════════════════════════════════════════════════════
+// PAGE ROOT
+// ═════════════════════════════════════════════════════════════════════════════
 export default async function DestinationDetailPage({
   params,
 }: {
@@ -401,10 +682,10 @@ export default async function DestinationDetailPage({
   const relatedTours = getToursByDestination(destination.country.toLowerCase());
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
       <DestinationHero destination={destination} />
 
-      <section className="py-12 px-4">
+      <section className="py-12 px-4" aria-label="Destination details">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Main Content */}

@@ -182,10 +182,10 @@ function PriceCard({ tour }: { tour: Tour }) {
       <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40" aria-hidden="true" />
 
       <div className="mb-6">
-        <span className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-[0.2em]">From</span>
+        <span className="text-xs text-stone-600 dark:text-stone-400 uppercase tracking-[0.2em]">From</span>
         <div className="flex items-baseline gap-1">
           <span className="text-4xl font-bold text-stone-900 dark:text-amber-100 font-serif">${tour.price.toLocaleString()}</span>
-          <span className="text-stone-500 dark:text-stone-400">/ person</span>
+          <span className="text-stone-600 dark:text-stone-400">/ person</span>
         </div>
       </div>
 
@@ -196,7 +196,7 @@ function PriceCard({ tour }: { tour: Tour }) {
         Book This Tour
       </Link>
 
-      <button className="w-full border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-600 dark:text-amber-400 py-3 font-medium uppercase tracking-wider transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900">
+      <button className="w-full border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-400 py-3 font-medium uppercase tracking-wider transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
@@ -225,7 +225,7 @@ function PriceCard({ tour }: { tour: Tour }) {
 function TourOverview({ tour }: { tour: Tour }) {
   return (
     <section className="mb-12" aria-labelledby="overview-heading">
-      <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-1">About This Tour</p>
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">About This Tour</p>
       <h2 id="overview-heading" className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif">Overview</h2>
       <DiamondDivider className="mb-6 !justify-start" />
       <p className="text-stone-600 dark:text-stone-300 leading-relaxed">{tour.longDescription}</p>
@@ -236,7 +236,7 @@ function TourOverview({ tour }: { tour: Tour }) {
 function TourHighlights({ tour }: { tour: Tour }) {
   return (
     <section className="mb-12" aria-labelledby="highlights-heading">
-      <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-1">What Awaits You</p>
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">What Awaits You</p>
       <h2 id="highlights-heading" className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif">Highlights</h2>
       <DiamondDivider className="mb-6 !justify-start" />
       <ul className="grid md:grid-cols-2 gap-3">
@@ -256,7 +256,7 @@ function TourHighlights({ tour }: { tour: Tour }) {
 function TourItinerary({ tour }: { tour: Tour }) {
   return (
     <section className="mb-12" aria-labelledby="itinerary-heading">
-      <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-1">Day by Day</p>
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">Day by Day</p>
       <h2 id="itinerary-heading" className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-6 font-serif">Itinerary</h2>
       <DiamondDivider className="mb-6 !justify-start" />
       <div className="space-y-4">
@@ -273,7 +273,7 @@ function TourItinerary({ tour }: { tour: Tour }) {
                 {day.title}
               </span>
               <svg
-                className="w-5 h-5 text-stone-400 dark:text-stone-500 group-open:rotate-180 transition-transform"
+                className="w-5 h-5 text-stone-600 dark:text-stone-400 group-open:rotate-180 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -295,7 +295,7 @@ function TourItinerary({ tour }: { tour: Tour }) {
 function TourInclusions({ tour }: { tour: Tour }) {
   return (
     <section className="mb-12" aria-labelledby="inclusions-heading">
-      <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-1">The Details</p>
+      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">The Details</p>
       <h2 id="inclusions-heading" className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-6 font-serif">
         What&apos;s Included
       </h2>

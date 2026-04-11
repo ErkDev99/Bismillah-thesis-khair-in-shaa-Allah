@@ -82,7 +82,7 @@ function FilterSidebar({
           <h2 className="text-lg font-bold text-stone-900 dark:text-amber-100 font-serif">Filters</h2>
           <button
             onClick={clearFilters}
-            className="text-sm text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 uppercase tracking-wider font-medium"
+            className="text-sm text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 uppercase tracking-wider font-medium"
           >
             Clear all
           </button>
@@ -90,7 +90,7 @@ function FilterSidebar({
 
         {/* Destination Filter */}
         <div className="mb-6">
-          <label htmlFor="filter-destination" className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
+          <label htmlFor="filter-destination" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
             Destination
           </label>
           <select
@@ -112,7 +112,7 @@ function FilterSidebar({
 
         {/* Category Filter */}
         <div className="mb-6">
-          <label htmlFor="filter-category" className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
+          <label htmlFor="filter-category" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
             Category
           </label>
           <select
@@ -134,7 +134,7 @@ function FilterSidebar({
 
         {/* Difficulty Filter */}
         <div className="mb-6">
-          <label htmlFor="filter-difficulty" className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
+          <label htmlFor="filter-difficulty" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
             Difficulty
           </label>
           <select
@@ -156,7 +156,7 @@ function FilterSidebar({
 
         {/* Duration Filter */}
         <div className="mb-6">
-          <label htmlFor="filter-duration" className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
+          <label htmlFor="filter-duration" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
             Duration
           </label>
           <select
@@ -176,8 +176,8 @@ function FilterSidebar({
 
         {/* Price Range */}
         <div>
-          <label htmlFor="filter-price" className="block text-xs font-semibold text-stone-500 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
-            Max Price: <span className="text-amber-600 dark:text-amber-400 font-serif">${filters.priceRange[1]}</span>
+          <label htmlFor="filter-price" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
+            Max Price: <span className="text-amber-700 dark:text-amber-400 font-serif">${filters.priceRange[1]}</span>
           </label>
           <input
             id="filter-price"
@@ -194,7 +194,7 @@ function FilterSidebar({
             }
             className="w-full accent-amber-500"
           />
-          <div className="flex justify-between text-xs text-stone-400 dark:text-stone-500 mt-1">
+          <div className="flex justify-between text-xs text-stone-600 dark:text-stone-400 mt-1">
             <span>$500</span>
             <span>$5,000</span>
           </div>
@@ -251,14 +251,14 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
 
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
-        <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.2em] text-xs mb-1">
+        <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.2em] text-xs mb-1">
           {tour.destination}
         </p>
         <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-2 font-serif group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
           {tour.title}
         </h3>
-        <p className="text-sm text-stone-500 dark:text-stone-400 mb-4 line-clamp-2 flex-1">
-          {tour.shortDescription}
+        <p className="text-sm text-stone-600 dark:text-stone-400 mb-4 line-clamp-2 flex-1">
+          {tour.description}
         </p>
 
         {/* Rating */}
@@ -276,11 +276,11 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
             </svg>
           ))}
           <span className="text-sm font-semibold text-stone-900 dark:text-amber-100 ml-1">{tour.rating}</span>
-          <span className="text-sm text-stone-500 dark:text-stone-400">({tour.reviewCount})</span>
+          <span className="text-sm text-stone-600 dark:text-stone-400">({tour.reviewCount})</span>
         </div>
 
         {/* Meta info */}
-        <div className="flex items-center justify-between text-sm text-stone-500 dark:text-stone-400 mb-4 border-t border-stone-100 dark:border-stone-800 pt-3">
+        <div className="flex items-center justify-between text-sm text-stone-600 dark:text-stone-400 mb-4 border-t border-stone-100 dark:border-stone-800 pt-3">
           <span>{tour.duration}</span>
           <span>{tour.groupSize}</span>
         </div>
@@ -312,12 +312,12 @@ function SortOptions({
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-      <p className="text-stone-500 dark:text-stone-400">
+      <p className="text-stone-600 dark:text-stone-400">
         <span className="font-semibold text-stone-900 dark:text-amber-100">{resultCount}</span> tours
         found
       </p>
       <div className="flex items-center gap-2">
-        <label htmlFor="sort-select" className="text-sm text-stone-500 dark:text-stone-400 uppercase tracking-wider">Sort by:</label>
+        <label htmlFor="sort-select" className="text-sm text-stone-600 dark:text-stone-400 uppercase tracking-wider">Sort by:</label>
         <select
           id="sort-select"
           value={sortBy}
@@ -423,7 +423,7 @@ export default function ToursPage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-amber-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
         <div className="relative max-w-7xl mx-auto text-center">
-          <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-2">
+          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
             Curated Journeys
           </p>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 font-serif">
@@ -522,7 +522,7 @@ export default function ToursPage() {
                   <h3 className="text-xl font-semibold text-stone-900 dark:text-amber-100 mb-2 font-serif">
                     No tours found
                   </h3>
-                  <p className="text-stone-500 dark:text-stone-400 mb-4">
+                  <p className="text-stone-600 dark:text-stone-400 mb-4">
                     Try adjusting your filters to find what you&apos;re looking
                     for.
                   </p>
@@ -536,7 +536,7 @@ export default function ToursPage() {
                         duration: "",
                       })
                     }
-                    className="text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-medium uppercase tracking-wider text-sm"
+                    className="text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-medium uppercase tracking-wider text-sm"
                   >
                     Clear all filters
                   </button>

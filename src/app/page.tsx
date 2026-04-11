@@ -81,7 +81,7 @@ function StarRating({ rating, count }: { rating: number; count?: number }) {
       ))}
       <span className="text-sm font-semibold text-stone-900 dark:text-amber-100">{rating}</span>
       {count && (
-        <span className="text-sm text-stone-500 dark:text-stone-400">({count})</span>
+        <span className="text-sm text-stone-600 dark:text-stone-400">({count})</span>
       )}
     </div>
   );
@@ -108,8 +108,7 @@ function HeroSection() {
   return (
     <section
       aria-label="Welcome to Wanderlust Central Asia Tours"
-      className="relative flex flex-col items-center justify-center text-center text-white"
-      style={{ minHeight: "65vh" }}
+      className="relative text-center text-white overflow-hidden"
     >
       <div
         className="absolute inset-0"
@@ -135,7 +134,7 @@ function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 px-4 max-w-4xl mx-auto py-16 md:py-20">
+      <div className="relative z-10 px-4 max-w-4xl mx-auto py-12 md:py-16">
         <div className="flex items-center justify-center gap-4 mb-6" aria-hidden="true">
           <div className="h-px w-12 md:w-20 bg-amber-500/60" />
           <span className="text-amber-400/80 text-xs tracking-[0.3em] uppercase">Est. 2024</span>
@@ -174,24 +173,6 @@ function HeroSection() {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 bg-black/50 backdrop-blur-sm border-t border-amber-500/20">
-        <div className="max-w-3xl mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-amber-500/20 text-center">
-          {[
-            { value: "6+", label: "Destinations" },
-            { value: "500+", label: "Happy Travelers" },
-            { value: "4.9★", label: "Avg. Rating" },
-          ].map((stat) => (
-            <div key={stat.label} className="px-2 sm:px-4">
-              <p className="text-xl sm:text-2xl font-bold text-amber-400 font-serif">
-                {stat.value}
-              </p>
-              <p className="text-[11px] sm:text-xs text-stone-400 uppercase tracking-[0.15em] mt-0.5">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
@@ -249,7 +230,7 @@ function WhyChooseUsSection() {
     >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-2">
+          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
             Why Choose Us
           </p>
           <h2
@@ -258,7 +239,7 @@ function WhyChooseUsSection() {
           >
             Why Travel with Wanderlust?
           </h2>
-          <p className="text-stone-500 dark:text-stone-400 max-w-xl mx-auto">
+          <p className="text-stone-600 dark:text-stone-400 max-w-xl mx-auto">
             We&apos;ve spent years crafting journeys that go beyond the tourist
             trail — here&apos;s what makes us different.
           </p>
@@ -291,7 +272,7 @@ function WhyChooseUsSection() {
               <h3 className="text-lg font-semibold text-stone-900 dark:text-amber-100 mb-2 font-serif">
                 {item.title}
               </h3>
-              <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed">
+              <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
                 {item.description}
               </p>
             </div>
@@ -336,7 +317,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
       </div>
 
       <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-center gap-1.5 text-stone-400 dark:text-stone-500 text-sm mb-2">
+        <div className="flex items-center gap-1.5 text-stone-600 dark:text-stone-400 text-sm mb-2">
           <svg
             className="w-3.5 h-3.5 shrink-0"
             fill="none"
@@ -350,13 +331,13 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
           <span>{tour.location}</span>
         </div>
 
-        <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-1 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors font-serif">
+        <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-1 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors font-serif">
           <Link href={`/tours/${tour.slug}`} className="focus:outline-none focus:underline">
             {tour.title}
           </Link>
         </h3>
 
-        <p className="text-stone-500 dark:text-stone-400 text-sm line-clamp-2 mb-4 leading-relaxed flex-1">
+        <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 mb-4 leading-relaxed flex-1">
           {tour.description}
         </p>
 
@@ -369,7 +350,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
           </div>
           <div className="text-right">
             <p className="text-sm font-medium text-stone-700 dark:text-stone-300">{tour.duration}</p>
-            <p className="text-xs text-stone-400 dark:text-stone-500">{tour.groupSize}</p>
+            <p className="text-xs text-stone-600 dark:text-stone-400">{tour.groupSize}</p>
           </div>
         </div>
 
@@ -395,7 +376,7 @@ function FeaturedToursSection({ tours }: { tours: Tour[] }) {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
           <div>
-            <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-1">
+            <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
               Curated Journeys
             </p>
             <h2
@@ -404,14 +385,14 @@ function FeaturedToursSection({ tours }: { tours: Tour[] }) {
             >
               Featured Tours
             </h2>
-            <p className="text-stone-500 dark:text-stone-400">
+            <p className="text-stone-600 dark:text-stone-400">
               Handpicked journeys that showcase the best of Central Asia.
             </p>
           </div>
           <Link
             href="/tours"
             aria-label="View all available tours"
-            className="shrink-0 inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
+            className="shrink-0 inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
           >
             View all tours
             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -481,7 +462,7 @@ function FeaturedDestinationsSection({ destinations }: { destinations: Destinati
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
           <div>
-            <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-1">
+            <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
               Iconic Places
             </p>
             <h2
@@ -490,14 +471,14 @@ function FeaturedDestinationsSection({ destinations }: { destinations: Destinati
             >
               Top Destinations
             </h2>
-            <p className="text-stone-500 dark:text-stone-400">
+            <p className="text-stone-600 dark:text-stone-400">
               Iconic places where ancient legend meets breathtaking landscape.
             </p>
           </div>
           <Link
             href="/destinations"
             aria-label="View all destinations"
-            className="shrink-0 inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
+            className="shrink-0 inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
           >
             All destinations
             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -554,7 +535,7 @@ function TestimonialsSection() {
     >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-amber-700/60 dark:text-amber-400/60 uppercase tracking-[0.3em] text-xs mb-2">
+          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
             Testimonials
           </p>
           <h2
@@ -563,7 +544,7 @@ function TestimonialsSection() {
           >
             What Our Travelers Say
           </h2>
-          <p className="text-stone-500 dark:text-stone-400">
+          <p className="text-stone-600 dark:text-stone-400">
             Real reviews from real adventurers. No filters, no edits.
           </p>
           <DiamondDivider className="mt-5" />
@@ -585,7 +566,7 @@ function TestimonialsSection() {
               <footer>
                 <cite className="not-italic">
                   <p className="font-semibold text-stone-900 dark:text-amber-100 text-sm">{t.name}</p>
-                  <p className="text-stone-400 dark:text-stone-500 text-xs mt-0.5">
+                  <p className="text-stone-600 dark:text-stone-400 text-xs mt-0.5">
                     {t.country} &middot; {t.tour}
                   </p>
                 </cite>
@@ -643,7 +624,7 @@ function NewsletterSection() {
             required
             aria-required="true"
             autoComplete="email"
-            className="flex-1 px-4 py-3 bg-white/10 border border-amber-500/30 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+            className="flex-1 px-4 py-3 bg-white/10 border border-amber-500/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
           />
           <button
             type="submit"
@@ -653,7 +634,7 @@ function NewsletterSection() {
           </button>
         </form>
 
-        <p className="text-stone-600 text-xs mt-4">No spam. Unsubscribe at any time.</p>
+        <p className="text-stone-400 text-xs mt-4">No spam. Unsubscribe at any time.</p>
       </div>
     </section>
   );
@@ -751,21 +732,32 @@ export default function Home() {
       : getAllDestinations().slice(0, 6);
 
   return (
-    <main id="main-content">
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-amber-700 focus:px-4 focus:py-2 focus:font-semibold focus:shadow-lg"
-      >
-        Skip to main content
-      </a>
-
+    <>
       <HeroSection />
+      <div className="bg-stone-900 dark:bg-black border-t border-amber-500/20" aria-label="Key stats">
+        <div className="max-w-3xl mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-amber-500/20 text-center">
+          {([
+            { value: "6+", label: "Destinations" },
+            { value: "500+", label: "Happy Travelers" },
+            { value: "4.9★", label: "Avg. Rating" },
+          ] as const).map((stat) => (
+            <div key={stat.label} className="px-2 sm:px-4">
+              <p className="text-xl sm:text-2xl font-bold text-amber-400 font-serif">
+                {stat.value}
+              </p>
+              <p className="text-[11px] sm:text-xs text-stone-400 uppercase tracking-[0.15em] mt-0.5">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
       <WhyChooseUsSection />
       <FeaturedToursSection tours={featuredTours} />
       <FeaturedDestinationsSection destinations={featuredDestinations} />
       <TestimonialsSection />
       <NewsletterSection />
       <CTABannerSection />
-    </main>
+    </>
   );
 }

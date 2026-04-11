@@ -1,6 +1,8 @@
 # Wanderlust – Bachelor's Thesis Website
 ## Master Plan: Professional-Grade Website for Academic Evaluation
 
+> **Note:** For active session context (what's been restyled, what's next, current design system, user preferences, lessons learned), see **`HANDOVER.md`**. This file holds the long-term master plan — site structure, quality tests, execution phases, and design principles that don't change session to session.
+
 ---
 
 ## Project Context
@@ -94,27 +96,22 @@ These are the standard tests applied to professional websites. We will go throug
 
 The teacher's "can't find without scrolling" complaint comes from these specific problems:
 
-### Problem 1: The Hero Section Is Full-Screen (100vh)
-The home page hero takes up the entire viewport. When a user lands on the page, they see ONLY the hero. They have no idea there are tours, destinations, filters, or any content below. They don't know what to scroll to.
-
-**Fix:** Reduce hero to ~60-70% viewport height, or show a visual cue (arrow + partial next section peeking up from bottom) so the user is "invited" to scroll.
-
-### Problem 2: Navigation Has 7 Items With No Visual Priority
+### Problem 1: Navigation Has 7 Items With No Visual Priority
 The header has: Home, Tours, Destinations, About, Practical Info, Blog, Contact — all the same size and weight. There is no visual distinction between primary actions (Tours, Destinations) and secondary pages (About, Blog, Privacy).
 
 **Fix:** Visually group navigation. Primary nav = Tours, Destinations, Contact. Secondary = About, Blog, Practical Info. Add a prominent CTA button ("Book Now" or "View Tours") in the header.
 
-### Problem 3: No Images — It Looks Like a Prototype
+### Problem 2: No Images — It Looks Like a Prototype
 All images are CSS gradients. This makes the site look unfinished. A travel website without photographs feels untrustworthy and amateurish.
 
 **Fix:** Add free, high-quality travel images from Unsplash/Pexels for Central Asia (Kazakhstan, Kyrgyzstan, Uzbekistan).
 
-### Problem 4: Homepage Has Too Many Sections
+### Problem 3: Homepage Has Too Many Sections
 The homepage currently has: Hero → Featured Tours → Popular Destinations → Testimonials → Newsletter. That is ~5 heavy sections. A first-time visitor is overwhelmed.
 
 **Fix:** Restructure homepage to be shorter and more focused. Each section should have one clear purpose and lead naturally to the next.
 
-### Problem 5: No Visual Hierarchy on Cards
+### Problem 4: No Visual Hierarchy on Cards
 Tour cards all look the same weight. There's no "featured" indicator that draws the eye. Prices, ratings, and CTAs are present but don't stand out enough.
 
 **Fix:** Improve card design — larger images, clearer price/rating, stronger CTA button.
@@ -340,38 +337,9 @@ Phase 6: Polish & Content
 
 ---
 
-## Design Direction (Updated 2026-04-08)
-
-The user switched to **Modern Adventure Travel** as the design style for the site.
-
-Key characteristics applied:
-- Hero: Deep teal gradient (`from-teal-800 via-teal-700 to-emerald-600`) with white text and amber accents
-- Accent color: Amber/gold (`amber-400`) — evokes the Silk Road, desert warmth
-- Backgrounds: Alternating `bg-white` and `bg-gray-50` sections
-- Cards: Rounded (`rounded-2xl`), with `shadow-sm hover:shadow-xl` depth
-- Typography: Bold sans-serif headings, small uppercase teal labels with `tracking-wider`
-- Tour cards: 3-column equal grid, price badge, review count, "View Tour →" CTA
-- Why Choose Us: Icon cards with SVG icons in teal rounded squares
-- Testimonials: Light gray cards, reviewer's tour name shown
-- CTA section: `bg-teal-800` with amber subscribe button
-- Inspired by real booking platforms (Viator, TourRadar, G Adventures style)
-
-**SAFE RULE: Only edit `src/app/page.tsx` for homepage changes. Never touch `globals.css`, `layout.tsx`, or `Header.tsx` unless absolutely necessary — these caused horizontal overflow bugs twice.**
-
----
-
 ## Progress Tracker
 
-### Phase 1 — UI/UX Redesign
-| Step | Task | Status |
-|------|------|--------|
-| 1.1 | Add real images | ⏸️ Skipped — user will add own photos manually to `/public/images/` |
-| 1.2 | Redesign hero (reduce height from 90vh → 60vh) | ✅ Done |
-| 1.3 | Improve header/navigation | ⬜ Not started |
-| 1.4 | Redesign homepage layout | ✅ Done — light magazine editorial applied to `page.tsx` only |
-| 1.5 | Improve tour & destination cards | ⚠️ Homepage cards done; `/tours` and `/destinations` pages still use old style |
-| 1.6 | Fix typography & spacing | ⚠️ Homepage done; other pages not yet |
-| 1.7 | Footer cleanup | ⬜ Not started |
+> **Phase 1 (UI/UX Redesign) is tracked per-file in `HANDOVER.md`.** See the "Files Completed" and "Files NOT Yet Restyled" sections there for current status. The current design system is **Luxury / Art Deco** (amber + stone palette, serif headings, geometric ornaments) — full specification in HANDOVER.
 
 ### Phase 2 — Accessibility
 | Step | Task | Status |
@@ -411,26 +379,9 @@ Key characteristics applied:
 | 6.4 | Micro-interactions | ⬜ Not started |
 | 6.5 | Trust signals | ⬜ Not started |
 
----
-
-## Lessons Learned (Do Not Repeat)
-
-### Incident: Horizontal Overflow Bug (2026-04-08) — Happened TWICE
-- First attempt: changed `globals.css`, `next.config.ts`, `page.tsx` → content shifted right
-- Second attempt: applied luxury dark theme, again touched `globals.css` → same overflow bug
-- Both times the user had to run `git reset --hard origin/main` to recover
-- **Rule: NEVER touch `globals.css` for visual/design changes. The overflow is caused by something in that file.**
-- **Rule: All design changes must be done through component-level Tailwind classes only.**
-- **Rule: If the user says something was working before and broke after my changes, believe them. Do not argue. Revert immediately.**
-- **Rule: Always test visually after every change. If layout breaks, own it immediately.**
-
-### What Works (Confirmed Safe Pattern)
-- Editing only `src/app/page.tsx` with Tailwind classes → no overflow, clean build
-- Using `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` as the container pattern on every section
-- Using `gap-px bg-stone-200` for grid dividers
-- The `font-serif` class works with Geist Sans fallback (Cormorant Garamond was added to layout.tsx but caused issues — do not re-add unless confirmed safe)
+> **Lessons learned and safe patterns** (horizontal overflow bug, `globals.css` rule, confirmed safe editing patterns) are documented in `HANDOVER.md`. Read that file before making any changes.
 
 ---
 
-*Last updated: 2026-04-08*
+*Last updated: 2026-04-11*
 *Working together step by step — quality over speed.*

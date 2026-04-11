@@ -34,10 +34,10 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-amber-300/80">Quick Links</h4>
             <ul className="space-y-2.5 text-stone-400">
-              <li><Link href="/tours" className="hover:text-amber-400 transition-colors">Tours</Link></li>
-              <li><Link href="/destinations" className="hover:text-amber-400 transition-colors">Destinations</Link></li>
-              <li><Link href="/about" className="hover:text-amber-400 transition-colors">About Us</Link></li>
-              <li><Link href="/contact" className="hover:text-amber-400 transition-colors">Contact</Link></li>
+              <li><Link href="/tours" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">Tours</Link></li>
+              <li><Link href="/destinations" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">Destinations</Link></li>
+              <li><Link href="/about" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">About Us</Link></li>
+              <li><Link href="/contact" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">Contact</Link></li>
             </ul>
           </div>
 
@@ -45,10 +45,10 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-amber-300/80">Support</h4>
             <ul className="space-y-2.5 text-stone-400">
-              <li><Link href="/practical-info" className="hover:text-amber-400 transition-colors">Practical Info</Link></li>
-              <li><Link href="/faq" className="hover:text-amber-400 transition-colors">FAQ</Link></li>
-              <li><Link href="/privacy" className="hover:text-amber-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-amber-400 transition-colors">Terms of Service</Link></li>
+              <li><Link href="/practical-info" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">Practical Info</Link></li>
+              <li><Link href="/faq" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">FAQ</Link></li>
+              <li><Link href="/privacy" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950">Terms of Service</Link></li>
             </ul>
           </div>
 
@@ -74,7 +74,7 @@ export default function Footer() {
             <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/50" />
             <div className="h-px w-16 md:w-24 bg-amber-500/30" />
           </div>
-          <p className="text-stone-500 text-sm">
+          <p className="text-stone-400 text-sm">
             &copy; {new Date().getFullYear()} Wanderlust. All rights reserved.
           </p>
         </div>

@@ -1,0 +1,145 @@
+/* Sora voice-orb animation — Luxury/Art Deco amber palette */
+
+.wrapper {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ball {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 34%, #fde68a, #d97706 52%, #78350f);
+  position: relative;
+  z-index: 2;
+  transition: filter 0.4s ease;
+  box-shadow: 0 0 60px rgba(245, 158, 11, 0.35);
+}
+
+.ball::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  width: 34px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  transform: rotate(-28deg);
+}
+
+.ballIdle {
+  animation: soraIdle 3.5s ease-in-out infinite;
+}
+
+.ballRecording {
+  animation: soraRecording 0.38s ease-in-out infinite;
+  filter: brightness(1.15) saturate(1.2);
+}
+
+.ballThinking {
+  animation: soraIdle 1.1s ease-in-out infinite;
+  filter: brightness(0.75) saturate(0.8);
+}
+
+.ballSpeaking {
+  animation: soraSpeaking 0.45s ease-in-out infinite;
+  filter: brightness(1.2) saturate(1.3);
+}
+
+@keyframes soraIdle {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.055);
+  }
+}
+
+@keyframes soraRecording {
+  0%,
+  100% {
+    transform: scale(1.04) translateY(-2px);
+  }
+  50% {
+    transform: scale(0.97) translateY(2px);
+  }
+}
+
+@keyframes soraSpeaking {
+  0%,
+  100% {
+    transform: scale(1.05) translateY(-3px);
+  }
+  50% {
+    transform: scale(0.96) translateY(3px);
+  }
+}
+
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+}
+
+.ring1 {
+  width: 170px;
+  height: 170px;
+}
+
+.ring2 {
+  width: 205px;
+  height: 205px;
+}
+
+.ringActive.ring1 {
+  border-color: rgba(245, 158, 11, 0.5);
+  animation: soraWave 1.1s ease-out infinite;
+}
+
+.ringActive.ring2 {
+  border-color: rgba(245, 158, 11, 0.25);
+  animation: soraWave 1.1s ease-out 0.38s infinite;
+}
+
+@keyframes soraWave {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.ringThinking.ring1 {
+  border-color: rgba(245, 158, 11, 0.5);
+  border-top-color: transparent;
+  animation: soraThink 1s linear infinite !important;
+}
+
+.ringThinking.ring2 {
+  border-color: rgba(245, 158, 11, 0.25);
+  border-bottom-color: transparent;
+  animation: soraThink 1.6s linear infinite !important;
+}
+
+.ringThinkingReverse {
+  animation-direction: reverse !important;
+}
+
+@keyframes soraThink {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

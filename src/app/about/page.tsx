@@ -1,47 +1,179 @@
 // src/app/about/page.tsx
+// ─────────────────────────────────────────────────────────────────────────────
+// Server Component — no "use client" needed.
+// Style: Luxury / Art Deco — amber + stone palette, serif headings,
+// geometric diamond ornaments, wide tracking, dark mode throughout.
+// ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
 import type { Metadata } from "next";
 
+// ─── SEO Metadata ─────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
-  title: "About Us | Wanderlust",
+  title: "About Us | Wanderlust — Central Asia Tour Experts",
   description:
-    "Learn about Wanderlust - our story, mission, and the passionate team behind your Central Asian adventures.",
+    "Meet the team behind Wanderlust. Local guides and international travel experts crafting authentic small-group journeys through Kazakhstan, Kyrgyzstan, and Uzbekistan since 2018.",
+  openGraph: {
+    title: "About Wanderlust — Central Asia Tour Experts",
+    description:
+      "Local guides and international travel experts crafting authentic small-group journeys through Central Asia since 2018.",
+    type: "website",
+    siteName: "Wanderlust",
+  },
 };
 
-// Hero Section
+// ─── Shared gradient palette (warm / luxury tones) ───────────────────────────
+const GRADIENTS = [
+  "from-amber-800 via-amber-900 to-stone-950",
+  "from-stone-700 via-stone-800 to-stone-950",
+  "from-amber-700 via-orange-800 to-amber-950",
+  "from-stone-600 via-stone-700 to-stone-900",
+  "from-amber-600 via-amber-700 to-stone-900",
+  "from-stone-800 via-stone-900 to-black",
+];
+
+// ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
+function DiamondDivider({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
+      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
+      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    </div>
+  );
+}
+
+// ─── Corner Accents — 4 corners on a card ────────────────────────────────────
+function CornerAccents() {
+  return (
+    <>
+      <div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
+      <div className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
+      <div className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
+      <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
+    </>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// SECTION 1 — HERO
+// ═════════════════════════════════════════════════════════════════════════════
 function HeroSection() {
   return (
-    <section className="relative bg-emerald-900 text-white py-24 px-4">
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-800 to-emerald-950 opacity-90" />
-      <div className="relative max-w-7xl mx-auto text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6">About Wanderlust</h1>
-        <p className="text-emerald-200 max-w-3xl mx-auto text-lg md:text-xl">
+    <section
+      aria-label="About Wanderlust"
+      className="relative text-center text-white overflow-hidden"
+    >
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(150deg, #1c1917 0%, #292524 20%, #44403c 50%, #1c1917 100%)",
+        }}
+        aria-hidden="true"
+      />
+      {/* Art Deco geometric pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
+        <svg width="100%" height="100%">
+          <pattern id="about-hero-deco" width="80" height="80" patternUnits="userSpaceOnUse">
+            <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="white" strokeWidth="1" />
+            <circle cx="40" cy="40" r="12" fill="none" stroke="white" strokeWidth="0.5" />
+            <circle cx="40" cy="40" r="3" fill="white" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#about-hero-deco)" />
+        </svg>
+      </div>
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-amber-500/10 rounded-full blur-3xl"
+        aria-hidden="true"
+      />
+
+      {/* Top corner accents */}
+      <div className="absolute top-6 left-6 w-10 h-10 border-t-2 border-l-2 border-amber-500/40 z-10" aria-hidden="true" />
+      <div className="absolute top-6 right-6 w-10 h-10 border-t-2 border-r-2 border-amber-500/40 z-10" aria-hidden="true" />
+
+      <div className="relative z-10 px-4 max-w-4xl mx-auto py-16 md:py-20">
+        <div className="flex items-center justify-center gap-4 mb-6" aria-hidden="true">
+          <div className="h-px w-12 md:w-20 bg-amber-500/60" />
+          <span className="text-amber-400/80 text-xs tracking-[0.3em] uppercase">Since 2018</span>
+          <div className="h-px w-12 md:w-20 bg-amber-500/60" />
+        </div>
+
+        <p className="text-amber-300 text-sm font-semibold tracking-[0.2em] uppercase mb-5">
+          Our Story
+        </p>
+
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-5 font-serif">
+          About <span className="text-amber-400">Wanderlust</span>
+        </h1>
+
+        <p className="text-lg md:text-xl text-stone-300 max-w-2xl mx-auto mb-8 leading-relaxed">
           We&apos;re passionate travelers dedicated to sharing the hidden gems
           of Central Asia with the world.
         </p>
+
+        <DiamondDivider />
       </div>
     </section>
   );
 }
 
-// Story Section
+// ═════════════════════════════════════════════════════════════════════════════
+// SECTION 2 — STORY
+// ═════════════════════════════════════════════════════════════════════════════
 function StorySection() {
   return (
-    <section className="py-20 px-4">
+    <section
+      aria-labelledby="story-heading"
+      className="py-16 md:py-20 px-4 bg-amber-50 dark:bg-stone-950"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Image Placeholder */}
-          <div className="h-80 lg:h-[450px] bg-gradient-to-br from-emerald-200 to-emerald-400 rounded-2xl">
-            {/* Replace with actual image */}
+          {/* Image Placeholder with gradient + corner accents */}
+          <div className="group relative h-80 lg:h-[450px] overflow-hidden">
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${GRADIENTS[0]}`}
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 opacity-[0.06]" aria-hidden="true">
+              <svg width="100%" height="100%">
+                <pattern id="story-deco" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
+                  <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
+                </pattern>
+                <rect width="100%" height="100%" fill="url(#story-deco)" />
+              </svg>
+            </div>
+            <CornerAccents />
+            {/* Decorative monogram */}
+            <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+              <div className="w-24 h-24 border-2 border-amber-500/40 rotate-45 flex items-center justify-center">
+                <span className="text-amber-400 text-3xl font-serif -rotate-45">W</span>
+              </div>
+            </div>
           </div>
 
           {/* Content */}
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+              Our Journey
+            </p>
+            <h2
+              id="story-heading"
+              className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-5 font-serif"
+            >
               Our Story
             </h2>
-            <div className="space-y-4 text-gray-600 leading-relaxed">
+            <div className="flex items-center gap-2 mb-6" aria-hidden="true">
+              <div className="h-px w-16 bg-amber-500/50" />
+              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+              <div className="w-2 h-2 rotate-45 border border-amber-500" />
+              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+              <div className="h-px w-16 bg-amber-500/50" />
+            </div>
+            <div className="space-y-4 text-stone-600 dark:text-stone-400 leading-relaxed">
               <p>
                 Wanderlust was born from a simple belief: Central Asia is one of
                 the world&apos;s most underrated travel destinations, and it
@@ -70,87 +202,134 @@ function StorySection() {
   );
 }
 
-// Mission Section
+// ═════════════════════════════════════════════════════════════════════════════
+// SECTION 3 — MISSION
+// ═════════════════════════════════════════════════════════════════════════════
 function MissionSection() {
   return (
-    <section className="py-20 px-4 bg-gray-50">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-          Our Mission
-        </h2>
-        <p className="text-xl text-gray-600 leading-relaxed">
-          To connect travelers with the authentic soul of Central Asia through
-          responsible, meaningful experiences that benefit local communities and
-          preserve cultural heritage for future generations.
-        </p>
+    <section
+      aria-labelledby="mission-heading"
+      className="py-16 md:py-20 px-4 bg-stone-100 dark:bg-stone-900"
+    >
+      <div className="max-w-4xl mx-auto">
+        <div className="group relative bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-10 md:p-14 text-center">
+          <CornerAccents />
+
+          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+            Our Purpose
+          </p>
+          <h2
+            id="mission-heading"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-5 font-serif"
+          >
+            Our Mission
+          </h2>
+          <DiamondDivider className="mb-6" />
+          <p className="text-lg md:text-xl text-stone-600 dark:text-stone-300 leading-relaxed font-serif italic">
+            To connect travelers with the authentic soul of Central Asia through
+            responsible, meaningful experiences that benefit local communities
+            and preserve cultural heritage for future generations.
+          </p>
+        </div>
       </div>
     </section>
   );
 }
 
-// Team Data
+// ═════════════════════════════════════════════════════════════════════════════
+// SECTION 4 — TEAM
+// ═════════════════════════════════════════════════════════════════════════════
 const teamMembers = [
   {
     name: "Aibek Nurzhanov",
     role: "Founder & Lead Guide",
     bio: "Born in the Tian Shan foothills, Aibek has 15+ years of guiding experience across Central Asia.",
-    image: "/images/team/aibek.jpg",
+    initial: "A",
   },
   {
     name: "Sarah Mitchell",
     role: "Operations Director",
     bio: "Former travel journalist who fell in love with the region and never left. Manages logistics and partnerships.",
-    image: "/images/team/sarah.jpg",
+    initial: "S",
   },
   {
     name: "Bekzat Omarov",
     role: "Cultural Expert",
     bio: "Historian and storyteller specializing in Silk Road history and nomadic traditions.",
-    image: "/images/team/bekzat.jpg",
+    initial: "B",
   },
   {
     name: "Elena Petrova",
     role: "Customer Experience",
     bio: "Ensures every traveler feels supported from first inquiry to final farewell.",
-    image: "/images/team/elena.jpg",
+    initial: "E",
   },
 ];
 
-// Team Section
 function TeamSection() {
   return (
-    <section className="py-20 px-4">
+    <section
+      aria-labelledby="team-heading"
+      className="py-16 md:py-20 px-4 bg-amber-50 dark:bg-stone-950"
+    >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+            The People
+          </p>
+          <h2
+            id="team-heading"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-3 font-serif"
+          >
             Meet Our Team
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-stone-600 dark:text-stone-400 max-w-xl mx-auto">
             Local experts and global adventurers united by a love for Central
             Asia.
           </p>
+          <DiamondDivider className="mt-5" />
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {teamMembers.map((member) => (
-            <div
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {teamMembers.map((member, i) => (
+            <article
               key={member.name}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow text-center"
+              className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-all duration-300 overflow-hidden flex flex-col"
             >
-              {/* Avatar Placeholder */}
-              <div className="h-56 bg-gradient-to-br from-emerald-300 to-emerald-500">
-                {/* Replace with actual image */}
+              <CornerAccents />
+
+              {/* Avatar with gradient + monogram */}
+              <div
+                className={`relative h-56 bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} flex items-center justify-center`}
+                aria-hidden="true"
+              >
+                <div className="absolute inset-0 opacity-[0.06]">
+                  <svg width="100%" height="100%">
+                    <pattern id={`team-deco-${i}`} width="50" height="50" patternUnits="userSpaceOnUse">
+                      <path d="M25 0 L50 25 L25 50 L0 25 Z" fill="none" stroke="white" strokeWidth="0.5" />
+                    </pattern>
+                    <rect width="100%" height="100%" fill={`url(#team-deco-${i})`} />
+                  </svg>
+                </div>
+                <div className="relative w-20 h-20 border-2 border-amber-400/60 rotate-45 flex items-center justify-center">
+                  <span className="text-amber-300 text-3xl font-serif -rotate-45">
+                    {member.initial}
+                  </span>
+                </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">
+
+              <div className="p-6 text-center flex-1 flex flex-col">
+                <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-1 font-serif group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
                   {member.name}
                 </h3>
-                <p className="text-emerald-600 text-sm font-medium mb-3">
+                <p className="text-amber-700 dark:text-amber-400 text-xs font-semibold uppercase tracking-[0.2em] mb-3">
                   {member.role}
                 </p>
-                <p className="text-gray-600 text-sm">{member.bio}</p>
+                <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
+                  {member.bio}
+                </p>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
@@ -158,23 +337,18 @@ function TeamSection() {
   );
 }
 
-// Values Data
+// ═════════════════════════════════════════════════════════════════════════════
+// SECTION 5 — VALUES
+// ═════════════════════════════════════════════════════════════════════════════
 const values = [
   {
     icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      </svg>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     ),
     title: "Authentic Experiences",
     description:
@@ -182,19 +356,12 @@ const values = [
   },
   {
     icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-        />
-      </svg>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+      />
     ),
     title: "Sustainable Travel",
     description:
@@ -202,19 +369,12 @@ const values = [
   },
   {
     icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-        />
-      </svg>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+      />
     ),
     title: "Safety First",
     description:
@@ -222,19 +382,12 @@ const values = [
   },
   {
     icon: (
-      <svg
-        className="w-8 h-8"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-        />
-      </svg>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+      />
     ),
     title: "Small Groups",
     description:
@@ -242,29 +395,66 @@ const values = [
   },
 ];
 
-// Values Section
 function ValuesSection() {
   return (
-    <section className="py-20 px-4 bg-emerald-900 text-white">
-      <div className="max-w-7xl mx-auto">
+    <section
+      aria-labelledby="values-heading"
+      className="relative py-16 md:py-20 px-4 bg-stone-900 dark:bg-black text-white overflow-hidden"
+    >
+      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
+        <svg width="100%" height="100%">
+          <pattern id="values-deco" width="60" height="60" patternUnits="userSpaceOnUse">
+            <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
+            <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#values-deco)" />
+        </svg>
+      </div>
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-amber-500/10 rounded-full blur-3xl"
+        aria-hidden="true"
+      />
+
+      <div className="relative max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Values</h2>
-          <p className="text-emerald-200 max-w-2xl mx-auto">
+          <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+            What We Stand For
+          </p>
+          <h2
+            id="values-heading"
+            className="text-3xl md:text-4xl font-bold mb-3 font-serif"
+          >
+            Our Values
+          </h2>
+          <p className="text-stone-400 max-w-xl mx-auto">
             The principles that guide every journey we create.
           </p>
+          <DiamondDivider className="mt-5" />
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {values.map((value) => (
             <div
               key={value.title}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center"
+              className="group relative bg-white/5 backdrop-blur-sm border border-amber-500/20 hover:border-amber-500/60 transition-all duration-300 p-6 text-center"
             >
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-emerald-500/20 rounded-full text-emerald-300 mb-4">
-                {value.icon}
+              <CornerAccents />
+
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-4 group-hover:bg-amber-500/20 transition-colors">
+                <svg
+                  className="w-7 h-7"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  {value.icon}
+                </svg>
               </div>
-              <h3 className="text-lg font-bold mb-2">{value.title}</h3>
-              <p className="text-emerald-200 text-sm">{value.description}</p>
+              <h3 className="text-lg font-bold mb-2 font-serif">{value.title}</h3>
+              <p className="text-stone-400 text-sm leading-relaxed">
+                {value.description}
+              </p>
             </div>
           ))}
         </div>
@@ -273,41 +463,61 @@ function ValuesSection() {
   );
 }
 
-// CTA Section
+// ═════════════════════════════════════════════════════════════════════════════
+// SECTION 6 — CTA
+// ═════════════════════════════════════════════════════════════════════════════
 function CTASection() {
   return (
-    <section className="py-20 px-4">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Ready to Explore With Us?
-        </h2>
-        <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-          Let&apos;s plan your Central Asian adventure together. Our team is
-          here to answer your questions and craft your perfect trip.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/contact"
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-semibold transition-colors"
+    <section
+      aria-labelledby="cta-heading"
+      className="py-16 md:py-20 px-4 bg-amber-50 dark:bg-stone-950"
+    >
+      <div className="max-w-4xl mx-auto">
+        <div className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-10 md:p-14 text-center">
+          <CornerAccents />
+
+          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+            Begin Your Journey
+          </p>
+          <h2
+            id="cta-heading"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
           >
-            Contact Us
-          </Link>
-          <Link
-            href="/tours"
-            className="border border-gray-300 hover:border-gray-400 text-gray-700 px-8 py-4 rounded-lg font-semibold transition-colors"
-          >
-            Browse Tours
-          </Link>
+            Ready to Explore With Us?
+          </h2>
+          <p className="text-stone-600 dark:text-stone-400 mb-6 max-w-2xl mx-auto leading-relaxed">
+            Let&apos;s plan your Central Asian adventure together. Our team is
+            here to answer your questions and craft your perfect trip.
+          </p>
+
+          <DiamondDivider className="mb-8" />
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/contact"
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2 dark:focus:ring-offset-stone-900"
+            >
+              Contact Us
+            </Link>
+            <Link
+              href="/tours"
+              className="border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-400 px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-400/50 focus:ring-offset-2 dark:focus:ring-offset-stone-900"
+            >
+              Browse Tours
+            </Link>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-// Main About Page
+// ═════════════════════════════════════════════════════════════════════════════
+// PAGE ROOT
+// ═════════════════════════════════════════════════════════════════════════════
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
       <HeroSection />
       <StorySection />
       <MissionSection />
