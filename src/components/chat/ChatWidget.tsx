@@ -347,8 +347,13 @@ export default function ChatWidget() {
           role="dialog"
           aria-labelledby="chat-dialog-title"
           aria-modal="false"
-          style={{ position: 'fixed', bottom: '96px', right: '24px' }}
-          className="z-50 w-[350px] sm:w-[400px] h-[500px] bg-stone-50 dark:bg-stone-900 shadow-2xl flex flex-col overflow-hidden border border-amber-500/30"
+          style={{
+            position: 'fixed',
+            bottom: '96px',
+            right: '24px',
+            height: 'min(500px, calc(100dvh - 120px))',
+          }}
+          className="z-50 w-[350px] sm:w-[400px] bg-stone-50 dark:bg-stone-900 shadow-2xl flex flex-col overflow-hidden border border-amber-500/30"
         >
           {/* Header */}
           <div className="bg-stone-900 dark:bg-black text-white px-4 py-3 flex items-center gap-3 border-b border-amber-500/20">
