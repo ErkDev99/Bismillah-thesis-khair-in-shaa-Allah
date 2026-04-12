@@ -264,8 +264,38 @@ export default function VoiceChatPage() {
 
   const inConversation = appState !== "idle";
 
+  // Shared message card renderer
+  const renderMessage = (msg: ChatMessage, i: number) => (
+    <div
+      key={i}
+      className={
+        msg.role === "user"
+          ? "relative border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-3"
+          : "relative border border-amber-500/40 bg-stone-900 dark:bg-black p-3 text-amber-50"
+      }
+    >
+      <div className={`absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
+      <div className={`absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
+      <div className={`absolute -bottom-px -left-px w-3 h-3 border-b-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
+      <div className={`absolute -bottom-px -right-px w-3 h-3 border-b-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
+      <p className={`uppercase tracking-[0.3em] text-xs mb-1 ${msg.role === "user" ? "text-amber-700 dark:text-amber-400" : "text-amber-400"}`}>
+        {msg.role === "user" ? "You" : "Assistant"}
+      </p>
+      <p className={`text-sm leading-relaxed ${msg.role === "user" ? "text-stone-800 dark:text-stone-200" : ""}`}>
+        {msg.content}
+      </p>
+    </div>
+  );
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-amber-50 dark:bg-stone-950">
+    // Fill exactly the viewport below the sticky nav — no page scroll ever
+    <div
+      className={`relative bg-amber-50 dark:bg-stone-950 flex flex-col ${inConversation ? "overflow-hidden" : "overflow-auto"}`}
+      style={inConversation
+        ? { height: "calc(100vh - 4rem)" }
+        : { minHeight: "calc(100vh - 4rem)" }
+      }
+    >
       {/* Art Deco pattern */}
       <div className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.06]" aria-hidden="true">
         <svg width="100%" height="100%">
@@ -278,129 +308,128 @@ export default function VoiceChatPage() {
       </div>
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/10 blur-3xl" aria-hidden="true" />
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      {/* ── IDLE: everything vertically centred, nothing below fold ── */}
+      {!inConversation && (
+        <div className="relative flex flex-col items-center justify-center flex-1 px-4 gap-4">
+          {/* Compact title */}
+          <header className="text-center">
+            <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+              Voice Assistant
+            </p>
+            <h1 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-amber-50 mb-3">
+              Speak with Wanderlust
+            </h1>
+            <div className="flex items-center justify-center gap-2" aria-hidden="true">
+              <div className="h-px w-10 bg-amber-500/50" />
+              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+              <div className="w-2 h-2 rotate-45 border border-amber-500" />
+              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
+              <div className="h-px w-10 bg-amber-500/50" />
+            </div>
+          </header>
 
-        {/* Header */}
-        <header className="text-center mb-8">
-          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-3">
-            Voice Assistant
-          </p>
-          <h1 className="font-serif text-4xl md:text-5xl text-stone-900 dark:text-amber-50 mb-5">
-            Speak with Wanderlust
-          </h1>
-          <div className="flex items-center justify-center gap-2 mb-4" aria-hidden="true">
-            <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-            <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-            <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-            <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-            <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+          {/* Orb — constrained to 154px layout box so the button stays above fold */}
+          <div className="relative shrink-0" style={{ width: 154, height: 154 }}>
+            <div className="absolute top-1/2 left-1/2" style={{ transform: "translate(-50%, -50%) scale(0.7)", transformOrigin: "center" }}>
+              <SoraBall state={appState} />
+            </div>
           </div>
-          <p className="text-stone-600 dark:text-stone-400 max-w-xl mx-auto leading-relaxed text-sm">
-            {inConversation
-              ? "Just speak naturally — the assistant hears you automatically."
-              : "Press Start to begin a hands-free conversation about Central Asian tours, destinations, and travel."}
-          </p>
-        </header>
 
-        {/* Orb + status */}
-        <div className="flex flex-col items-center gap-4 mb-6">
-          <SoraBall state={appState} />
+          {/* Status */}
           <p
-            className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.25em] text-xs min-h-[20px]"
+            className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.25em] text-xs min-h-[18px]"
             role="status"
             aria-live="polite"
           >
             {STATE_LABELS[appState]}
           </p>
-        </div>
 
-        {/* Start / End button */}
-        <div className="flex justify-center mb-8">
-          {!inConversation ? (
-            <button
-              type="button"
-              onClick={startConversation}
-              className="flex items-center gap-3 px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white font-medium uppercase tracking-[0.2em] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
+          {/* Start button */}
+          <button
+            type="button"
+            onClick={startConversation}
+            className="flex items-center gap-3 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-medium uppercase tracking-[0.2em] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="23" />
+              <line x1="8" y1="23" x2="16" y2="23" />
+            </svg>
+            Start Conversation
+          </button>
+
+          {/* Error */}
+          {error && (
+            <p className="text-red-700 dark:text-red-400 text-sm text-center" role="alert">{error}</p>
+          )}
+        </div>
+      )}
+
+      {/* ── IN CONVERSATION: compact controls on top, scrollable log below ── */}
+      {inConversation && (
+        <div className="relative flex flex-col items-center flex-1 overflow-hidden pt-4 px-4">
+
+          {/* Control strip — fixed height, never scrolls away */}
+          <div className="flex flex-col items-center gap-2 shrink-0 mb-3">
+            {/* Orb scaled down so the log gets more space */}
+            <div className="scale-75 origin-top">
+              <SoraBall state={appState} />
+            </div>
+            <p
+              className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.25em] text-xs min-h-[18px]"
+              role="status"
+              aria-live="polite"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                <line x1="12" y1="19" x2="12" y2="23" />
-                <line x1="8" y1="23" x2="16" y2="23" />
-              </svg>
-              Start Conversation
-            </button>
-          ) : (
+              {STATE_LABELS[appState]}
+            </p>
             <button
               type="button"
               onClick={endConversation}
-              className="flex items-center gap-3 px-8 py-4 bg-stone-800 hover:bg-stone-700 text-amber-400 hover:text-amber-300 border border-stone-600 font-medium uppercase tracking-[0.2em] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
+              className="flex items-center gap-2 px-6 py-2.5 bg-stone-800 hover:bg-stone-700 text-amber-400 hover:text-amber-300 border border-stone-600 font-medium uppercase tracking-[0.2em] text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <rect x="4" y="4" width="16" height="16" rx="2" />
               </svg>
               End Conversation
             </button>
+            {error && (
+              <p className="text-red-700 dark:text-red-400 text-xs text-center" role="alert">{error}</p>
+            )}
+          </div>
+
+          {/* Scrollable conversation log — fills remaining height */}
+          {messages.length > 0 && (
+            <div className="w-full max-w-xl flex flex-col flex-1 overflow-hidden min-h-0">
+              <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs text-center mb-2 shrink-0">
+                Conversation
+              </p>
+              <div
+                ref={logContainerRef}
+                className="flex-1 overflow-y-auto space-y-3 pr-1 scroll-smooth pb-4"
+              >
+                {messages.map(renderMessage)}
+
+                {/* Thinking indicator */}
+                {appState === "thinking" && (
+                  <div className="relative border border-amber-500/40 bg-stone-900 dark:bg-black p-3 text-amber-50">
+                    <div className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-amber-500" aria-hidden="true" />
+                    <div className="absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 border-amber-500" aria-hidden="true" />
+                    <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">Assistant</p>
+                    <div className="flex gap-1.5">
+                      <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
+                      <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
+                      <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
+                    </div>
+                  </div>
+                )}
+
+                <div ref={logEndRef} />
+              </div>
+            </div>
           )}
         </div>
-
-        {/* Error */}
-        {error && (
-          <p className="text-center text-red-700 dark:text-red-400 text-sm mb-6" role="alert">{error}</p>
-        )}
-
-        {/* Conversation log — accumulates all turns */}
-        {messages.length > 0 && (
-          <div className="mx-auto max-w-xl space-y-4">
-            <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs text-center mb-2">
-              Conversation
-            </p>
-
-            <div ref={logContainerRef} className="max-h-[400px] overflow-y-auto space-y-4 pr-2 scroll-smooth">
-              {messages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={
-                    msg.role === "user"
-                      ? "relative border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-4"
-                      : "relative border border-amber-500/40 bg-stone-900 dark:bg-black p-4 text-amber-50"
-                  }
-                >
-                  {/* Corner accents */}
-                  <div className={`absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-                  <div className={`absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-                  <div className={`absolute -bottom-px -left-px w-3 h-3 border-b-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-                  <div className={`absolute -bottom-px -right-px w-3 h-3 border-b-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-
-                  <p className={`uppercase tracking-[0.3em] text-xs mb-1.5 ${msg.role === "user" ? "text-amber-700 dark:text-amber-400" : "text-amber-400"}`}>
-                    {msg.role === "user" ? "You" : "Assistant"}
-                  </p>
-                  <p className={`text-sm leading-relaxed ${msg.role === "user" ? "text-stone-800 dark:text-stone-200" : ""}`}>
-                    {msg.content}
-                  </p>
-                </div>
-              ))}
-
-              {/* Thinking indicator */}
-              {appState === "thinking" && (
-                <div className="relative border border-amber-500/40 bg-stone-900 dark:bg-black p-4 text-amber-50">
-                  <div className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-amber-500" aria-hidden="true" />
-                  <div className="absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 border-amber-500" aria-hidden="true" />
-                  <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-1.5">Assistant</p>
-                  <div className="flex gap-1.5">
-                    <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
-                    <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
-                    <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
-                  </div>
-                </div>
-              )}
-
-              <div ref={logEndRef} />
-            </div>
-          </div>
-        )}
-
-      </div>
+      )}
     </div>
   );
 }

@@ -42,7 +42,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`transition-colors text-sm uppercase tracking-wider px-3 py-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black ${
+                  className={`transition-colors text-sm uppercase tracking-wider px-3 py-2 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black ${
                     active
                       ? "text-amber-400 border-b-2 border-amber-400"
                       : "text-stone-300 hover:text-amber-400"
