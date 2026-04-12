@@ -1,2 +1,7 @@
 venv/
 .env
+tts_*.mp3
+temp_recording.webm
+*.webm
+__pycache__/
+*.pyc
