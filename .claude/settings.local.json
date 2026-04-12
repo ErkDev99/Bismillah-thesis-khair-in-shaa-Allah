@@ -4,7 +4,11 @@
       "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
       "Bash(npm run:*)",
       "Bash(npx tsc:*)",
-      "Bash(\"/c/Program Files/nodejs/node.exe\" node_modules/typescript/bin/tsc --noEmit)"
+      "Bash(\"/c/Program Files/nodejs/node.exe\" node_modules/typescript/bin/tsc --noEmit)",
+      "Bash(where node:*)",
+      "Bash(where npx:*)",
+      "Bash(\"/c/Program Files/nodejs/npx.cmd\" tsc --noEmit)",
+      "Bash('/c/Program Files/nodejs/npx.cmd' tsc --noEmit)"
     ]
   }
 }

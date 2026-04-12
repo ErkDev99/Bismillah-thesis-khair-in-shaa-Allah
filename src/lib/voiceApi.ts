@@ -9,6 +9,20 @@
 
 const VOICE_BASE = "/voice";
 
+/**
+ * Detect the dominant language of a text string.
+ * Kyrgyz-specific Unicode chars (ң, ү, ө, ы, і, ә, ґ) → "ky"
+ * Any remaining Cyrillic → "ru"
+ * Fallback → "en"
+ */
+function detectLang(text: string): "ky" | "ru" | "en" {
+  // Kyrgyz-specific letters not shared with standard Russian
+  if (/[ңүөіәґҮӨҢІӘ]/.test(text)) return "ky";
+  // Generic Cyrillic block
+  if (/[\u0400-\u04FF]/.test(text)) return "ru";
+  return "en";
+}
+
 export const voiceApi = {
   /** Send a recorded audio blob to the ASR endpoint and return the transcript text. */
   transcribe: async (audioBlob: Blob): Promise<string> => {
@@ -35,12 +49,14 @@ export const voiceApi = {
     return JSON.stringify(data ?? "");
   },
 
-  /** Send a text string to the TTS endpoint and return an object URL for the audio. */
+  /** Send a text string to the TTS endpoint and return an object URL for the audio.
+   *  Automatically detects the reply language and tells the backend which gTTS voice to use. */
   synthesize: async (text: string): Promise<string> => {
+    const lang = detectLang(text);
     const res = await fetch(`${VOICE_BASE}/generate-voice`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, lang }),
     });
     if (!res.ok) throw new Error(`TTS error: ${res.status}`);
 

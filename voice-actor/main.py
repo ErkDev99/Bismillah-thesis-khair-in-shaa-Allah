@@ -4,11 +4,12 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
-import torch
-from transformers import pipeline
+from dotenv import load_dotenv
 from gtts import gTTS
 from kyrgyz_normalizer import normalize
+import openai
+
+load_dotenv()
 
 # ========================
 # INIT
@@ -22,54 +23,59 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ========================
-# LOAD WHISPER
-# ========================
-device = 0 if torch.cuda.is_available() else -1
-
-asr = pipeline(
-    "automatic-speech-recognition",
-    model="openai/whisper-small",
-    device=device
-)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # ========================
-# TEXT → SPEECH
+# TEXT → SPEECH  (OpenAI tts-1 for en/ru — fast; gTTS fallback for ky)
 # ========================
-def text_to_speech(text: str, output_file: str = None):
-    text = normalize(text)
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+def text_to_speech(text: str, lang: str = "ru", output_file: str = None):
     if not output_file:
         output_file = f"tts_{uuid.uuid4()}.mp3"
 
-    tts = gTTS(text=text, lang="ru")
-    tts.save(output_file)
+    if lang == "ky":
+        # OpenAI TTS doesn't support Kyrgyz — use gTTS
+        tts = gTTS(text=normalize(text), lang=lang)
+        tts.save(output_file)
+    else:
+        # OpenAI tts-1: low-latency, high quality
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="nova",
+            input=text,
+        )
+        response.stream_to_file(output_file)
 
-    print("✅ TTS готов:", output_file)
+    print(f"✅ TTS ready ({lang}):", output_file)
     return output_file
 
 # ========================
-# SPEECH → TEXT
+# SPEECH → TEXT  (OpenAI Whisper API — multilingual, ~2s)
 # ========================
 def speech_to_text(file_path: str):
-    result = asr(file_path)
-    print("✅ ASR текст:", result["text"])
-    return result
+    with open(file_path, "rb") as f:
+        result = client.audio.transcriptions.create(
+            model="whisper-1",
+            file=f,
+        )
+    text = result.text
+    print("✅ ASR текст:", text)
+    return text
 
 # ========================
 # REQUEST MODEL
 # ========================
 class TTSRequest(BaseModel):
     text: str
+    lang: str = "ru"  # "en", "ru", or "ky" — frontend auto-detects
 
 # ========================
 # /generate-voice
 # ========================
 @app.post("/generate-voice")
 async def generate_voice(data: TTSRequest):
-    normalized_text = normalize(data.text)
-
-    result = text_to_speech(normalized_text)
+    result = text_to_speech(data.text, lang=data.lang)
 
     if result:
         with open(result, "rb") as f:
@@ -89,13 +95,10 @@ async def transcribe_voice(file: UploadFile = File(...)):
     with open(temp_path, "wb") as buffer:
         buffer.write(await file.read())
 
-    result = speech_to_text(temp_path)
+    text = speech_to_text(temp_path)
 
-    if result:
-        return {
-            "status": "success",
-            "data": result["text"]
-        }
+    if text:
+        return {"status": "success", "data": text}
 
     return {"status": "error", "message": "Failed to transcribe audio"}
 

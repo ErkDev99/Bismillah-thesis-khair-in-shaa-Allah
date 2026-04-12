@@ -143,9 +143,14 @@ Contact info:
 
 Keep responses concise (2-3 short paragraphs max). Be helpful and encourage users to explore our tours or contact us for custom trips.`;
 
+// Shorter version for voice — TTS has to speak every word, so brevity matters
+const VOICE_SYSTEM_PROMPT = `You are a friendly voice assistant for Wanderlust, a Central Asian travel company (Kazakhstan, Kyrgyzstan, Uzbekistan). Tours cost $1,299–$2,499. Contact: info@wanderlust.com.
+
+CRITICAL: This is a VOICE conversation. Reply in 1–2 short sentences only. Never use lists, bullet points, or markdown. Be warm and natural, as if speaking out loud.`;
+
 export async function POST(request: NextRequest) {
   try {
-    const { messages } = await request.json();
+    const { messages, voice } = await request.json();
 
     // Check if API key is configured
     const apiKey = process.env.OPENAI_API_KEY;
@@ -157,8 +162,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Call OpenAI API
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const systemPrompt = voice ? VOICE_SYSTEM_PROMPT : SYSTEM_PROMPT;
+    const maxTokens    = voice ? 80 : 500;
+
+    // Voice mode: return full JSON (TTS needs the complete text before it can speak)
+    // Text mode: stream tokens so the UI can display them as they arrive
+    const useStream = !voice;
+
+    const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -166,9 +177,10 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        max_tokens: 500,
+        max_tokens: maxTokens,
+        stream: useStream,
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: systemPrompt },
           ...messages.map((m: { role: string; content: string }) => ({
             role: m.role,
             content: m.content,
@@ -177,16 +189,51 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.text();
+    if (!openaiResponse.ok) {
+      const error = await openaiResponse.text();
       console.error("OpenAI API error:", error);
       throw new Error("Failed to get response from AI");
     }
 
-    const data = await response.json();
-    const assistantMessage = data.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+    // ── Voice: non-streaming JSON response ──────────────────────────────────
+    if (!useStream) {
+      const data = await openaiResponse.json();
+      const assistantMessage = data.choices[0]?.message?.content || "Sorry, I couldn't generate a response.";
+      return NextResponse.json({ message: assistantMessage });
+    }
 
-    return NextResponse.json({ message: assistantMessage });
+    // ── Text: transform OpenAI SSE → plain text token stream ────────────────
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    const transformStream = new TransformStream({
+      transform(chunk, controller) {
+        const text = decoder.decode(chunk, { stream: true });
+        for (const line of text.split("\n")) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith("data: ")) continue;
+          const data = trimmed.slice(6);
+          if (data === "[DONE]") return;
+          try {
+            const parsed = JSON.parse(data);
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) controller.enqueue(encoder.encode(content));
+          } catch {
+            // skip malformed SSE lines
+          }
+        }
+      },
+    });
+
+    openaiResponse.body?.pipeTo(transformStream.writable).catch(() => {});
+
+    return new Response(transformStream.readable, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-cache",
+      },
+    });
   } catch (error) {
     console.error("Chat API error:", error);
     return NextResponse.json(

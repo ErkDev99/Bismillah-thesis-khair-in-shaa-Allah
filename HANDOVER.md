@@ -1,6 +1,6 @@
 # Handover: Luxury/Art Deco Restyle — Continuation
 
-*Last updated: 2026-04-11 (Session 4 — Phase 2 Accessibility)*
+*Last updated: 2026-04-12 (Session 7 — Voice Chat: OpenAI Whisper + TTS, VAD continuous conversation mode, conversation history, short voice prompt, scroll fix — all working)*
 
 ## What Was Done (Cumulative)
 
@@ -173,6 +173,203 @@ Both were pre-existing bugs unrelated to Phase 2 work — but blocked `tsc --noE
 - Real manual screen reader test (NVDA/VoiceOver) — requires the user to run a browser and reader
 - Real manual keyboard tab-through of the live site — requires user testing
 - Focus ring color audit against WCAG 1.4.11 (3:1 for non-text UI). Amber-500 focus rings on white bg are 2.15:1 (FAIL). Most buttons already use amber-300/amber-400/50 with ring-offset which is looser to evaluate. Scope: ~20 instances of `focus:ring-amber-500` in form/card contexts. **Still open — flag for user.**
+
+---
+
+## Session 2026-04-11 (Session 5) — Voice Chat Integration (CODE COMPLETE — awaiting browser test + commit)
+
+### What was done this session
+
+**1. `voice-actor/` folder placed at repo root (correctly, untouched).** FastAPI service on port 8001, two interchangeable variants — user picks at runtime:
+- **`voice_service.py`** — calls external Kyrgyz aitil.kg ASR/TTS APIs for Kyrgyz; falls back to gTTS for en/ru. Tokens already in `voice-actor/.env` (`TTS_TOKEN`, `ASR_TOKEN`, `TTS_API_URL`, `ASR_API_URL`). **Recommended** — no ML downloads, works immediately.
+- **`main.py`** — local Whisper-small (~1 GB HuggingFace download on first run) + Google gTTS with auto-detected `lang` param (en/ru/ky). Heavier but fully self-contained.
+- Both expose the same two endpoints: `POST /transcribe-voice` (multipart file upload → `{status, data}`) and `POST /generate-voice` (JSON `{text}` → `audio/mpeg` bytes). Frontend works with either.
+- **To run:** `cd voice-actor && python voice_service.py` (or `python main.py`). Listens on `http://127.0.0.1:8001`.
+
+**2. Misplaced cruft DELETED from `src/app/`** (source project had these at root, they don't belong in a Next.js app):
+- `VoiceChatPage.jsx` (Vite/React-Router page → migrated below)
+- `docker-compose.yml` (referenced archivdin-backend etc., wrong project)
+- `nginx.conf` (we deploy to Vercel, not nginx)
+- `vite.config.js` (we use Next.js, not Vite)
+- `index.js` (old axios API module — only `voiceApi` block was useful, extracted below)
+
+**3. Created `src/lib/voiceApi.ts`** — typed `transcribe(blob: Blob): Promise<string>` and `synthesize(text: string): Promise<string>` (returns an object URL). Calls `/voice/transcribe-voice` and `/voice/generate-voice`. Fixed the `\generate-voice` backslash typo from the source project. **Updated in Session 6:** added `detectLang(text)` heuristic (Kyrgyz-specific chars → `ky`, Cyrillic → `ru`, else → `en`) and passes `{ text, lang }` in the TTS request body.
+
+**4. Created `src/app/voice-chat/page.tsx`** — Next.js client component (`"use client"`). Features:
+- Full Luxury/Art Deco theme (all 15 rules): serif h1, uppercase eyebrow, diamond divider, corner accents on transcript/response cards, geometric pattern overlay, radial amber glow, dark mode, `<div>` wrapper (NOT `<main>` — layout.tsx owns that, nested-main bug).
+- Sora orb animation recolored from purple to amber.
+- State machine: `idle` / `recording` / `thinking` / `speaking`.
+- **Rewired from source's SSE `/api/chat/sessions/:id/message` streaming + auth to this project's existing non-streaming `POST /api/chat`** (shape: `{messages:[{role,content}]}` → `{message}`). Removed `useAuth` entirely.
+- ARIA: `aria-hidden` on decorative orb, `role="status"` + `aria-live="polite"` on state label, `role="alert"` on errors, dynamic `aria-label` on mic button, focus ring.
+- Press-and-hold mic button with `onMouseDown/Up`, `onTouchStart/End`, and `onMouseLeave` fallback (releases if pointer leaves while recording).
+- English UI labels (source was Russian).
+
+**5. Created `src/app/voice-chat/sora.module.css`** — CSS Module with the amber-palette orb + concentric ring animations (wave + thinking-rotation). Using CSS Modules rather than styled-jsx (cleaner, type-safe, idiomatic App Router).
+
+**6. Updated `next.config.ts`** — added `rewrites()` proxying `/voice/:path*` → `http://localhost:8001/:path*`. Replaces the old Vite proxy + nginx location block in one Next-native move. Browser calls same-origin URLs (no CORS).
+
+**7. Verification:** `tsc --noEmit` → **clean, zero errors**. **NOT yet tested in the browser** — user wants a single end-to-end test AFTER the ChatWidget edits are done, not Swagger tests.
+
+**8. Git state at session end:**
+- User **committed + pushed** the Phase 2 Accessibility work (all modified page files, Header, Footer, ChatWidget, CLAUDE.md, HANDOVER.md) earlier in this session.
+- Voice integration is **uncommitted**. Files to commit when finished: `voice-actor/`, `src/lib/voiceApi.ts`, `src/app/voice-chat/`, `next.config.ts`, and the ChatWidget edits the next chat will make.
+
+### ChatWidget edits — COMPLETE (Session 5 continuation, 2026-04-11)
+
+**File:** `src/components/chat/ChatWidget.tsx` — all edits were **additive**, Phase 2 accessibility preserved (nested-interactive fix, dialog role, sr-only labels, focus rings, aria-live log all intact).
+
+**What was added:**
+1. **Imports:** `Link` from `next/link`, `voiceApi` from `@/lib/voiceApi`.
+2. **New state:** `isRecording`, `isPlayingAudio`, `voiceError` + refs `mediaRecRef`, `chunksRef`, `audioRef`.
+3. **Refactor:** Extracted a `sendMessage(text, speakReply)` helper out of `handleSubmit`. The form `handleSubmit` now calls `sendMessage(text, false)`. The voice path calls `sendMessage(text, true)` so they share the exact same `/api/chat` call + error handling + message insertion. No duplicate code path.
+4. **`startRecording` / `stopRecording`:** MediaRecorder + `getUserMedia({ audio: true })` + `audio/webm` blob → `voiceApi.transcribe(blob)` → `sendMessage(text, true)`. On success, `sendMessage` calls `voiceApi.synthesize(replyText)` and auto-plays via `new Audio()`. Stream tracks are stopped inside `onstop` to release the mic LED.
+5. **Cleanup `useEffect`:** On unmount, stops any in-flight MediaRecorder + pauses any playing audio to avoid leaks.
+6. **Voice Mode header button:** `<Link href="/voice-chat">` placed between the dialog title block and the close button. Closes the widget (`setIsOpen(false)`) on click. Mic-with-base SVG icon. `aria-label="Open immersive voice mode"`, focus ring matching the close button.
+7. **Mic button in input row:** Placed between `<input>` and the existing send button. Press-and-hold via `onMouseDown/Up`, `onMouseLeave` fallback (release if pointer leaves), `onTouchStart/End` with `preventDefault()` to stop the double-tap-to-zoom. `aria-label` flips between "Press and hold to record voice message" / "Recording — release to send". `aria-pressed={isRecording}`. Red pulse when recording. Focus ring consistent with rest of site.
+8. **Voice status strip:** Above the input form, only rendered when `isRecording || isPlayingAudio || voiceError`. Dark stone-900 background with uppercase tracking, `role="status"` + `aria-live="polite"`. Shows red "Recording — release to send" w/ pulsing dot, or amber "Speaking…" w/ pulsing dot, or red error text w/ `role="alert"`.
+9. **Input disabled during recording:** `<input>` and send button both disabled while `isRecording` so the user can't type while holding the mic.
+
+**Design rules applied:** sharp corners (no rounded except the pulse dots), amber palette, uppercase tracking on the status strip, focus rings with `focus-visible:ring-amber-400 focus-visible:ring-offset-2`, dark mode variants throughout.
+
+**Typecheck:** `npx tsc --noEmit` — **clean, zero errors.**
+
+### TTS language routing — COMPLETE (Session 6, 2026-04-12)
+
+**Problem:** `/api/chat` replies in English, but `main.py` hardcoded `gTTS(lang="ru")` and `voice_service.py` only did Kyrgyz via aitil.kg.
+
+**Solution implemented — 3 files patched:**
+1. **`src/lib/voiceApi.ts`** — added `detectLang(text): "ky" | "ru" | "en"` heuristic: Kyrgyz-specific Unicode chars (`ң`, `ү`, `ө`, `і`, `ә`, `ґ`) → `ky`, generic Cyrillic block `[\u0400-\u04FF]` → `ru`, else → `en`. `synthesize()` now sends `{ text, lang }` in the POST body.
+2. **`voice-actor/main.py`** — `TTSRequest` now has `lang: str = "ru"`. `text_to_speech()` accepts `lang` param, passes to `gTTS(lang=...)`. Skips `normalize()` for non-Kyrgyz text (the normalizer is Kyrgyz-specific).
+3. **`voice-actor/voice_service.py`** — `TTSRequest` now has `lang: str = "ky"`. Routes: `lang == "ky"` → aitil.kg native Kyrgyz TTS, `lang == "en"` or `"ru"` → falls back to Google gTTS. Added `from gtts import gTTS` + `import uuid` for the fallback path. Removed unused `import time`.
+
+**Typecheck:** `npx tsc --noEmit` — clean.
+
+### What's left — browser test + commit
+
+**A. Test end-to-end in the browser:**
+```bash
+# Terminal 1:
+cd voice-actor
+python voice_service.py    # or: python main.py
+# Terminal 2:
+npm run dev
+```
+Then open any page at `http://localhost:3000` (ChatWidget is global), click the chat bubble, try the new mic button. Separately open `http://localhost:3000/voice-chat` via the header's Voice Mode button to test the immersive mode.
+
+**B. Commit + push when done:**
+```bash
+git add voice-actor src/lib/voiceApi.ts src/app/voice-chat src/components/chat/ChatWidget.tsx next.config.ts HANDOVER.md
+git commit -m "Add voice chat: STT/TTS via voice-actor, ChatWidget mic + /voice-chat immersive mode + auto language routing"
+git push
+```
+
+### Critical context for the next chat
+
+- **Voice integration code is COMPLETE but UNCOMMITTED.** All code changes type-check clean. Browser test + commit are the only remaining steps.
+- **`/api/chat` is non-streaming** — shape is `{messages:[{role,content}]}` → `{message}`. ChatWidget's `sendMessage()` helper reuses this for both text and voice paths.
+- **TTS language routing is auto-detected client-side** — `voiceApi.ts:detectLang()` checks reply text for Kyrgyz chars → `ky`, Cyrillic → `ru`, else → `en`. Both backends accept the `lang` field.
+- **No auth in this project** — source project had `useAuth` + JWT Bearer tokens, all removed. Don't reintroduce.
+- **`voice-actor/.env` already has aitil.kg tokens** — `voice_service.py` works out of the box.
+- **`main.py` has `root_path="/voice"`, `voice_service.py` does not** — doesn't matter because the Next.js rewrite strips `/voice` before forwarding, and both services serve `/transcribe-voice` + `/generate-voice` at their root.
+- **`requirements.txt` in voice-actor has sketchy pins** (`fastapi==0.135.3`, `certifi==2026.2.25` — look fake). User's existing venv probably already works; don't touch unless pip install fails. Note: `gTTS` must be installed for both backends now (was already a dependency in `main.py`, newly added to `voice_service.py`'s imports).
+- **Don't touch `src/app/globals.css`** (has broken the site TWICE). Don't touch fonts in `src/app/layout.tsx`.
+- **Header is NOT getting a voice-chat nav link** — access is exclusively through the ChatWidget header button (Voice Mode icon, built in Session 6).
+- **Files ALREADY DELETED** (don't re-create): `src/app/VoiceChatPage.jsx`, `src/app/docker-compose.yml`, `src/app/nginx.conf`, `src/app/vite.config.js`, `src/app/index.js`.
+
+---
+
+## Session 2026-04-12 (Session 7) — Voice Chat Debugging + Continuous Conversation Mode
+
+### Problems fixed this session (in order)
+
+**1. `gtts.py` naming conflict — FIXED**
+`voice-actor/gtts.py` (a test script) shadowed the real `gtts` library. Python was importing the local file instead of the installed package.
+Fix: renamed `gtts.py` → `test_gtts.py`. No code changes.
+
+**2. Local Whisper needs ffmpeg — DISCOVERED + FIXED**
+`main.py` with local Whisper-small model requires `ffmpeg` installed on the system to decode `.webm` audio from the browser. Error: `FileNotFoundError: ffmpeg was not found`.
+Fix: `winget install --id=Gyan.FFmpeg -e` (one-time install, system-wide).
+
+**3. Switched local Whisper → OpenAI Whisper API — COMPLETE**
+Local Whisper on CPU took ~60 seconds per transcription. OpenAI `whisper-1` API takes ~2s.
+Changes to `voice-actor/main.py`:
+- Removed `import torch`, `from transformers import pipeline`, the `asr = pipeline(...)` loader
+- Added `import openai`, `load_dotenv()`, `client = openai.OpenAI(...)`
+- `speech_to_text()` now calls `client.audio.transcriptions.create(model="whisper-1", file=f)`
+- Added `OPENAI_API_KEY` to `voice-actor/.env` (copied from `.env.local`)
+
+**4. Switched gTTS → OpenAI TTS `tts-1` — COMPLETE**
+gTTS (free Google Translate endpoint) was slow and unreliable (~10s for a paragraph).
+OpenAI `tts-1` generates speech in ~1-2s for voice-length responses.
+Changes to `voice-actor/main.py`:
+- `text_to_speech()`: for `lang != "ky"` → calls `client.audio.speech.create(model="tts-1", voice="nova", input=text)` + `response.stream_to_file(output_file)`
+- Kyrgyz (`lang == "ky"`) still uses gTTS as fallback (OpenAI TTS doesn't support Kyrgyz)
+
+**5. ChatWidget mic button: press-and-hold → click-to-toggle — FIXED**
+The previous implementation used `onMouseDown/onMouseUp` (press-and-hold). A quick click would immediately release, sending an empty audio blob and getting a 500 error.
+Fix: replaced `onMouseDown/onMouseUp/onMouseLeave/onTouchStart/onTouchEnd` with a single `onClick={() => isRecording ? stopRecording() : startRecording()}`.
+Also updated the status strip label from "release to send" → "click mic to send".
+
+**6. Continuous conversation mode (VAD) — COMPLETE**
+Rewrote `src/app/voice-chat/page.tsx` to eliminate press-and-hold entirely. Now works like ChatGPT/Gemini voice mode:
+- Press **"Start Conversation"** → mic opens, page stays put, listens continuously
+- **Voice Activity Detection (VAD)** via Web Audio API (`AnalyserNode` + time-domain RMS): detects when you start/stop speaking automatically
+- VAD parameters: `SPEECH_THRESHOLD = 0.018` RMS, `SILENCE_MS = 1400` ms, `MIN_SPEECH_MS = 350` ms
+- After speech stops → auto-sends to Whisper → Chat → TTS → auto-resumes listening
+- Press **"End Conversation"** to release the mic and stop everything
+- State machine extended: `idle | listening | recording | thinking | speaking`
+- VAD loop runs in `requestAnimationFrame`; uses `stateRef` (not React state) to avoid stale closures
+- While `thinking` or `speaking`, VAD is active but does nothing (prevents AI's own voice from triggering a new recording)
+
+**7. Conversation history — COMPLETE**
+Previous implementation showed only the last exchange (overwrote `transcript`/`response` each turn).
+Now:
+- `messages: ChatMessage[]` array accumulates all turns in-session
+- `messagesRef` keeps a ref copy for use inside async callbacks (avoids stale closures)
+- Full history passed to `/api/chat` on every turn (AI has context)
+- Scrollable conversation log rendered below the orb, auto-scrolls to bottom
+- Thinking indicator (3 bouncing dots) shown as a placeholder assistant bubble while processing
+
+**8. `voice: true` flag + short voice system prompt — COMPLETE**
+Long AI responses (2-3 paragraphs) = long TTS audio = long wait.
+Fix: `/api/chat` now accepts `{ voice: true }` in the request body.
+- New `VOICE_SYSTEM_PROMPT`: "Reply in 1–2 short sentences only. Never use lists, bullet points, or markdown."
+- `max_tokens: 80` for voice (vs 500 for text chat)
+- `src/app/voice-chat/page.tsx` sends `voice: true` in every fetch call
+- Text ChatWidget does NOT send `voice: true` — still gets full responses
+
+**9. Scroll hijack fix — COMPLETE**
+When new messages were added, `scrollIntoView({ behavior: "smooth" })` scrolled the entire **page window** down to the conversation log, hiding the orb and status.
+Fix: added `logContainerRef` on the scrollable `<div>` container. On new messages: `container.scrollTop = container.scrollHeight` — scrolls only inside the box, page stays fixed.
+
+### Current state of voice-chat
+
+**`voice-actor/main.py`** is the recommended script (OpenAI Whisper + OpenAI TTS).
+- **To run:** `cd voice-actor && python main.py`
+- Requires: `pip install openai python-dotenv fastapi uvicorn gtts kyrgyz-normalizer`
+- Does NOT require torch, transformers, or local model downloads anymore
+
+**`voice-actor/voice_service.py`** still works but uses aitil.kg ASR (Kyrgyz-only, garbles English/Russian). Only use it if you specifically need Kyrgyz transcription.
+
+**Expected latency per turn with main.py + OpenAI:**
+- Whisper: ~2s
+- GPT-3.5-turbo (80 token limit): ~1-2s
+- OpenAI TTS `tts-1`: ~1-2s
+- **Total: ~4-6s** per turn (vs ~20s before)
+
+### Files changed this session
+- `voice-actor/main.py` — OpenAI Whisper + OpenAI TTS, dropped local model
+- `voice-actor/.env` — added `OPENAI_API_KEY`
+- `voice-actor/gtts.py` → renamed to `voice-actor/test_gtts.py`
+- `src/app/voice-chat/page.tsx` — full rewrite: VAD + conversation history + scroll fix + short prompt flag
+- `src/app/api/chat/route.ts` — added `VOICE_SYSTEM_PROMPT`, `voice` flag, `max_tokens: 80` for voice
+- `src/components/chat/ChatWidget.tsx` — mic button click-to-toggle
+
+### Open issues / things still to improve
+- **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. aitil.kg TTS in voice_service.py is better. Could route Kyrgyz-detected replies through voice_service.py's TTS endpoint instead.
+- **No streaming TTS**: even at 80 tokens, there's still ~2s TTS generation before audio starts. True streaming (send text chunks → generate audio in parallel) would feel more instant but requires chunked streaming from the chat API + chunked audio playback — complex.
+- **VAD sensitivity**: `SPEECH_THRESHOLD = 0.018` may need tuning per microphone/environment. Too low = background noise triggers; too high = misses quiet speech.
+- **Phase 3 (Performance) and Phase 4 (SEO) not started** — still the next major phases per CLAUDE.md.
 
 ---
 
@@ -367,11 +564,11 @@ For each file, apply ALL of the following:
 
 ## Quick Start for Next Chat
 
-**Phase 1 (UI/UX restyle) and Phase 2 (Accessibility) are substantially complete.** Every page under `src/app/**/page.tsx` has been converted to the Luxury/Art Deco system AND passed through a WCAG 2.1 audit (contrast, focus rings, keyboard, landmarks, skip link, nested main fix). The next chat should move on to **Phase 3 (Performance)** or **Phase 4 (SEO)** from `CLAUDE.md` unless the user directs otherwise.
+**Session 5+6 (Voice Chat Integration) is CODE COMPLETE.** ChatWidget mic button, Voice Mode header link, `/voice-chat` immersive page, TTS language auto-detection — all done and type-checked clean. Phase 1 (UI/UX restyle) and Phase 2 (Accessibility) are also complete.
 
-1. Read this file first
-2. Read `CLAUDE.md` for project background (note: "Problem 1" about hero height is now outdated — fixed)
-3. Ask the user which Phase they want to tackle next. Candidates from `CLAUDE.md`:
+1. **Browser test + commit** are the only remaining voice tasks. Run `cd voice-actor && python voice_service.py` + `npm run dev`, test the ChatWidget mic and `/voice-chat`, then commit.
+2. After voice integration is committed, ask the user which Phase to tackle next (3–6). See `CLAUDE.md` for the full list.
+4. Only AFTER voice integration is fully tested and committed, ask the user which Phase they want to tackle next. Candidates from `CLAUDE.md`:
    - **Phase 2 — Accessibility**: color contrast audit, keyboard nav, ARIA + semantic HTML review, screen reader check. Most of the ARIA/semantic-HTML groundwork is already laid during the restyle (eyebrow labels, `aria-hidden` on decorative elements, `htmlFor`/`id` pairs, `<section aria-label>`), so this phase mostly means verifying and filling gaps.
    - **Phase 3 — Performance**: image optimization (note: no real images yet — all placeholders are CSS gradients), code splitting review, Core Web Vitals, Lighthouse audit.
    - **Phase 4 — SEO**: page metadata (partially done — most restyled files now have `openGraph` tags), semantic structure, robots.txt, sitemap.xml.

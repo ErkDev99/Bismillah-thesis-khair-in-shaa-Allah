@@ -2,6 +2,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { voiceApi } from "@/lib/voiceApi";
 
 interface Message {
   id: number;
@@ -24,6 +26,14 @@ export default function ChatWidget() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Voice chat state
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [voiceError, setVoiceError] = useState("");
+  const mediaRecRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Show prompt after 3 seconds (only if not dismissed and chat not open)
   useEffect(() => {
@@ -61,18 +71,17 @@ export default function ChatWidget() {
     setIsOpen(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const sendMessage = async (text: string, speakReply: boolean) => {
+    const trimmed = text.trim();
+    if (!trimmed || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now(),
       role: "user",
-      content: input.trim(),
+      content: trimmed,
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInput("");
     setIsLoading(true);
 
     try {
@@ -84,33 +93,153 @@ export default function ChatWidget() {
             role: m.role,
             content: m.content,
           })),
+          voice: speakReply,
         }),
       });
 
       if (!response.ok) throw new Error("Failed to get response");
 
-      const data = await response.json();
+      if (speakReply) {
+        // Voice mode: full JSON response (TTS needs complete text)
+        const data = await response.json();
+        const replyText: string = data.message ?? "";
 
-      const assistantMessage: Message = {
-        id: Date.now() + 1,
-        role: "assistant",
-        content: data.message,
-      };
+        setMessages((prev) => [
+          ...prev,
+          { id: Date.now() + 1, role: "assistant", content: replyText },
+        ]);
 
-      setMessages((prev) => [...prev, assistantMessage]);
+        if (replyText) {
+          try {
+            const audioUrl = await voiceApi.synthesize(replyText);
+            const audio = new Audio(audioUrl);
+            audioRef.current = audio;
+            const cleanup = () => {
+              URL.revokeObjectURL(audioUrl);
+              audioRef.current = null;
+              setIsPlayingAudio(false);
+            };
+            audio.onended = cleanup;
+            audio.onerror = cleanup;
+            setIsPlayingAudio(true);
+            await audio.play();
+          } catch (ttsErr) {
+            console.error("TTS error:", ttsErr);
+            setIsPlayingAudio(false);
+            setVoiceError("Could not play voice reply. Text reply is shown above.");
+          }
+        }
+      } else {
+        // Text mode: streaming response — add empty bubble, fill as tokens arrive
+        const assistantId = Date.now() + 1;
+        setMessages((prev) => [
+          ...prev,
+          { id: assistantId, role: "assistant", content: "" },
+        ]);
+
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let fullText = "";
+
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          fullText += decoder.decode(value, { stream: true });
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId ? { ...m, content: fullText } : m
+            )
+          );
+        }
+      }
     } catch (error) {
       console.error("Chat error:", error);
-      const errorMessage: Message = {
-        id: Date.now() + 1,
-        role: "assistant",
-        content:
-          "Sorry, I'm having trouble connecting right now. Please try again or contact us directly at info@wanderlust.com",
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          role: "assistant",
+          content:
+            "Sorry, I'm having trouble connecting right now. Please try again or contact us directly at info@wanderlust.com",
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text || isLoading) return;
+    setInput("");
+    await sendMessage(text, false);
+  };
+
+  // --- Voice chat: press-and-hold mic → transcribe → send → auto-TTS reply ---
+
+  const startRecording = async () => {
+    if (isRecording || isLoading) return;
+    setVoiceError("");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      chunksRef.current = [];
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+      mr.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        try {
+          const text = await voiceApi.transcribe(blob);
+          if (text && text.trim()) {
+            await sendMessage(text, true);
+          } else {
+            setVoiceError("No speech detected. Try again.");
+          }
+        } catch (err) {
+          console.error("Voice transcription error:", err);
+          setVoiceError("Could not transcribe audio. Is the voice service running?");
+        }
+      };
+      mr.start();
+      mediaRecRef.current = mr;
+      setIsRecording(true);
+    } catch {
+      setVoiceError("Microphone access denied. Please allow microphone permission.");
+    }
+  };
+
+  const stopRecording = () => {
+    if (!isRecording || !mediaRecRef.current) return;
+    try {
+      mediaRecRef.current.stop();
+    } catch {
+      // noop — stop() may throw if already inactive
+    }
+    mediaRecRef.current = null;
+    setIsRecording(false);
+  };
+
+  // Cleanup on unmount: stop any in-flight recording or audio playback
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (mediaRecRef.current && mediaRecRef.current.state !== "inactive") {
+        try {
+          mediaRecRef.current.stop();
+        } catch {
+          // noop
+        }
+        mediaRecRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <>
@@ -237,6 +366,17 @@ export default function ChatWidget() {
                 {isLoading ? "Typing..." : "Online"}
               </p>
             </div>
+            <Link
+              href="/voice-chat"
+              onClick={() => setIsOpen(false)}
+              className="w-8 h-8 hover:bg-amber-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-amber-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
+              aria-label="Open immersive voice mode"
+              title="Voice mode"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-14 0m7 7v4m-4 0h8M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+              </svg>
+            </Link>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
@@ -279,7 +419,7 @@ export default function ChatWidget() {
                 </div>
               </div>
             ))}
-            {isLoading && (
+            {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
               <div className="flex justify-start" aria-label="Assistant is typing">
                 <div className="bg-white dark:bg-stone-800 text-stone-800 shadow-sm border border-stone-200 dark:border-stone-700 px-4 py-2">
                   <div className="flex gap-1" aria-hidden="true">
@@ -299,6 +439,31 @@ export default function ChatWidget() {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Voice status strip (recording / playback / errors) */}
+          {(isRecording || isPlayingAudio || voiceError) && (
+            <div
+              className="px-3 py-2 bg-stone-900 dark:bg-black border-t border-amber-500/20 text-xs uppercase tracking-[0.2em]"
+              role="status"
+              aria-live="polite"
+            >
+              {voiceError ? (
+                <p className="text-red-300" role="alert">
+                  {voiceError}
+                </p>
+              ) : isRecording ? (
+                <p className="text-amber-400 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
+                  Recording — click mic to send
+                </p>
+              ) : (
+                <p className="text-amber-400 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" aria-hidden="true" />
+                  Speaking…
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Input */}
           <form
             onSubmit={handleSubmit}
@@ -315,11 +480,43 @@ export default function ChatWidget() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about tours, destinations..."
                 className="flex-1 px-4 py-2 border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-200 placeholder-stone-500 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-400 focus:border-transparent text-sm"
-                disabled={isLoading}
+                disabled={isLoading || isRecording}
               />
               <button
+                type="button"
+                onClick={() => (isRecording ? stopRecording() : startRecording())}
+                disabled={isLoading}
+                aria-label={isRecording ? "Stop recording and send" : "Click to start recording"}
+                aria-pressed={isRecording}
+                className={[
+                  "w-10 h-10 flex items-center justify-center transition-colors",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900",
+                  "disabled:opacity-50 disabled:cursor-not-allowed",
+                  isRecording
+                    ? "bg-red-600 hover:bg-red-700 text-white shadow-[0_0_0_4px_rgba(220,38,38,0.25)]"
+                    : "bg-white dark:bg-stone-800 border border-amber-500/60 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-stone-700",
+                ].join(" ")}
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"
+                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-14 0" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v4M8 22h8" />
+                </svg>
+              </button>
+              <button
                 type="submit"
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || isRecording || !input.trim()}
                 className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-stone-300 disabled:to-stone-300 dark:disabled:from-stone-600 dark:disabled:to-stone-600 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
                 aria-label="Send message"
               >

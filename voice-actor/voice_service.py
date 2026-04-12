@@ -1,10 +1,11 @@
 import requests
 import os
+import uuid
 from dotenv import load_dotenv
-from kyrgyz_normalizer import normalize  # Add this line
+from kyrgyz_normalizer import normalize
+from gtts import gTTS
 from fastapi.responses import Response
-from fastapi import FastAPI             # Add this line
-import time
+from fastapi import FastAPI
 load_dotenv()
 app = FastAPI()  # Add this line
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,10 +27,10 @@ ASR_TOKEN = os.getenv("ASR_TOKEN")
 
 
 # ========================
-# TEXT → SPEECH
+# TEXT → SPEECH (Kyrgyz via aitil.kg)
 # ========================
-def text_to_speech(text: str, output_file: str = "voice.mp3"):
-    text = normalize(text)  # Add this line here to clean the text first
+def text_to_speech_aitil(text: str, output_file: str = "voice.mp3"):
+    text = normalize(text)
     headers = {
         "Authorization": f"Bearer {TTS_TOKEN}",
         "Content-Type": "application/json",
@@ -48,11 +49,25 @@ def text_to_speech(text: str, output_file: str = "voice.mp3"):
     if response.ok:
         with open(output_file, "wb") as f:
             f.write(response.content)
-        print("✅ TTS готов:", output_file)
+        print(f"✅ TTS ready (aitil.kg ky):", output_file)
         return output_file
     else:
-        print("❌ TTS ошибка:", response.status_code, response.text)
+        print("❌ TTS aitil.kg error:", response.status_code, response.text)
         return None
+
+
+# ========================
+# TEXT → SPEECH (en/ru fallback via Google gTTS)
+# ========================
+def text_to_speech_gtts(text: str, lang: str = "en", output_file: str = None):
+    if not output_file:
+        output_file = f"tts_{uuid.uuid4()}.mp3"
+
+    tts = gTTS(text=text, lang=lang)
+    tts.save(output_file)
+
+    print(f"✅ TTS ready (gTTS {lang}):", output_file)
+    return output_file
 
 
 # ========================
@@ -84,11 +99,14 @@ from pydantic import BaseModel
 
 class TTSRequest(BaseModel):
     text: str
+    lang: str = "ky"  # "en", "ru", or "ky" — frontend auto-detects
 
 @app.post("/generate-voice")
 async def generate_voice(data: TTSRequest):
-    normalized_text = normalize(data.text)
-    result = text_to_speech(normalized_text)
+    if data.lang == "ky":
+        result = text_to_speech_aitil(data.text)
+    else:
+        result = text_to_speech_gtts(data.text, lang=data.lang)
     
     if result:
         with open(result, "rb") as f:
