@@ -26,7 +26,7 @@ export default function ChatWidget() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Voice chat state
   const [isRecording, setIsRecording] = useState(false);
@@ -61,9 +61,10 @@ export default function ChatWidget() {
     }
   }, [isOpen]);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive (scroll container only, never window)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesContainerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
 
   const handleDismissPrompt = (
@@ -351,12 +352,13 @@ export default function ChatWidget() {
             position: 'fixed',
             bottom: '96px',
             right: '24px',
-            height: 'min(500px, calc(100dvh - 120px))',
+            height: '500px',
+            maxHeight: 'calc(100vh - 120px)',
           }}
           className="z-50 w-[350px] sm:w-[400px] bg-stone-50 dark:bg-stone-900 shadow-2xl flex flex-col overflow-hidden border border-amber-500/30"
         >
           {/* Header */}
-          <div className="bg-stone-900 dark:bg-black text-white px-4 py-3 flex items-center gap-3 border-b border-amber-500/20">
+          <div className="flex-shrink-0 bg-stone-900 dark:bg-black text-white px-4 py-3 flex items-center gap-3 border-b border-amber-500/20">
             <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center" aria-hidden="true">
               <svg
                 className="w-6 h-6"
@@ -404,7 +406,8 @@ export default function ChatWidget() {
 
           {/* Messages */}
           <div
-            className="flex-1 overflow-y-auto p-4 space-y-4 bg-stone-100 dark:bg-stone-950"
+            ref={messagesContainerRef}
+            className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-stone-100 dark:bg-stone-950"
             role="log"
             aria-live="polite"
             aria-label="Chat messages"
@@ -449,13 +452,12 @@ export default function ChatWidget() {
                 </div>
               </div>
             )}
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Voice status strip (recording / playback / errors) */}
           {(isRecording || isPlayingAudio || voiceError) && (
             <div
-              className="px-3 py-2 bg-stone-900 dark:bg-black border-t border-amber-500/20 text-xs uppercase tracking-[0.2em]"
+              className="flex-shrink-0 px-3 py-2 bg-stone-900 dark:bg-black border-t border-amber-500/20 text-xs uppercase tracking-[0.2em]"
               role="status"
               aria-live="polite"
             >
@@ -480,7 +482,7 @@ export default function ChatWidget() {
           {/* Input */}
           <form
             onSubmit={handleSubmit}
-            className="p-3 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-700"
+            className="flex-shrink-0 p-3 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-700"
           >
             <div className="flex gap-2">
               <label htmlFor="chat-input" className="sr-only">

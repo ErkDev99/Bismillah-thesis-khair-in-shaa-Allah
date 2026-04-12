@@ -8,7 +8,10 @@
       "Bash(where node:*)",
       "Bash(where npx:*)",
       "Bash(\"/c/Program Files/nodejs/npx.cmd\" tsc --noEmit)",
-      "Bash('/c/Program Files/nodejs/npx.cmd' tsc --noEmit)"
+      "Bash('/c/Program Files/nodejs/npx.cmd' tsc --noEmit)",
+      "Bash(node ./node_modules/.bin/tsc --noEmit)",
+      "Bash(./node_modules/.bin/tsc.cmd --noEmit)",
+      "Bash(\"/c/Program Files/nodejs/node\" ./node_modules/typescript/bin/tsc --noEmit)"
     ]
   }
 }

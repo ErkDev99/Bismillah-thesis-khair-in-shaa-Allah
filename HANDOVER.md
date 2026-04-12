@@ -1,6 +1,6 @@
 # Handover: Luxury/Art Deco Restyle — Continuation
 
-*Last updated: 2026-04-12 (Session 9 — Homepage hero above-the-fold fix, ChatWidget scroll-gated proactive prompt)*
+*Last updated: 2026-04-12 (Session 10 — ChatWidget layout bug: UNRESOLVED, needs fix next session)*
 
 ## What Was Done (Cumulative)
 
@@ -477,6 +477,92 @@ Fix: added `logContainerRef` on the scrollable `<div>` container. On new message
 ### Files changed this session
 - `src/app/page.tsx` — HeroSection padding, font sizes, margins
 - `src/components/chat/ChatWidget.tsx` — scroll-gated proactive prompt
+
+---
+
+## Session 2026-04-12 (Session 10) — ChatWidget Layout Bug: UNRESOLVED ⚠️
+
+### The bug
+
+**Symptom:** After the 2nd message (typed OR voice), the conversation text scrolls upward and a growing empty white space appears below the input form. The empty space increases with each subsequent message.
+
+**Trigger:** The 1st message is always fine. The problem starts on the 2nd message.
+
+**Reproduced on:** `localhost:3000` (any page — widget is global) and `localhost:3000/voice-chat`.
+
+### What was tried (all failed)
+
+Three approaches were attempted, none resolved the issue:
+
+**Attempt 1 — Spacer inside messages div:**
+- Added `flex flex-col gap-4` to messages div + a `<div className="flex-1">` spacer as first child to push messages to the bottom
+- **Why it failed:** `flex-1` inside `overflow-y-auto` is a broken CSS pattern. The spacer sizes against the scroll height (infinite), not the visual height. Made things worse.
+
+**Attempt 2 — `min-h-0` on messages div:**
+- Reverted spacer. Changed messages div to `flex-1 min-h-0 overflow-y-auto p-4 space-y-4`
+- `min-h-0` is the standard fix for "flex child with overflow-y-auto doesn't scroll" — but here the problem is NOT that scrolling doesn't appear; it's that empty space grows below the form.
+- **Why it failed:** Bug persisted. `min-h-0` is necessary but not sufficient.
+
+**Attempt 3 — Replace `min()` + `dvh` with separate `height` + `maxHeight`:**
+- Changed `height: 'min(500px, calc(100dvh - 120px))'` → `height: '500px', maxHeight: 'calc(100vh - 120px)'`
+- Motivation: `dvh` unit and CSS `min()` may not be supported in all browsers; if ignored, the chat window has `height: auto` and `flex-1` has no definite parent height to grow against.
+- **Why it failed:** Bug persisted even after `npm run dev` restart.
+
+### Current state of `src/components/chat/ChatWidget.tsx`
+
+The chat window div has:
+```jsx
+style={{
+  position: 'fixed',
+  bottom: '96px',
+  right: '24px',
+  height: '500px',
+  maxHeight: 'calc(100vh - 120px)',
+}}
+className="z-50 w-[350px] sm:w-[400px] bg-stone-50 dark:bg-stone-900 shadow-2xl flex flex-col overflow-hidden border border-amber-500/30"
+```
+
+The messages div has:
+```jsx
+className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-stone-100 dark:bg-stone-950"
+```
+
+### Diagnosis for next session
+
+The real cause has NOT been identified. Hypotheses to investigate:
+
+1. **`scrollIntoView` side-effect on window scroll** — `messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })` scrolls the nearest scrollable ancestor. If the messages div doesn't have a proper scroll context (e.g., due to a flex layout issue), it may be scrolling the `window` instead of the messages div, causing the page layout to shift and creating apparent "empty space" below the widget.
+   - **Test:** Replace `scrollIntoView` with `messagesDiv.scrollTop = messagesDiv.scrollHeight` using a ref on the messages div. This confines scroll to the div only.
+
+2. **`overflow-hidden` on chat window clipping the form** — as messages grow, the messages div (flex-1) may be expanding beyond its flex-1 budget (because `min-height: auto` is still the default for the form and header, eating into the budget). The form gets pushed below the chat window's 500px boundary and is clipped, but the stone-50 background shows through as "empty white space".
+   - **Test:** Add explicit `flex-shrink-0` to the header div and the form element to prevent them from ever shrinking.
+
+3. **Tailwind v4 `flex-1` behavior difference** — Tailwind v4 may generate different CSS for `flex-1` than Tailwind v3. Check that `flex-1` on the messages div generates `flex: 1 1 0%` (not `flex: 1 1 auto%`).
+
+### Recommended fix to try next
+
+Replace the `scrollIntoView` approach with a direct scroll on a ref to the messages container:
+
+```tsx
+// Add ref:
+const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+// Replace scrollIntoView useEffect:
+useEffect(() => {
+  const el = messagesContainerRef.current;
+  if (el) el.scrollTop = el.scrollHeight;
+}, [messages]);
+
+// Add ref to messages div:
+<div ref={messagesContainerRef} className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 ...">
+  {/* Remove <div ref={messagesEndRef} /> — no longer needed */}
+```
+
+Also add `flex-shrink-0` to the header div and form to ensure they never shrink:
+```jsx
+// Header div: add flex-shrink-0
+// Form: add flex-shrink-0
+```
 
 ---
 
