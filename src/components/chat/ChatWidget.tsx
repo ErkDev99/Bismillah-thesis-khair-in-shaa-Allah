@@ -15,6 +15,7 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const [promptDismissed, setPromptDismissed] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -35,16 +36,23 @@ export default function ChatWidget() {
   const chunksRef = useRef<Blob[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Show prompt after 3 seconds (only if not dismissed and chat not open)
+  // Track whether user has scrolled past the hero — prompt must never cover above-the-fold content
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!promptDismissed && !isOpen) {
-        setShowPrompt(true);
-      }
-    }, 3000);
+    const onScroll = () => {
+      if (window.scrollY > 300) setHasScrolled(true);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
+  // Show prompt 2s after user has scrolled past the hero (never on first load)
+  useEffect(() => {
+    if (!hasScrolled || promptDismissed || isOpen) return;
+    const timer = setTimeout(() => {
+      if (!promptDismissed && !isOpen) setShowPrompt(true);
+    }, 2000);
     return () => clearTimeout(timer);
-  }, [promptDismissed, isOpen]);
+  }, [hasScrolled, promptDismissed, isOpen]);
 
   // Hide prompt when chat opens
   useEffect(() => {

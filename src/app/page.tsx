@@ -134,39 +134,39 @@ function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 px-4 max-w-4xl mx-auto py-12 md:py-16">
-        <div className="flex items-center justify-center gap-4 mb-6" aria-hidden="true">
+      <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
+        <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
           <div className="h-px w-12 md:w-20 bg-amber-500/60" />
           <span className="text-amber-400/80 text-xs tracking-[0.3em] uppercase">Est. 2024</span>
           <div className="h-px w-12 md:w-20 bg-amber-500/60" />
         </div>
 
-        <p className="text-amber-300 text-sm font-semibold tracking-[0.2em] uppercase mb-5">
+        <p className="text-amber-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3">
           Kazakhstan · Kyrgyzstan · Uzbekistan
         </p>
 
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-5 font-serif">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
           Discover the Heart of{" "}
           <span className="text-amber-400">Central Asia</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-stone-300 max-w-2xl mx-auto mb-8 leading-relaxed">
+        <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto mb-4 leading-relaxed">
           Expert-led small-group tours through ancient Silk Road cities, soaring
           mountain ranges, and nomadic landscapes unlike anywhere else on Earth.
         </p>
 
-        <DiamondDivider className="mb-8" />
+        <DiamondDivider className="mb-4" />
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/tours"
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white px-8 py-4 font-semibold text-lg uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-transparent"
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white px-8 py-3 font-semibold text-base uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-transparent"
           >
             Browse All Tours
           </Link>
           <Link
             href="/destinations"
-            className="border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-300 px-8 py-4 font-semibold text-lg uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-400/50 focus:ring-offset-2 focus:ring-offset-transparent"
+            className="border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-300 px-8 py-3 font-semibold text-base uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-400/50 focus:ring-offset-2 focus:ring-offset-transparent"
           >
             Explore Destinations
           </Link>

@@ -1,6 +1,6 @@
 # Handover: Luxury/Art Deco Restyle — Continuation
 
-*Last updated: 2026-04-12 (Session 7 — Voice Chat: OpenAI Whisper + TTS, VAD continuous conversation mode, conversation history, short voice prompt, scroll fix — all working)*
+*Last updated: 2026-04-12 (Session 9 — Homepage hero above-the-fold fix, ChatWidget scroll-gated proactive prompt)*
 
 ## What Was Done (Cumulative)
 
@@ -370,6 +370,113 @@ Fix: added `logContainerRef` on the scrollable `<div>` container. On new message
 - **No streaming TTS**: even at 80 tokens, there's still ~2s TTS generation before audio starts. True streaming (send text chunks → generate audio in parallel) would feel more instant but requires chunked streaming from the chat API + chunked audio playback — complex.
 - **VAD sensitivity**: `SPEECH_THRESHOLD = 0.018` may need tuning per microphone/environment. Too low = background noise triggers; too high = misses quiet speech.
 - **Phase 3 (Performance) and Phase 4 (SEO) not started** — still the next major phases per CLAUDE.md.
+
+---
+
+## Session 2026-04-12 (Session 8) — Streaming Chat + Voice Page Above-the-Fold Fix
+
+### 1. Streaming chat — ChatGPT-style token-by-token output (COMPLETE)
+
+**Problem:** `/api/chat` returned the full response as a single JSON payload. The user had to wait for the entire reply before seeing anything — no streaming feel.
+
+**Solution:** HTTP streaming via `ReadableStream` (no WebSockets needed — chunked transfer encoding is sufficient for request/response).
+
+**`src/app/api/chat/route.ts`:**
+- Text mode (`voice: false`): adds `stream: true` to the OpenAI request, pipes the raw SSE response through a `TransformStream` that extracts only the `delta.content` tokens and forwards them as plain UTF-8 text. Returns `new Response(transformStream.readable, { "Content-Type": "text/plain" })`.
+- Voice mode (`voice: true`): unchanged — still returns full JSON (TTS needs the complete sentence before synthesis).
+
+**`src/components/chat/ChatWidget.tsx`:**
+- `sendMessage()` branches on `speakReply`:
+  - **Voice path**: JSON parse → TTS (same as before)
+  - **Text path**: adds an empty assistant bubble immediately, reads `response.body.getReader()` chunk by chunk, appends each decoded token to that bubble in real time
+- Bouncing-dots condition changed from `{isLoading && ...}` → `{isLoading && messages[messages.length - 1]?.role !== "assistant"}` — dots disappear the moment the first token adds the assistant bubble
+
+### 2. Voice page above-the-fold fix (COMPLETE)
+
+**Problem:** The Start Conversation button was below the fold at 100% zoom on a laptop. Required scrolling to reach the primary action.
+
+**Root causes found:**
+1. **Nav "Practical Info" text was wrapping** — `Header.tsx` desktop nav links had no `whitespace-nowrap`, so at mid-range viewports the two-word label wrapped to 2 lines, making the header taller than `h-16` (4rem). This broke the `calc(100vh - 4rem)` height assumption.
+2. **Orb was full 220px in idle state** — `scale-75` on the orb is a CSS visual transform only; the DOM layout space is still 220px. The idle orb was consuming 220px of layout height.
+3. **Subtitle text** (below the diamond divider) added ~40px and was redundant with the "Press Start to begin" state label.
+
+**Fixes:**
+
+`src/components/layout/Header.tsx`:
+- Added `whitespace-nowrap` to all desktop nav link classes. "Practical Info" now stays on one line; header stays true h-16 at all viewport widths.
+
+`src/app/voice-chat/page.tsx`:
+- **Orb in idle state** — wrapped in a `154px × 154px` fixed layout box. Inside: `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.7)`. The DOM layout space is now 154px (not 220px), while the orb renders at 154px visual size. No CSS module changes needed.
+- **Subtitle removed** — the paragraph below the diamond divider was deleted. The state label already says "Press Start to begin".
+- **Page height logic split by state:**
+  - **Idle**: `minHeight: calc(100vh - 4rem)` + `overflow: auto` + `flex flex-col` — content auto-sizes, `justify-center` in the idle child div vertically centres everything; scrollable as a safety net on very small screens.
+  - **Conversation**: `height: calc(100vh - 4rem)` + `overflow: hidden` — bounded height required so the `flex-1 overflow-y-auto` log container has a real parent height to scroll within.
+- **Conversation orb**: already wrapped in `scale-75` from Session 7 (effective 165px) — no change needed.
+
+**Estimated idle layout height after fixes (desktop 1366×768, browser ~700px viewport):**
+- Eyebrow + h1 (`text-2xl/3xl`) + divider: ~90px
+- Orb layout box: 154px
+- Status label: 20px
+- Start button: 44px
+- Gaps (`gap-4` × 4): 64px
+- **Total: ~372px** — fits comfortably in ~636px available (700px minus 64px nav).
+
+### Files changed this session
+- `src/app/api/chat/route.ts` — streaming for text, non-streaming JSON for voice
+- `src/components/chat/ChatWidget.tsx` — streaming reader + dot-hide fix
+- `src/components/layout/Header.tsx` — `whitespace-nowrap` on desktop nav links
+- `src/app/voice-chat/page.tsx` — orb 154px layout box + subtitle removed + state-split height/overflow
+
+### Open issues carried forward
+- Phase 3 (Performance) and Phase 4 (SEO) not started — next major phases per CLAUDE.md
+- Kyrgyz TTS quality still mediocre (gTTS fallback)
+- VAD sensitivity may need tuning per microphone/environment
+
+---
+
+## Session 2026-04-12 (Session 9) — Homepage Hero Above-the-Fold Fix
+
+**Problem:** At 100% browser zoom on a Windows 11 laptop with 125–150% DPI scaling, the effective CSS viewport height is ~448–550px (instead of 768px physical). The hero section was ~580px tall, pushing the CTA buttons ("Browse All Tours" / "Explore Destinations") below the fold. Users had to scroll to find the primary actions.
+
+**Root cause:** Excessive vertical padding (`py-12 md:py-16` = 64px each side) + oversized H1 (`text-6xl` = 60px × 2 lines = 150px) + large `mb-8` gaps throughout = ~580px total hero height.
+
+**Fix applied to `src/app/page.tsx` — HeroSection only:**
+| Element | Before | After |
+|---|---|---|
+| Container padding | `py-12 md:py-16` | `py-4 md:py-6` |
+| "Est. 2024" line margin | `mb-6` | `mb-2` |
+| Eyebrow margin | `mb-5` | `mb-3` |
+| H1 font size | `text-4xl sm:text-5xl md:text-6xl` | `text-3xl sm:text-4xl md:text-5xl` |
+| H1 margin | `mb-5` | `mb-3` |
+| Description font | `text-lg md:text-xl` | `text-base md:text-lg` |
+| Description margin | `mb-8` | `mb-4` |
+| Diamond divider margin | `mb-8` | `mb-4` |
+| CTA buttons | `py-4 text-lg` | `py-3 text-base` |
+
+**New estimated hero height (desktop, md:py-6):** ~380px — fits in ~448px available at 150% DPI with 68px to spare. CTA buttons are now visible without scrolling.
+
+**No other files changed. No globals.css touched.**
+
+### 2. ChatWidget proactive prompt — scroll-gated (COMPLETE)
+
+**Problem:** The "Need help planning your trip?" card appeared 3 seconds after page load, overlapping the hero description text and CTA buttons — a direct visibility/usability failure.
+
+**Professional standard:** Intercom, HubSpot, Drift, and all major chat widgets never show a proactive prompt over above-the-fold content. They trigger only after the user has scrolled (shown intent to explore) or after a long idle timeout.
+
+**Fix applied to `src/components/chat/ChatWidget.tsx`:**
+- Added `hasScrolled: boolean` state (default `false`)
+- Added scroll listener (`window.addEventListener("scroll", ..., { passive: true })`) — sets `hasScrolled = true` once `window.scrollY > 300` (past the hero)
+- Replaced the old fire-on-mount 3s timer with a **two-gate** system:
+  1. **Gate 1:** `hasScrolled` must be `true` (user has scrolled past the hero)
+  2. **Gate 2:** 2-second delay fires after Gate 1 is cleared
+- The prompt `useEffect` now depends on `[hasScrolled, promptDismissed, isOpen]`; returns early if any gate fails
+- Old timer `useEffect` (was `[promptDismissed, isOpen]`) replaced entirely
+
+**Result:** The prompt never appears on the hero. It only appears after the user has actively scrolled 300px+ down the page, then waits 2 more seconds. Hero content is always fully readable on first load. All accessibility attributes (role, aria-label, dismiss button, focus rings) preserved.
+
+### Files changed this session
+- `src/app/page.tsx` — HeroSection padding, font sizes, margins
+- `src/components/chat/ChatWidget.tsx` — scroll-gated proactive prompt
 
 ---
 
