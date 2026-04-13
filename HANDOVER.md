@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-13 (Session 15)*
+*Last updated: 2026-04-13 (Session 16)*
 
 ---
 
@@ -10,8 +10,9 @@
 |-------|--------|
 | Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete |
 | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |
-| Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech |
+| Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech, ChatGPT-style conversation UI |
 | ChatWidget Mic (chat bubble) | ✅ Complete — Dictation mode (record → waveform → confirm/cancel → Whisper STT → text in input) |
+| Chat streaming fix | ✅ Complete — SSE buffering bug fixed in `/api/chat` route |
 | Phase 3 — Performance (Lighthouse) | ⬜ Not started |
 | Phase 4 — SEO | ⬜ Not started |
 | Phase 5 — Cross-browser & Responsive | ⬜ Not started |
@@ -23,27 +24,21 @@
 
 1. **Ask user which phase to tackle next (3–6).** See `CLAUDE.md` for full phase specs.
 
-   **What was done in Session 15:**
-   - ChatWidget mic rewritten as a **dictation** feature (like ChatGPT's "Dictate" button):
-     - Click mic → recording starts, input bar transforms to show live waveform (AnalyserNode) + X (cancel) + ✓ (confirm)
-     - Click X → discard recording, return to normal input
-     - Click ✓ → stop recording, send to `/voice/transcribe-voice` (Whisper STT), transcribed text fills input field
-     - User then edits/sends text with the send arrow — **no auto-send**
-   - This is separate from the Voice Chat page (`/voice-chat`) which is full real-time speech-to-speech via WebSocket — **DO NOT TOUCH** that page.
-   - `voice-actor/main.py`: fixed Windows cp1252 crash — all `print()` statements now use ASCII-only text (no emojis, no raw Cyrillic). Added try/except error handling to `/transcribe-voice` endpoint.
-   - `sendMessage()` simplified — removed `speakReply` parameter and old TTS streaming logic.
-
-   **Known issue fixed in this session:**
-   - `voice-actor/main.py` print statements with emojis (✅) and Cyrillic text crashed on Windows cp1252 console encoding → `UnicodeEncodeError` → 500 to browser. Fixed by using ASCII-only prints: `print(f"[ASR] Transcript ({len(text)} chars)")` instead of printing the actual text.
+   **What was done in Session 16:**
+   - **Chat streaming fix**: `/api/chat/route.ts` SSE transform had a buffering bug — TCP chunks splitting mid-line caused dropped words in both Russian and English responses. Fixed by accumulating a line buffer across chunks + `flush()` handler.
+   - **Voice Chat UI redesign** (`/voice-chat`): Redesigned in-conversation view to match ChatGPT's voice mode:
+     - Compact top bar with orb + status + "End" button (was a tall vertical stack)
+     - Full-height chat transcript with left/right chat bubbles (was a narrow scrollable field)
+     - User/assistant messages styled identically to ChatWidget bubbles
+   - **Voice Chat message ordering fix**: User transcription (`conversation.item.input_audio_transcription.completed`) arrived after assistant response started. Fixed by inserting a placeholder user bubble on `speech_stopped`, then filling it when transcription arrives. Shows "Transcribing..." in italic while waiting (~1-2s, normal for Whisper).
 
 ---
 
 ## Open Issues
 
 - **Focus ring contrast (WCAG 1.4.11)**: `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1 for UI). ~20 instances in form/card contexts. Deferred — flag before Phase 3 audit.
-- **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. `voice_service.py` aitil.kg TTS is better but requires Kyrgyz text. Low priority.
-- **ChatWidget mic is dictation mode**: Records → Whisper STT → text in input. Uses `/voice/transcribe-voice` endpoint.
-- **WebSocket URL is hardcoded**: Voice-chat page connects to `ws://${hostname}:8001/ws/realtime` directly (Next.js HTTP rewrites don't reliably proxy WebSocket upgrades). Fine for thesis demo; would need a reverse proxy in production.
+- **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. Low priority.
+- **WebSocket URL is hardcoded**: Voice-chat page connects to `ws://${hostname}:8001/ws/realtime` directly. Fine for thesis demo; would need a reverse proxy in production.
 
 ---
 
@@ -71,7 +66,6 @@
 
 **DO NOT TOUCH:**
 - `src/app/globals.css` — caused horizontal overflow bug TWICE. `git reset --hard` both times.
-- `src/app/voice-chat/page.tsx` — Voice Chat page is complete: OpenAI Realtime API, WebSocket, real-time speech-to-speech. Works excellently. Do not touch.
 - `voice-actor/main.py` — Backend with REST + WebSocket proxy endpoints. All working. Do not touch.
 
 ---
@@ -216,6 +210,8 @@ const GRADIENTS = [
 - **blog/page.tsx is a client component** — cannot use `export const metadata`. Keep the inline comment noting this.
 - **`flex-1` inside `overflow-y-auto`** — always pair with `min-h-0` on the flex child, and use `el.scrollTop = el.scrollHeight` (not `scrollIntoView`) to confine scrolling to the container.
 - **Windows cp1252 kills non-ASCII `print()`** — `voice-actor/main.py` runs on Windows where the console defaults to cp1252. Any `print()` with emojis, Cyrillic, or other non-ASCII chars throws `UnicodeEncodeError` which becomes a 500 to the browser. **Never print raw user text or emojis in voice-actor.** Use `print(f"[ASR] Transcript ({len(text)} chars)")` style instead.
+- **SSE streaming needs line buffering** — OpenAI SSE `data: {...}\n\n` lines can split across TCP chunks. A naive `text.split("\n")` per chunk drops partial lines. Must buffer incomplete lines across `transform()` calls and process in `flush()`.
+- **OpenAI Realtime transcription arrives late** — `conversation.item.input_audio_transcription.completed` (user's words) arrives *after* `response.audio_transcript.delta` (assistant starts replying). Insert a placeholder user message on `speech_stopped` and fill it when transcription arrives, otherwise messages appear out of order.
 
 ---
 

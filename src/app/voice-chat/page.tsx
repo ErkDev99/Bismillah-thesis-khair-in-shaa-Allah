@@ -114,6 +114,7 @@ export default function VoiceChatPage() {
   const scheduledRef = useRef<AudioBufferSourceNode[]>([]);
   const assistantIdRef = useRef<number | null>(null);
   const assistantTextRef = useRef("");
+  const pendingUserIdRef = useRef<number | null>(null);
   const logContainerRef = useRef<HTMLDivElement>(null);
 
   const transition = useCallback((next: AppState) => {
@@ -189,18 +190,34 @@ export default function VoiceChatPage() {
           transition("recording");
           break;
 
-        case "input_audio_buffer.speech_stopped":
+        case "input_audio_buffer.speech_stopped": {
+          // Insert a placeholder user message NOW so it appears before the assistant reply
+          const uid = Date.now();
+          pendingUserIdRef.current = uid;
+          setMessages((prev) => [
+            ...prev,
+            { id: uid, role: "user", content: "" },
+          ]);
           transition("thinking");
           break;
+        }
 
         case "conversation.item.input_audio_transcription.completed": {
           const transcript = (data.transcript as string | undefined)?.trim();
-          if (transcript) {
+          const pid = pendingUserIdRef.current;
+          if (transcript && pid) {
+            // Fill in the placeholder with actual transcription
+            setMessages((prev) =>
+              prev.map((m) => (m.id === pid ? { ...m, content: transcript } : m))
+            );
+          } else if (transcript) {
+            // No placeholder — append normally (fallback)
             setMessages((prev) => [
               ...prev,
               { id: Date.now(), role: "user", content: transcript },
             ]);
           }
+          pendingUserIdRef.current = null;
           break;
         }
 
@@ -265,6 +282,7 @@ export default function VoiceChatPage() {
     setMessages([]);
     assistantIdRef.current = null;
     assistantTextRef.current = "";
+    pendingUserIdRef.current = null;
     transition("connecting");
 
     try {
@@ -366,6 +384,7 @@ export default function VoiceChatPage() {
 
     assistantIdRef.current = null;
     assistantTextRef.current = "";
+    pendingUserIdRef.current = null;
     transition("idle");
   }, [stopPlayback, transition]);
 
@@ -375,44 +394,6 @@ export default function VoiceChatPage() {
   // ── Render ──────────────────────────────────────────────────────────────────
 
   const inConversation = appState !== "idle";
-
-  const renderMessage = (msg: ChatMessage) => (
-    <div
-      key={msg.id}
-      className={
-        msg.role === "user"
-          ? "relative border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-3"
-          : "relative border border-amber-500/40 bg-stone-900 dark:bg-black p-3 text-amber-50"
-      }
-    >
-      <div
-        className={`absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
-        aria-hidden="true"
-      />
-      <div
-        className={`absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
-        aria-hidden="true"
-      />
-      <div
-        className={`absolute -bottom-px -left-px w-3 h-3 border-b-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
-        aria-hidden="true"
-      />
-      <div
-        className={`absolute -bottom-px -right-px w-3 h-3 border-b-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
-        aria-hidden="true"
-      />
-      <p
-        className={`uppercase tracking-[0.3em] text-xs mb-1 ${msg.role === "user" ? "text-amber-700 dark:text-amber-400" : "text-amber-400"}`}
-      >
-        {msg.role === "user" ? "You" : "Assistant"}
-      </p>
-      <p
-        className={`text-sm leading-relaxed ${msg.role === "user" ? "text-stone-800 dark:text-stone-200" : ""}`}
-      >
-        {msg.content}
-      </p>
-    </div>
-  );
 
   return (
     <div
@@ -548,72 +529,121 @@ export default function VoiceChatPage() {
 
       {/* ── IN CONVERSATION ── */}
       {inConversation && (
-        <div className="relative flex flex-col items-center flex-1 overflow-hidden pt-4 px-4">
-          {/* Control strip */}
-          <div className="flex flex-col items-center gap-2 shrink-0 mb-3">
-            <div className="scale-75 origin-top">
-              <SoraBall state={appState} />
+        <div className="relative flex flex-col flex-1 overflow-hidden">
+          {/* Compact top bar: orb + status + end button */}
+          <div className="shrink-0 flex items-center justify-between px-4 py-3 bg-stone-900/80 dark:bg-black/80 backdrop-blur-sm border-b border-amber-500/20 z-10">
+            <div className="flex items-center gap-3">
+              <div className="relative" style={{ width: 40, height: 40 }}>
+                <div
+                  className="absolute top-1/2 left-1/2"
+                  style={{
+                    transform: "translate(-50%, -50%) scale(0.18)",
+                    transformOrigin: "center",
+                  }}
+                >
+                  <SoraBall state={appState} />
+                </div>
+              </div>
+              <div>
+                <p className="text-amber-50 text-sm font-semibold font-serif">Wanderlust Voice</p>
+                <p
+                  className="text-amber-400/70 text-xs uppercase tracking-wider"
+                  role="status"
+                  aria-live="polite"
+                >
+                  {STATE_LABELS[appState]}
+                </p>
+              </div>
             </div>
-            <p
-              className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.25em] text-xs min-h-[18px]"
-              role="status"
-              aria-live="polite"
-            >
-              {STATE_LABELS[appState]}
-            </p>
             <button
               type="button"
               onClick={endConversation}
-              className="flex items-center gap-2 px-6 py-2.5 bg-stone-800 hover:bg-stone-700 text-amber-400 hover:text-amber-300 border border-stone-600 font-medium uppercase tracking-[0.2em] text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
+              className="flex items-center gap-2 px-4 py-2 bg-stone-800 hover:bg-stone-700 text-amber-400 hover:text-amber-300 border border-stone-600 font-medium uppercase tracking-[0.15em] text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900"
             >
               <svg
-                width="14"
-                height="14"
+                width="12"
+                height="12"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 aria-hidden="true"
               >
                 <rect x="4" y="4" width="16" height="16" rx="2" />
               </svg>
-              End Conversation
+              End
             </button>
-            {error && (
+          </div>
+
+          {error && (
+            <div className="shrink-0 px-4 py-2 bg-red-900/30 border-b border-red-500/30">
               <p
-                className="text-red-700 dark:text-red-400 text-xs text-center"
+                className="text-red-300 text-xs text-center"
                 role="alert"
               >
                 {error}
               </p>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Scrollable conversation log */}
-          {messages.length > 0 && (
-            <div className="w-full max-w-xl flex flex-col flex-1 overflow-hidden min-h-0">
-              <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs text-center mb-2 shrink-0">
-                Conversation
-              </p>
-              <div
-                ref={logContainerRef}
-                className="flex-1 overflow-y-auto space-y-3 pr-1 scroll-smooth pb-4"
-              >
-                {messages.map(renderMessage)}
+          {/* Chat transcript — full remaining height */}
+          <div
+            ref={logContainerRef}
+            className="flex-1 min-h-0 overflow-y-auto px-4 py-6 scroll-smooth"
+            role="log"
+            aria-live="polite"
+            aria-label="Voice conversation"
+          >
+            <div className="max-w-2xl mx-auto space-y-4">
+              {messages.length === 0 && (
+                <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-12">
+                  Start speaking — your conversation will appear here.
+                </p>
+              )}
 
-                {/* Thinking indicator */}
-                {appState === "thinking" && (
-                  <div className="relative border border-amber-500/40 bg-stone-900 dark:bg-black p-3 text-amber-50">
-                    <div
-                      className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-amber-500"
-                      aria-hidden="true"
-                    />
-                    <div
-                      className="absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 border-amber-500"
-                      aria-hidden="true"
-                    />
-                    <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 ${
+                      msg.role === "user"
+                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
+                        : "bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-stone-700"
+                    }`}
+                  >
+                    <p
+                      className={`uppercase tracking-[0.2em] text-[10px] mb-1 font-medium ${
+                        msg.role === "user"
+                          ? "text-amber-100/70"
+                          : "text-amber-600 dark:text-amber-400"
+                      }`}
+                    >
+                      {msg.role === "user" ? "You" : "Assistant"}
+                    </p>
+                    {msg.content ? (
+                      <p className="text-sm leading-relaxed">
+                        <span className="sr-only">
+                          {msg.role === "user" ? "You said: " : "Assistant said: "}
+                        </span>
+                        {msg.content}
+                      </p>
+                    ) : (
+                      <p className="text-sm leading-relaxed italic opacity-60">
+                        Transcribing...
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* Thinking indicator */}
+              {appState === "thinking" && (
+                <div className="flex justify-start">
+                  <div className="max-w-[85%] sm:max-w-[75%] px-4 py-3 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-stone-700">
+                    <p className="uppercase tracking-[0.2em] text-[10px] mb-1 font-medium text-amber-600 dark:text-amber-400">
                       Assistant
                     </p>
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-1.5" aria-label="Assistant is thinking">
                       <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
                       <span
                         className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
@@ -625,10 +655,10 @@ export default function VoiceChatPage() {
                       />
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       )}
     </div>
