@@ -7,8 +7,12 @@
 // In dev + prod, these are reached via the /voice/* rewrite in next.config.ts,
 // which forwards to http://localhost:8001 (the FastAPI process).
 
-const VOICE_BASE = "/voice";
+//const VOICE_BASE = "/voice";
 
+// Use the Vercel environment variable, fallback to local for development
+const VOICE_BASE = process.env.NEXT_PUBLIC_VOICE_WS_URL 
+  ? process.env.NEXT_PUBLIC_VOICE_WS_URL.replace('/ws/realtime', '') 
+  : "/voice";
 /**
  * Detect the dominant language of a text string.
  * Kyrgyz-specific Unicode chars (ң, ү, ө, ы, і, ә, ґ) → "ky"
