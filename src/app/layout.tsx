@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ChatWidget from "@/components/chat/ChatWidget";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,18 +27,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("theme");var d=t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d)document.documentElement.classList.add("dark")}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:text-amber-700 focus:px-4 focus:py-2 focus:font-semibold focus:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"
-        >
-          Skip to main content
-        </a>
-        <Header />
-        <main id="main-content" className="min-h-screen">{children}</main>
-        <Footer />
-        <ChatWidget />
+        <ThemeProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white dark:focus:bg-stone-900 focus:text-amber-700 dark:focus:text-amber-400 focus:px-4 focus:py-2 focus:font-semibold focus:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"
+          >
+            Skip to main content
+          </a>
+          <Header />
+          <main id="main-content" className="min-h-screen">{children}</main>
+          <Footer />
+          <ChatWidget />
+        </ThemeProvider>
       </body>
     </html>
   );
