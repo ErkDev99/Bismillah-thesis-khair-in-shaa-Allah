@@ -205,11 +205,15 @@ export async function POST(request: NextRequest) {
     // ── Text: transform OpenAI SSE → plain text token stream ────────────────
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
+    let buffer = "";
 
     const transformStream = new TransformStream({
       transform(chunk, controller) {
-        const text = decoder.decode(chunk, { stream: true });
-        for (const line of text.split("\n")) {
+        buffer += decoder.decode(chunk, { stream: true });
+        const lines = buffer.split("\n");
+        // Keep the last element — it may be an incomplete line
+        buffer = lines.pop() || "";
+        for (const line of lines) {
           const trimmed = line.trim();
           if (!trimmed.startsWith("data: ")) continue;
           const data = trimmed.slice(6);
@@ -220,6 +224,24 @@ export async function POST(request: NextRequest) {
             if (content) controller.enqueue(encoder.encode(content));
           } catch {
             // skip malformed SSE lines
+          }
+        }
+      },
+      flush(controller) {
+        // Process any remaining buffered data
+        if (buffer.trim()) {
+          const trimmed = buffer.trim();
+          if (trimmed.startsWith("data: ")) {
+            const data = trimmed.slice(6);
+            if (data !== "[DONE]") {
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) controller.enqueue(encoder.encode(content));
+              } catch {
+                // skip
+              }
+            }
           }
         }
       },

@@ -50,7 +50,7 @@ def text_to_speech(text: str, lang: str = "ru", output_file: str = None):
         )
         response.stream_to_file(output_file)
 
-    print(f"✅ TTS ready ({lang}):", output_file)
+    print(f"[TTS] Ready ({lang}): {output_file}")
     return output_file
 
 # ========================
@@ -63,7 +63,7 @@ def speech_to_text(file_path: str):
             file=f,
         )
     text = result.text
-    print("✅ ASR текст:", text)
+    print(f"[ASR] Transcript ({len(text)} chars)")
     return text
 
 # ========================
@@ -95,15 +95,26 @@ async def generate_voice(data: TTSRequest):
 async def transcribe_voice(file: UploadFile = File(...)):
     temp_path = f"temp_{file.filename}"
 
-    with open(temp_path, "wb") as buffer:
-        buffer.write(await file.read())
+    try:
+        contents = await file.read()
+        print(f"[ASR] Received {len(contents)} bytes, filename={file.filename}")
+        with open(temp_path, "wb") as buffer:
+            buffer.write(contents)
 
-    text = speech_to_text(temp_path)
+        text = speech_to_text(temp_path)
 
-    if text:
-        return {"status": "success", "data": text}
+        if text:
+            return {"status": "success", "data": text}
 
-    return {"status": "error", "message": "Failed to transcribe audio"}
+        return {"status": "error", "message": "Failed to transcribe audio"}
+    except Exception as exc:
+        import traceback
+        traceback.print_exc()
+        return Response(
+            content=json.dumps({"status": "error", "message": str(exc)}),
+            status_code=500,
+            media_type="application/json",
+        )
 
 # ========================
 # OPENAI REALTIME API — WebSocket proxy

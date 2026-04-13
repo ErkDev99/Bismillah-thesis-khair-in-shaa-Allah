@@ -11,7 +11,7 @@
 | Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete |
 | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |
 | Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech |
-| ChatWidget Mic (chat bubble) | ✅ Complete — upgraded to OpenAI Realtime API WebSocket (same as Voice Chat page) |
+| ChatWidget Mic (chat bubble) | ✅ Complete — Dictation mode (record → waveform → confirm/cancel → Whisper STT → text in input) |
 | Phase 3 — Performance (Lighthouse) | ⬜ Not started |
 | Phase 4 — SEO | ⬜ Not started |
 | Phase 5 — Cross-browser & Responsive | ⬜ Not started |
@@ -24,12 +24,17 @@
 1. **Ask user which phase to tackle next (3–6).** See `CLAUDE.md` for full phase specs.
 
    **What was done in Session 15:**
-   - ChatWidget mic (`src/components/chat/ChatWidget.tsx`) upgraded from old 3-step REST pipeline to OpenAI Realtime API WebSocket.
-   - Click mic → opens WebSocket to `ws://localhost:8001/ws/realtime` → streams PCM16 24kHz audio → server-side VAD detects speech → assistant responds with real-time audio + text transcript.
-   - Click mic again → closes WebSocket, stops capture/playback.
-   - Text chat (typing + send button) unchanged — still uses `/api/chat` streaming.
-   - `voiceApi` import removed from ChatWidget (old REST pipeline no longer used by any component; `src/lib/voiceApi.ts` kept in case needed later).
-   - `sendMessage()` simplified — removed `speakReply` parameter and the old TTS streaming logic.
+   - ChatWidget mic rewritten as a **dictation** feature (like ChatGPT's "Dictate" button):
+     - Click mic → recording starts, input bar transforms to show live waveform (AnalyserNode) + X (cancel) + ✓ (confirm)
+     - Click X → discard recording, return to normal input
+     - Click ✓ → stop recording, send to `/voice/transcribe-voice` (Whisper STT), transcribed text fills input field
+     - User then edits/sends text with the send arrow — **no auto-send**
+   - This is separate from the Voice Chat page (`/voice-chat`) which is full real-time speech-to-speech via WebSocket — **DO NOT TOUCH** that page.
+   - `voice-actor/main.py`: fixed Windows cp1252 crash — all `print()` statements now use ASCII-only text (no emojis, no raw Cyrillic). Added try/except error handling to `/transcribe-voice` endpoint.
+   - `sendMessage()` simplified — removed `speakReply` parameter and old TTS streaming logic.
+
+   **Known issue fixed in this session:**
+   - `voice-actor/main.py` print statements with emojis (✅) and Cyrillic text crashed on Windows cp1252 console encoding → `UnicodeEncodeError` → 500 to browser. Fixed by using ASCII-only prints: `print(f"[ASR] Transcript ({len(text)} chars)")` instead of printing the actual text.
 
 ---
 
@@ -37,7 +42,7 @@
 
 - **Focus ring contrast (WCAG 1.4.11)**: `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1 for UI). ~20 instances in form/card contexts. Deferred — flag before Phase 3 audit.
 - **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. `voice_service.py` aitil.kg TTS is better but requires Kyrgyz text. Low priority.
-- **ChatWidget mic upgraded to Realtime API**: Now uses the same WebSocket approach as the Voice Chat page. Latency ~0.5-1s.
+- **ChatWidget mic is dictation mode**: Records → Whisper STT → text in input. Uses `/voice/transcribe-voice` endpoint.
 - **WebSocket URL is hardcoded**: Voice-chat page connects to `ws://${hostname}:8001/ws/realtime` directly (Next.js HTTP rewrites don't reliably proxy WebSocket upgrades). Fine for thesis demo; would need a reverse proxy in production.
 
 ---
@@ -74,9 +79,9 @@
 ## Voice Integration Summary
 
 **Backend:** `voice-actor/main.py` (FastAPI on port 8001) — **one service, three endpoints:**
-- `POST /transcribe-voice` — Whisper-1 STT (legacy, no longer used by frontend)
-- `POST /generate-voice` — OpenAI TTS tts-1 + gTTS Kyrgyz fallback (legacy, no longer used by frontend)
-- `WS /ws/realtime` — WebSocket proxy to OpenAI Realtime API (used by both Voice Chat page and ChatWidget mic)
+- `POST /transcribe-voice` — Whisper-1 STT (used by ChatWidget dictation mic)
+- `POST /generate-voice` — OpenAI TTS tts-1 + gTTS Kyrgyz fallback (not currently used by frontend)
+- `WS /ws/realtime` — WebSocket proxy to OpenAI Realtime API (used by Voice Chat page only)
 
 **Run:** `cd voice-actor && python main.py` → listens on `http://127.0.0.1:8001`
 - Requires `OPENAI_API_KEY` in `voice-actor/.env`
@@ -88,11 +93,11 @@
 - Server-side VAD (no client-side VAD needed)
 - Latency: ~0.5-1s
 
-**ChatWidget mic (chat bubble)** — Real-time via Realtime API (same as Voice Chat page):
-- Click mic → opens WebSocket → streams PCM16 audio → server-side VAD → speech-to-speech response
-- Transcripts appear as chat messages; audio plays in real-time
-- Click mic again to end voice session
-- Latency: ~0.5-1s
+**ChatWidget mic (chat bubble)** — Dictation mode (like ChatGPT's "Dictate"):
+- Click mic → recording starts, waveform shown via AnalyserNode, X (cancel) + ✓ (confirm) buttons
+- Click ✓ → audio sent to `/voice/transcribe-voice` (Whisper STT) → transcribed text fills the input field
+- User clicks send arrow to send — no auto-send, no voice reply
+- Latency: ~2-3s (Whisper processing)
 
 **Language routing:** `src/lib/voiceApi.ts:detectLang()` — Kyrgyz-specific Unicode chars → `ky`, Cyrillic → `ru`, else → `en`. Sends `{ text, lang }` to TTS endpoint.
 
@@ -210,6 +215,7 @@ const GRADIENTS = [
 - **SVG pattern IDs must be unique per file** — duplicate IDs across pages cause pattern rendering bugs.
 - **blog/page.tsx is a client component** — cannot use `export const metadata`. Keep the inline comment noting this.
 - **`flex-1` inside `overflow-y-auto`** — always pair with `min-h-0` on the flex child, and use `el.scrollTop = el.scrollHeight` (not `scrollIntoView`) to confine scrolling to the container.
+- **Windows cp1252 kills non-ASCII `print()`** — `voice-actor/main.py` runs on Windows where the console defaults to cp1252. Any `print()` with emojis, Cyrillic, or other non-ASCII chars throws `UnicodeEncodeError` which becomes a 500 to the browser. **Never print raw user text or emojis in voice-actor.** Use `print(f"[ASR] Transcript ({len(text)} chars)")` style instead.
 
 ---
 
