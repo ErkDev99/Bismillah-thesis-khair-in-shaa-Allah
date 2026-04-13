@@ -21,11 +21,13 @@ const STATE_LABELS: Record<AppState, string> = {
   speaking: "Speaking\u2026",
 };
 
-// Voice-actor FastAPI runs on port 8001 — WebSocket connects directly
-// (Next.js HTTP rewrites don't reliably proxy WebSocket upgrades)
+// Voice-actor FastAPI — WebSocket connects directly
+// In production, use the Render backend; locally, connect to port 8001
 const WS_URL =
   typeof window !== "undefined"
-    ? `ws://${window.location.hostname}:8001/ws/realtime`
+    ? process.env.NEXT_PUBLIC_VOICE_WS_URL
+      ? process.env.NEXT_PUBLIC_VOICE_WS_URL.replace(/^https/, "wss").replace(/^http/, "ws") + "/ws/realtime"
+      : `ws://${window.location.hostname}:8001/ws/realtime`
     : "";
 
 // ── Audio helpers ────────────────────────────────────────────────────────────
