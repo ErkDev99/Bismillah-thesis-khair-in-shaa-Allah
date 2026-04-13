@@ -90,26 +90,22 @@ function HeroSection() {
         aria-hidden="true"
       />
 
-      {/* Top corner accents */}
-      <div className="absolute top-6 left-6 w-10 h-10 border-t-2 border-l-2 border-amber-500/40 z-10" aria-hidden="true" />
-      <div className="absolute top-6 right-6 w-10 h-10 border-t-2 border-r-2 border-amber-500/40 z-10" aria-hidden="true" />
-
-      <div className="relative z-10 px-4 max-w-4xl mx-auto py-16 md:py-20">
-        <div className="flex items-center justify-center gap-4 mb-6" aria-hidden="true">
+      <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
+        <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
           <div className="h-px w-12 md:w-20 bg-amber-500/60" />
           <span className="text-amber-400/80 text-xs tracking-[0.3em] uppercase">Since 2018</span>
           <div className="h-px w-12 md:w-20 bg-amber-500/60" />
         </div>
 
-        <p className="text-amber-300 text-sm font-semibold tracking-[0.2em] uppercase mb-5">
+        <p className="text-amber-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3">
           Our Story
         </p>
 
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-5 font-serif">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
           About <span className="text-amber-400">Wanderlust</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-stone-300 max-w-2xl mx-auto mb-8 leading-relaxed">
+        <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto mb-4 leading-relaxed">
           We&apos;re passionate travelers dedicated to sharing the hidden gems
           of Central Asia with the world.
         </p>

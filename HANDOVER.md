@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-13 (Session 16)*
+*Last updated: 2026-04-13 (Session 17)*
 
 ---
 
@@ -22,7 +22,16 @@
 
 ## Quick Start for Next Session
 
-1. **Ask user which phase to tackle next (3–6).** See `CLAUDE.md` for full phase specs.
+1. **Hero consistency fix complete.** All pages now match Home's standard: `text-3xl sm:text-4xl md:text-5xl`, `py-4 md:py-6`, description `text-base md:text-lg`. Fixed in Session 18: Destinations, About, Blog, Contact, Practical Info, FAQ, Privacy, Terms.
+
+2. **After hero consistency**, continue with Phase 3–6. See `CLAUDE.md` for full phase specs.
+
+   **What was done in Session 17:**
+   - **Vercel deployment fix**: Project had Output Directory misconfigured to "public" instead of `.next`. User had two Vercel projects — deleted the broken one, fixed the remaining one.
+   - **Voice chat production URL**: Updated `src/app/voice-chat/page.tsx` WS_URL to use `NEXT_PUBLIC_VOICE_WS_URL` env var (falls back to localhost:8001 for dev). Backend deployed on Render.
+   - **Voice chat scroll/viewport fix**: Page was rendering scrolled down with footer visible. Fixed by: `height: calc(100vh - 4rem)` (not minHeight), `overflow: hidden`, `window.scrollTo(0,0)` on mount, and hiding footer + body overflow via useEffect.
+   - **`voiceApi.ts` production URL**: `VOICE_BASE` now reads `NEXT_PUBLIC_VOICE_WS_URL` env var for Render backend HTTP endpoints.
+   - **Hero consistency (in progress)**: Home page is the reference. Tours page hero updated to match (H1 size, padding, description text). Destinations and About still need fixing.
 
    **What was done in Session 16:**
    - **Chat streaming fix**: `/api/chat/route.ts` SSE transform had a buffering bug — TCP chunks splitting mid-line caused dropped words in both Russian and English responses. Fixed by accumulating a line buffer across chunks + `flush()` handler.
@@ -38,7 +47,9 @@
 
 - **Focus ring contrast (WCAG 1.4.11)**: `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1 for UI). ~20 instances in form/card contexts. Deferred — flag before Phase 3 audit.
 - **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. Low priority.
-- **WebSocket URL is hardcoded**: Voice-chat page connects to `ws://${hostname}:8001/ws/realtime` directly. Fine for thesis demo; would need a reverse proxy in production.
+- **WebSocket URL**: Voice-chat page now uses `NEXT_PUBLIC_VOICE_WS_URL` env var for production (Render backend), falls back to `ws://localhost:8001` for dev. Backend deployed at `bismillah-thesis-khair-in-shaa-allah.onrender.com`.
+- **Hero size inconsistency**: ✅ Resolved — all pages now match Home's standard.
+- **Chat widget on Vercel needs OPENAI_API_KEY**: Without it, the API returns mock JSON responses and the streaming reader displays raw JSON. User needs to add `OPENAI_API_KEY` env var in Vercel project settings.
 
 ---
 

@@ -409,7 +409,7 @@ export default function ToursPage() {
   return (
     <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
       {/* Page Header */}
-      <section className="relative bg-stone-900 dark:bg-black text-white py-16 px-4 overflow-hidden">
+      <section className="relative bg-stone-900 dark:bg-black text-white py-4 md:py-6 px-4 overflow-hidden">
         {/* Art Deco geometric pattern overlay */}
         <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
           <svg width="100%" height="100%">
@@ -426,11 +426,11 @@ export default function ToursPage() {
           <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
             Curated Journeys
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-serif">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 font-serif leading-tight">
             Explore Our <span className="text-amber-400">Tours</span>
           </h1>
           <DiamondDivider className="mb-4" />
-          <p className="text-stone-300 max-w-2xl mx-auto text-lg">
+          <p className="text-stone-300 max-w-2xl mx-auto text-base md:text-lg">
             From cultural immersions to mountain expeditions, find the perfect
             adventure for your travel style.
           </p>

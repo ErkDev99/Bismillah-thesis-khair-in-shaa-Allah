@@ -71,20 +71,17 @@ function HeroSection() {
         aria-hidden="true"
       />
 
-      <div className="absolute top-6 left-6 w-10 h-10 border-t-2 border-l-2 border-amber-500/40 z-10" aria-hidden="true" />
-      <div className="absolute top-6 right-6 w-10 h-10 border-t-2 border-r-2 border-amber-500/40 z-10" aria-hidden="true" />
-
-      <div className="relative z-10 px-4 max-w-4xl mx-auto py-14 md:py-16">
-        <p className="text-amber-300 text-xs font-semibold tracking-[0.3em] uppercase mb-4">
+      <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
+        <p className="text-amber-300 text-xs font-semibold tracking-[0.3em] uppercase mb-2">
           Legal
         </p>
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-4 font-serif">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
           Privacy <span className="text-amber-400">Policy</span>
         </h1>
         <p className="text-stone-400 text-sm uppercase tracking-[0.2em]">
           Last updated: January 29, 2025
         </p>
-        <DiamondDivider className="mt-6" />
+        <DiamondDivider className="mt-4" />
       </div>
     </section>
   );

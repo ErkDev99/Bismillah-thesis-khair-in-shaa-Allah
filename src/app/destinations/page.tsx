@@ -198,7 +198,7 @@ export default function DestinationsPage() {
   return (
     <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
       {/* Hero Section */}
-      <section className="relative bg-stone-900 dark:bg-stone-950 text-white py-20 px-4 overflow-hidden" aria-labelledby="destinations-heading">
+      <section className="relative bg-stone-900 dark:bg-stone-950 text-white overflow-hidden" aria-labelledby="destinations-heading">
         {/* Geometric SVG Pattern */}
         <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
           <svg width="100%" height="100%">
@@ -212,22 +212,22 @@ export default function DestinationsPage() {
         {/* Radial Amber Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
-        <div className="relative max-w-7xl mx-auto text-center">
-          <p className="text-amber-400/70 uppercase tracking-[0.3em] text-xs mb-4" aria-hidden="true">
+        <div className="relative z-10 px-4 max-w-4xl mx-auto text-center py-4 md:py-6">
+          <p className="text-amber-400/70 uppercase tracking-[0.3em] text-xs mb-2" aria-hidden="true">
             Central Asia
           </p>
-          <h1 id="destinations-heading" className="font-serif text-4xl md:text-6xl font-bold mb-6">
+          <h1 id="destinations-heading" className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3">
             Explore Our Destinations
           </h1>
           {/* Diamond Divider */}
-          <div className="flex items-center justify-center gap-2 mb-6" aria-hidden="true">
+          <div className="flex items-center justify-center gap-2 mb-4" aria-hidden="true">
             <div className="h-px w-12 md:w-20 bg-amber-500/50" />
             <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
             <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
             <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
             <div className="h-px w-12 md:w-20 bg-amber-500/50" />
           </div>
-          <p className="text-amber-100/70 max-w-3xl mx-auto text-lg md:text-xl">
+          <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
             From the snow-capped peaks of the Tian Shan to the ancient Silk Road
             cities, discover the wonders of Central Asia.
           </p>
