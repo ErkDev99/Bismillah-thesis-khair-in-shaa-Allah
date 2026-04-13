@@ -393,18 +393,26 @@ export default function VoiceChatPage() {
   // Cleanup on unmount
   useEffect(() => () => endConversation(), [endConversation]);
 
+  // Scroll to top on mount and hide the footer (this is a full-screen page)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.body.style.overflow = "hidden";
+    const footer = document.querySelector("footer");
+    if (footer) footer.style.display = "none";
+    return () => {
+      document.body.style.overflow = "";
+      if (footer) footer.style.display = "";
+    };
+  }, []);
+
   // ── Render ──────────────────────────────────────────────────────────────────
 
   const inConversation = appState !== "idle";
 
   return (
     <div
-      className={`relative bg-amber-50 dark:bg-stone-950 flex flex-col ${inConversation ? "overflow-hidden" : "overflow-auto"}`}
-      style={
-        inConversation
-          ? { height: "calc(100vh - 4rem)" }
-          : { minHeight: "calc(100vh - 4rem)" }
-      }
+      className="relative bg-amber-50 dark:bg-stone-950 flex flex-col overflow-hidden"
+      style={{ height: "calc(100vh - 4rem)" }}
     >
       {/* Art Deco pattern */}
       <div
