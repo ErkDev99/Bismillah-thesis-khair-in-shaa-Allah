@@ -150,7 +150,7 @@ CRITICAL: This is a VOICE conversation. Reply in 1–2 short sentences only. Nev
 
 export async function POST(request: NextRequest) {
   try {
-    const { messages, voice } = await request.json();
+    const { messages, voice, streamTTS } = await request.json();
 
     // Check if API key is configured
     const apiKey = process.env.OPENAI_API_KEY;
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
 
     // Voice mode: return full JSON (TTS needs the complete text before it can speak)
     // Text mode: stream tokens so the UI can display them as they arrive
-    const useStream = !voice;
+    const useStream = !voice || !!streamTTS;
 
     const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",

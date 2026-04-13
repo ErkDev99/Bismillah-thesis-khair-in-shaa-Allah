@@ -11,7 +11,11 @@
       "Bash('/c/Program Files/nodejs/npx.cmd' tsc --noEmit)",
       "Bash(node ./node_modules/.bin/tsc --noEmit)",
       "Bash(./node_modules/.bin/tsc.cmd --noEmit)",
-      "Bash(\"/c/Program Files/nodejs/node\" ./node_modules/typescript/bin/tsc --noEmit)"
+      "Bash(\"/c/Program Files/nodejs/node\" ./node_modules/typescript/bin/tsc --noEmit)",
+      "Bash(npx next:*)",
+      "Bash(where npm:*)",
+      "Bash(\"C:\\\\Program Files\\\\nodejs\\\\npx.cmd\" tsc --noEmit)",
+      "Bash(pip install:*)"
     ]
   }
 }

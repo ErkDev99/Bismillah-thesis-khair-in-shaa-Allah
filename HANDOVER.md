@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-12 (Session 11)*
+*Last updated: 2026-04-13 (Session 15)*
 
 ---
 
@@ -10,7 +10,8 @@
 |-------|--------|
 | Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete |
 | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |
-| Voice Chat Integration | ✅ Code complete — needs browser test + commit |
+| Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech |
+| ChatWidget Mic (chat bubble) | ✅ Complete — upgraded to OpenAI Realtime API WebSocket (same as Voice Chat page) |
 | Phase 3 — Performance (Lighthouse) | ⬜ Not started |
 | Phase 4 — SEO | ⬜ Not started |
 | Phase 5 — Cross-browser & Responsive | ⬜ Not started |
@@ -20,22 +21,15 @@
 
 ## Quick Start for Next Session
 
-1. **Browser test + commit voice integration** (still uncommitted):
-   ```bash
-   # Terminal 1:
-   cd voice-actor && python main.py
-   # Terminal 2:
-   npm run dev
-   ```
-   Test: ChatWidget mic button (any page) + `/voice-chat` immersive page.
-   Then commit:
-   ```bash
-   git add voice-actor src/lib/voiceApi.ts src/app/voice-chat src/components/chat/ChatWidget.tsx next.config.ts HANDOVER.md
-   git commit -m "Add voice chat: STT/TTS, ChatWidget mic, /voice-chat immersive mode, language routing"
-   git push
-   ```
+1. **Ask user which phase to tackle next (3–6).** See `CLAUDE.md` for full phase specs.
 
-2. **After voice is committed**, ask user which phase to tackle next (3–6). See `CLAUDE.md` for full phase specs.
+   **What was done in Session 15:**
+   - ChatWidget mic (`src/components/chat/ChatWidget.tsx`) upgraded from old 3-step REST pipeline to OpenAI Realtime API WebSocket.
+   - Click mic → opens WebSocket to `ws://localhost:8001/ws/realtime` → streams PCM16 24kHz audio → server-side VAD detects speech → assistant responds with real-time audio + text transcript.
+   - Click mic again → closes WebSocket, stops capture/playback.
+   - Text chat (typing + send button) unchanged — still uses `/api/chat` streaming.
+   - `voiceApi` import removed from ChatWidget (old REST pipeline no longer used by any component; `src/lib/voiceApi.ts` kept in case needed later).
+   - `sendMessage()` simplified — removed `speakReply` parameter and the old TTS streaming logic.
 
 ---
 
@@ -43,7 +37,8 @@
 
 - **Focus ring contrast (WCAG 1.4.11)**: `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1 for UI). ~20 instances in form/card contexts. Deferred — flag before Phase 3 audit.
 - **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. `voice_service.py` aitil.kg TTS is better but requires Kyrgyz text. Low priority.
-- **VAD sensitivity**: `SPEECH_THRESHOLD = 0.018` RMS may need tuning per mic/environment.
+- **ChatWidget mic upgraded to Realtime API**: Now uses the same WebSocket approach as the Voice Chat page. Latency ~0.5-1s.
+- **WebSocket URL is hardcoded**: Voice-chat page connects to `ws://${hostname}:8001/ws/realtime` directly (Next.js HTTP rewrites don't reliably proxy WebSocket upgrades). Fine for thesis demo; would need a reverse proxy in production.
 
 ---
 
@@ -71,16 +66,33 @@
 
 **DO NOT TOUCH:**
 - `src/app/globals.css` — caused horizontal overflow bug TWICE. `git reset --hard` both times.
-- `src/components/chat/ChatWidget.tsx` — Chat bubble is working correctly: positioned bottom-right, does NOT cover page content/descriptions. Do not touch until user explicitly asks.
+- `src/app/voice-chat/page.tsx` — Voice Chat page is complete: OpenAI Realtime API, WebSocket, real-time speech-to-speech. Works excellently. Do not touch.
+- `voice-actor/main.py` — Backend with REST + WebSocket proxy endpoints. All working. Do not touch.
 
 ---
 
 ## Voice Integration Summary
 
-**Recommended backend:** `voice-actor/main.py` (OpenAI Whisper-1 STT + OpenAI TTS tts-1 + gTTS fallback for Kyrgyz)
-- Run: `cd voice-actor && python main.py` → listens on `http://127.0.0.1:8001`
+**Backend:** `voice-actor/main.py` (FastAPI on port 8001) — **one service, three endpoints:**
+- `POST /transcribe-voice` — Whisper-1 STT (legacy, no longer used by frontend)
+- `POST /generate-voice` — OpenAI TTS tts-1 + gTTS Kyrgyz fallback (legacy, no longer used by frontend)
+- `WS /ws/realtime` — WebSocket proxy to OpenAI Realtime API (used by both Voice Chat page and ChatWidget mic)
+
+**Run:** `cd voice-actor && python main.py` → listens on `http://127.0.0.1:8001`
 - Requires `OPENAI_API_KEY` in `voice-actor/.env`
-- Next.js rewrites `/voice/:path*` → `http://localhost:8001/:path*` (see `next.config.ts`)
+- Next.js rewrites `/voice/:path*` → `http://localhost:8001/:path*` for REST endpoints (see `next.config.ts`)
+- WebSocket connects directly to `ws://localhost:8001/ws/realtime` (bypasses Next.js rewrites)
+
+**Voice Chat page (`/voice-chat`)** — Real-time, like ChatGPT/Claude voice:
+- Opens WebSocket → streams mic audio as PCM16 24kHz → OpenAI Realtime API processes speech-to-speech → audio streams back
+- Server-side VAD (no client-side VAD needed)
+- Latency: ~0.5-1s
+
+**ChatWidget mic (chat bubble)** — Real-time via Realtime API (same as Voice Chat page):
+- Click mic → opens WebSocket → streams PCM16 audio → server-side VAD → speech-to-speech response
+- Transcripts appear as chat messages; audio plays in real-time
+- Click mic again to end voice session
+- Latency: ~0.5-1s
 
 **Language routing:** `src/lib/voiceApi.ts:detectLang()` — Kyrgyz-specific Unicode chars → `ky`, Cyrillic → `ru`, else → `en`. Sends `{ text, lang }` to TTS endpoint.
 

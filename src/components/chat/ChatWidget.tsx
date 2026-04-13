@@ -1,14 +1,43 @@
 // src/components/chat/ChatWidget.tsx
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { voiceApi } from "@/lib/voiceApi";
 
 interface Message {
   id: number;
   role: "user" | "assistant";
   content: string;
+}
+
+// WebSocket URL — same proxy the voice-chat page uses
+const WS_URL =
+  typeof window !== "undefined"
+    ? `ws://${window.location.hostname}:8001/ws/realtime`
+    : "";
+
+// ── Audio helpers (same as voice-chat page) ─────────────────────────────────
+
+function float32ToPcm16Base64(float32: Float32Array): string {
+  const pcm16 = new Int16Array(float32.length);
+  for (let i = 0; i < float32.length; i++) {
+    const s = Math.max(-1, Math.min(1, float32[i]));
+    pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+  }
+  const bytes = new Uint8Array(pcm16.buffer);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+function base64Pcm16ToFloat32(b64: string): Float32Array {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const int16 = new Int16Array(bytes.buffer);
+  const float32 = new Float32Array(int16.length);
+  for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 0x8000;
+  return float32;
 }
 
 export default function ChatWidget() {
@@ -28,13 +57,22 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Voice chat state
-  const [isRecording, setIsRecording] = useState(false);
+  // Voice session state (Realtime API WebSocket)
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [voiceError, setVoiceError] = useState("");
-  const mediaRecRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Refs for voice session
+  const wsRef = useRef<WebSocket | null>(null);
+  const captureCtxRef = useRef<AudioContext | null>(null);
+  const playbackCtxRef = useRef<AudioContext | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const playbackTimeRef = useRef(0);
+  const scheduledRef = useRef<AudioBufferSourceNode[]>([]);
+  const assistantIdRef = useRef<number | null>(null);
+  const assistantTextRef = useRef("");
+  const voiceActiveRef = useRef(false);
 
   // Track whether user has scrolled past the hero — hide prompt when back above the fold
   useEffect(() => {
@@ -94,7 +132,9 @@ export default function ChatWidget() {
     setIsOpen(true);
   };
 
-  const sendMessage = async (text: string, speakReply: boolean) => {
+  // ── Text chat: send message via /api/chat (streaming) ────────────────────
+
+  const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
 
@@ -116,65 +156,31 @@ export default function ChatWidget() {
             role: m.role,
             content: m.content,
           })),
-          voice: speakReply,
         }),
       });
 
       if (!response.ok) throw new Error("Failed to get response");
 
-      if (speakReply) {
-        // Voice mode: full JSON response (TTS needs complete text)
-        const data = await response.json();
-        const replyText: string = data.message ?? "";
+      const assistantId = Date.now() + 1;
+      setMessages((prev) => [
+        ...prev,
+        { id: assistantId, role: "assistant", content: "" },
+      ]);
 
-        setMessages((prev) => [
-          ...prev,
-          { id: Date.now() + 1, role: "assistant", content: replyText },
-        ]);
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
 
-        if (replyText) {
-          try {
-            const audioUrl = await voiceApi.synthesize(replyText);
-            const audio = new Audio(audioUrl);
-            audioRef.current = audio;
-            const cleanup = () => {
-              URL.revokeObjectURL(audioUrl);
-              audioRef.current = null;
-              setIsPlayingAudio(false);
-            };
-            audio.onended = cleanup;
-            audio.onerror = cleanup;
-            setIsPlayingAudio(true);
-            await audio.play();
-          } catch (ttsErr) {
-            console.error("TTS error:", ttsErr);
-            setIsPlayingAudio(false);
-            setVoiceError("Could not play voice reply. Text reply is shown above.");
-          }
-        }
-      } else {
-        // Text mode: streaming response — add empty bubble, fill as tokens arrive
-        const assistantId = Date.now() + 1;
-        setMessages((prev) => [
-          ...prev,
-          { id: assistantId, role: "assistant", content: "" },
-        ]);
-
-        const reader = response.body!.getReader();
-        const decoder = new TextDecoder();
-        let fullText = "";
-
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          fullText += decoder.decode(value, { stream: true });
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId ? { ...m, content: fullText } : m
-            )
-          );
-        }
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        fullText += decoder.decode(value, { stream: true });
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, content: fullText } : m
+          )
+        );
       }
     } catch (error) {
       console.error("Chat error:", error);
@@ -197,69 +203,255 @@ export default function ChatWidget() {
     const text = input.trim();
     if (!text || isLoading) return;
     setInput("");
-    await sendMessage(text, false);
+    await sendMessage(text);
   };
 
-  // --- Voice chat: press-and-hold mic → transcribe → send → auto-TTS reply ---
+  // ── Realtime API voice session ────────────────────────────────────────────
 
-  const startRecording = async () => {
-    if (isRecording || isLoading) return;
-    setVoiceError("");
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mr = new MediaRecorder(stream);
-      chunksRef.current = [];
-      mr.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-      mr.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        try {
-          const text = await voiceApi.transcribe(blob);
-          if (text && text.trim()) {
-            await sendMessage(text, true);
-          } else {
-            setVoiceError("No speech detected. Try again.");
+  const stopPlayback = useCallback(() => {
+    for (const s of scheduledRef.current) {
+      try { s.stop(); } catch { /* already stopped */ }
+    }
+    scheduledRef.current = [];
+    playbackTimeRef.current = 0;
+  }, []);
+
+  const playChunk = useCallback((b64: string) => {
+    const ctx = playbackCtxRef.current;
+    if (!ctx || ctx.state === "closed") return;
+
+    const samples = base64Pcm16ToFloat32(b64);
+    if (samples.length === 0) return;
+
+    const buf = ctx.createBuffer(1, samples.length, 24000);
+    buf.getChannelData(0).set(samples);
+
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+
+    const now = ctx.currentTime;
+    if (playbackTimeRef.current < now) playbackTimeRef.current = now;
+    src.start(playbackTimeRef.current);
+    playbackTimeRef.current += buf.duration;
+
+    scheduledRef.current.push(src);
+    src.onended = () => {
+      scheduledRef.current = scheduledRef.current.filter((s) => s !== src);
+    };
+  }, []);
+
+  const handleWsMessage = useCallback(
+    (ev: MessageEvent) => {
+      let data: Record<string, unknown>;
+      try {
+        data = JSON.parse(ev.data as string);
+      } catch {
+        return;
+      }
+
+      switch (data.type) {
+        case "session.created":
+        case "session.updated":
+          // Session ready — mic is streaming
+          break;
+
+        case "input_audio_buffer.speech_started":
+          // User interrupted — stop assistant playback
+          stopPlayback();
+          setIsPlayingAudio(false);
+          if (assistantIdRef.current) {
+            assistantIdRef.current = null;
+            assistantTextRef.current = "";
           }
-        } catch (err) {
-          console.error("Voice transcription error:", err);
-          setVoiceError("Could not transcribe audio. Is the voice service running?");
+          break;
+
+        case "conversation.item.input_audio_transcription.completed": {
+          const transcript = (data.transcript as string | undefined)?.trim();
+          if (transcript) {
+            setMessages((prev) => [
+              ...prev,
+              { id: Date.now(), role: "user", content: transcript },
+            ]);
+          }
+          break;
+        }
+
+        case "response.audio.delta":
+          if (!isPlayingAudio) setIsPlayingAudio(true);
+          if (data.delta) playChunk(data.delta as string);
+          break;
+
+        case "response.audio_transcript.delta": {
+          const delta = (data.delta as string) || "";
+          assistantTextRef.current += delta;
+
+          if (!assistantIdRef.current) {
+            const id = Date.now();
+            assistantIdRef.current = id;
+            setMessages((prev) => [
+              ...prev,
+              { id, role: "assistant", content: assistantTextRef.current },
+            ]);
+          } else {
+            const id = assistantIdRef.current;
+            const text = assistantTextRef.current;
+            setMessages((prev) =>
+              prev.map((m) => (m.id === id ? { ...m, content: text } : m))
+            );
+          }
+          break;
+        }
+
+        case "response.done": {
+          assistantIdRef.current = null;
+          assistantTextRef.current = "";
+
+          // Wait for queued audio to finish
+          const ctx = playbackCtxRef.current;
+          if (ctx && playbackTimeRef.current > ctx.currentTime) {
+            const delay =
+              (playbackTimeRef.current - ctx.currentTime) * 1000 + 150;
+            setTimeout(() => {
+              setIsPlayingAudio(false);
+            }, delay);
+          } else {
+            setIsPlayingAudio(false);
+          }
+          break;
+        }
+
+        case "error": {
+          const errObj = data.error as { message?: string } | undefined;
+          setVoiceError(errObj?.message || "Realtime API error");
+          break;
+        }
+      }
+    },
+    [stopPlayback, playChunk, isPlayingAudio]
+  );
+
+  const stopVoiceSession = useCallback(() => {
+    stopPlayback();
+
+    if (processorRef.current) {
+      processorRef.current.disconnect();
+      processorRef.current = null;
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    if (captureCtxRef.current) {
+      captureCtxRef.current.close();
+      captureCtxRef.current = null;
+    }
+    if (playbackCtxRef.current) {
+      playbackCtxRef.current.close();
+      playbackCtxRef.current = null;
+    }
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+
+    assistantIdRef.current = null;
+    assistantTextRef.current = "";
+    voiceActiveRef.current = false;
+    setIsVoiceActive(false);
+    setIsPlayingAudio(false);
+  }, [stopPlayback]);
+
+  const startVoiceSession = async () => {
+    if (isVoiceActive || isLoading) return;
+    setVoiceError("");
+
+    try {
+      // 1. Get mic access
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+      streamRef.current = stream;
+
+      // 2. AudioContexts — 24 kHz to match OpenAI Realtime PCM16 format
+      const captureCtx = new AudioContext({ sampleRate: 24000 });
+      captureCtxRef.current = captureCtx;
+
+      const playbackCtx = new AudioContext({ sampleRate: 24000 });
+      playbackCtxRef.current = playbackCtx;
+
+      // 3. Open WebSocket to the FastAPI proxy
+      const ws = new WebSocket(WS_URL);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        // Start streaming mic PCM16 to OpenAI via the proxy
+        const source = captureCtx.createMediaStreamSource(stream);
+        const processor = captureCtx.createScriptProcessor(4096, 1, 1);
+        processorRef.current = processor;
+
+        processor.onaudioprocess = (e) => {
+          if (ws.readyState !== WebSocket.OPEN) return;
+          const input = e.inputBuffer.getChannelData(0);
+          ws.send(
+            JSON.stringify({
+              type: "input_audio_buffer.append",
+              audio: float32ToPcm16Base64(input),
+            })
+          );
+        };
+
+        // Connect through a silent gain node so the processor fires
+        // but doesn't route mic audio back to speakers
+        const silencer = captureCtx.createGain();
+        silencer.gain.value = 0;
+        source.connect(processor);
+        processor.connect(silencer);
+        silencer.connect(captureCtx.destination);
+      };
+
+      ws.onmessage = handleWsMessage;
+
+      ws.onerror = () => {
+        setVoiceError("WebSocket error. Is the voice service running on port 8001?");
+        stopVoiceSession();
+      };
+
+      ws.onclose = (e) => {
+        if (voiceActiveRef.current) {
+          if (e.reason) setVoiceError(e.reason);
+          voiceActiveRef.current = false;
+          setIsVoiceActive(false);
+          setIsPlayingAudio(false);
         }
       };
-      mr.start();
-      mediaRecRef.current = mr;
-      setIsRecording(true);
+
+      voiceActiveRef.current = true;
+      setIsVoiceActive(true);
     } catch {
       setVoiceError("Microphone access denied. Please allow microphone permission.");
+      stopVoiceSession();
     }
   };
 
-  const stopRecording = () => {
-    if (!isRecording || !mediaRecRef.current) return;
-    try {
-      mediaRecRef.current.stop();
-    } catch {
-      // noop — stop() may throw if already inactive
-    }
-    mediaRecRef.current = null;
-    setIsRecording(false);
-  };
-
-  // Cleanup on unmount: stop any in-flight recording or audio playback
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      if (mediaRecRef.current && mediaRecRef.current.state !== "inactive") {
-        try {
-          mediaRecRef.current.stop();
-        } catch {
-          // noop
+      if (voiceActiveRef.current) {
+        // Inline cleanup to avoid stale closure issues
+        for (const s of scheduledRef.current) {
+          try { s.stop(); } catch { /* */ }
         }
-        mediaRecRef.current = null;
+        scheduledRef.current = [];
+        processorRef.current?.disconnect();
+        streamRef.current?.getTracks().forEach((t) => t.stop());
+        captureCtxRef.current?.close();
+        playbackCtxRef.current?.close();
+        wsRef.current?.close();
       }
     };
   }, []);
@@ -392,7 +584,7 @@ export default function ChatWidget() {
             <div className="flex-1">
               <h3 id="chat-dialog-title" className="font-semibold font-serif">Wanderlust Assistant</h3>
               <p className="text-amber-400/70 text-xs uppercase tracking-wider" aria-live="polite">
-                {isLoading ? "Typing..." : "Online"}
+                {isLoading ? "Typing..." : isVoiceActive ? "Voice active" : "Online"}
               </p>
             </div>
             <Link
@@ -469,7 +661,7 @@ export default function ChatWidget() {
           </div>
 
           {/* Voice status strip (recording / playback / errors) */}
-          {(isRecording || isPlayingAudio || voiceError) && (
+          {(isVoiceActive || isPlayingAudio || voiceError) && (
             <div
               className="flex-shrink-0 px-3 py-2 bg-stone-900 dark:bg-black border-t border-amber-500/20 text-xs uppercase tracking-[0.2em]"
               role="status"
@@ -479,17 +671,17 @@ export default function ChatWidget() {
                 <p className="text-red-300" role="alert">
                   {voiceError}
                 </p>
-              ) : isRecording ? (
-                <p className="text-amber-400 flex items-center gap-2">
-                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
-                  Recording — click mic to send
-                </p>
-              ) : (
+              ) : isPlayingAudio ? (
                 <p className="text-amber-400 flex items-center gap-2">
                   <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" aria-hidden="true" />
-                  Speaking…
+                  Speaking...
                 </p>
-              )}
+              ) : isVoiceActive ? (
+                <p className="text-amber-400 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" aria-hidden="true" />
+                  Listening — speak naturally
+                </p>
+              ) : null}
             </div>
           )}
 
@@ -509,19 +701,19 @@ export default function ChatWidget() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about tours, destinations..."
                 className="flex-1 px-4 py-2 border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-200 placeholder-stone-500 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-400 focus:border-transparent text-sm"
-                disabled={isLoading || isRecording}
+                disabled={isLoading || isVoiceActive}
               />
               <button
                 type="button"
-                onClick={() => (isRecording ? stopRecording() : startRecording())}
+                onClick={() => (isVoiceActive ? stopVoiceSession() : startVoiceSession())}
                 disabled={isLoading}
-                aria-label={isRecording ? "Stop recording and send" : "Click to start recording"}
-                aria-pressed={isRecording}
+                aria-label={isVoiceActive ? "Stop voice session" : "Start voice session"}
+                aria-pressed={isVoiceActive}
                 className={[
                   "w-10 h-10 flex items-center justify-center transition-colors",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900",
                   "disabled:opacity-50 disabled:cursor-not-allowed",
-                  isRecording
+                  isVoiceActive
                     ? "bg-red-600 hover:bg-red-700 text-white shadow-[0_0_0_4px_rgba(220,38,38,0.25)]"
                     : "bg-white dark:bg-stone-800 border border-amber-500/60 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-stone-700",
                 ].join(" ")}
@@ -545,7 +737,7 @@ export default function ChatWidget() {
               </button>
               <button
                 type="submit"
-                disabled={isLoading || isRecording || !input.trim()}
+                disabled={isLoading || isVoiceActive || !input.trim()}
                 className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-stone-300 disabled:to-stone-300 dark:disabled:from-stone-600 dark:disabled:to-stone-600 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
                 aria-label="Send message"
               >

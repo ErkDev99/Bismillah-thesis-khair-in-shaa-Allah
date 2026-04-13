@@ -2,316 +2,467 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { voiceApi } from "@/lib/voiceApi";
 import styles from "./sora.module.css";
 
-type AppState = "idle" | "listening" | "recording" | "thinking" | "speaking";
+type AppState = "idle" | "connecting" | "listening" | "recording" | "thinking" | "speaking";
 
 interface ChatMessage {
+  id: number;
   role: "user" | "assistant";
   content: string;
 }
 
 const STATE_LABELS: Record<AppState, string> = {
   idle: "Press Start to begin",
-  listening: "Listening…",
-  recording: "Hearing you…",
-  thinking: "Thinking…",
-  speaking: "Speaking…",
+  connecting: "Connecting\u2026",
+  listening: "Listening\u2026",
+  recording: "Hearing you\u2026",
+  thinking: "Thinking\u2026",
+  speaking: "Speaking\u2026",
 };
 
-// VAD tuning
-const SPEECH_THRESHOLD = 0.018;
-const SILENCE_MS       = 1400;
-const MIN_SPEECH_MS    = 350;
+// Voice-actor FastAPI runs on port 8001 — WebSocket connects directly
+// (Next.js HTTP rewrites don't reliably proxy WebSocket upgrades)
+const WS_URL =
+  typeof window !== "undefined"
+    ? `ws://${window.location.hostname}:8001/ws/realtime`
+    : "";
 
-// ─── Animated orb ────────────────────────────────────────────────────────────
+// ── Audio helpers ────────────────────────────────────────────────────────────
+
+function float32ToPcm16Base64(float32: Float32Array): string {
+  const pcm16 = new Int16Array(float32.length);
+  for (let i = 0; i < float32.length; i++) {
+    const s = Math.max(-1, Math.min(1, float32[i]));
+    pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+  }
+  const bytes = new Uint8Array(pcm16.buffer);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
+function base64Pcm16ToFloat32(b64: string): Float32Array {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const int16 = new Int16Array(bytes.buffer);
+  const float32 = new Float32Array(int16.length);
+  for (let i = 0; i < int16.length; i++) float32[i] = int16[i] / 0x8000;
+  return float32;
+}
+
+// ── Animated orb (reuses sora.module.css) ────────────────────────────────────
+
 function SoraBall({ state }: { state: AppState }) {
-  const active   = state !== "idle";
-  const thinking = state === "thinking";
+  const active = state !== "idle" && state !== "connecting";
+  const thinking = state === "thinking" || state === "connecting";
 
   const ballClass =
-    state === "recording" ? styles.ballRecording
-    : state === "thinking" ? styles.ballThinking
-    : state === "speaking" ? styles.ballSpeaking
-    : styles.ballIdle;
+    state === "recording"
+      ? styles.ballRecording
+      : state === "thinking" || state === "connecting"
+        ? styles.ballThinking
+        : state === "speaking"
+          ? styles.ballSpeaking
+          : styles.ballIdle;
 
   return (
     <div className={styles.wrapper} aria-hidden="true">
-      <div className={[styles.ring, styles.ring2, active ? styles.ringActive : "", thinking ? styles.ringThinking : ""].filter(Boolean).join(" ")} />
-      <div className={[styles.ring, styles.ring1, active ? styles.ringActive : "", thinking ? `${styles.ringThinking} ${styles.ringThinkingReverse}` : ""].filter(Boolean).join(" ")} />
+      <div
+        className={[
+          styles.ring,
+          styles.ring2,
+          active ? styles.ringActive : "",
+          thinking ? styles.ringThinking : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      />
+      <div
+        className={[
+          styles.ring,
+          styles.ring1,
+          active ? styles.ringActive : "",
+          thinking
+            ? `${styles.ringThinking} ${styles.ringThinkingReverse}`
+            : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      />
       <div className={`${styles.ball} ${ballClass}`} />
     </div>
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ── Page ─────────────────────────────────────────────────────────────────────
+
 export default function VoiceChatPage() {
   const [appState, setAppState] = useState<AppState>("idle");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [error,    setError]    = useState("");
+  const [error, setError] = useState("");
 
-  // Ref-mirror of appState for RAF callbacks
-  const stateRef         = useRef<AppState>("idle");
-  const messagesRef      = useRef<ChatMessage[]>([]);
-  const streamRef        = useRef<MediaStream | null>(null);
-  const audioCtxRef      = useRef<AudioContext | null>(null);
-  const analyserRef      = useRef<AnalyserNode | null>(null);
-  const rafRef           = useRef<number | null>(null);
-  const mediaRecRef      = useRef<MediaRecorder | null>(null);
-  const chunksRef        = useRef<Blob[]>([]);
-  const audioRef         = useRef<HTMLAudioElement | null>(null);
-  const speechStartRef   = useRef<number | null>(null);
-  const silenceStartRef  = useRef<number | null>(null);
-  const busyRef          = useRef(false);
-  const logEndRef        = useRef<HTMLDivElement>(null);
-  const logContainerRef  = useRef<HTMLDivElement>(null);
+  // Refs that need to survive across renders / callbacks
+  const stateRef = useRef<AppState>("idle");
+  const wsRef = useRef<WebSocket | null>(null);
+  const captureCtxRef = useRef<AudioContext | null>(null);
+  const playbackCtxRef = useRef<AudioContext | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const playbackTimeRef = useRef(0);
+  const scheduledRef = useRef<AudioBufferSourceNode[]>([]);
+  const assistantIdRef = useRef<number | null>(null);
+  const assistantTextRef = useRef("");
+  const logContainerRef = useRef<HTMLDivElement>(null);
 
   const transition = useCallback((next: AppState) => {
     stateRef.current = next;
     setAppState(next);
   }, []);
 
-  // Keep messagesRef in sync
-  useEffect(() => { messagesRef.current = messages; }, [messages]);
-
-  // Auto-scroll conversation log — scroll INSIDE the container only, not the page
+  // Auto-scroll conversation log
   useEffect(() => {
-    const container = logContainerRef.current;
-    if (container) container.scrollTop = container.scrollHeight;
+    const c = logContainerRef.current;
+    if (c) c.scrollTop = c.scrollHeight;
   }, [messages]);
 
-  // ── Stop recording ──────────────────────────────────────────────────────────
-  const stopRecording = useCallback(() => {
-    if (mediaRecRef.current && mediaRecRef.current.state !== "inactive") {
-      mediaRecRef.current.stop();
+  // ── Playback helpers ────────────────────────────────────────────────────────
+
+  const stopPlayback = useCallback(() => {
+    for (const s of scheduledRef.current) {
+      try { s.stop(); } catch { /* already stopped */ }
     }
-    mediaRecRef.current = null;
+    scheduledRef.current = [];
+    playbackTimeRef.current = 0;
   }, []);
 
-  // ── Process audio → transcribe → chat → TTS ────────────────────────────────
-  const processAudio = useCallback(async (blob: Blob) => {
-    busyRef.current = true;
-    transition("thinking");
-    setError("");
+  const playChunk = useCallback((b64: string) => {
+    const ctx = playbackCtxRef.current;
+    if (!ctx || ctx.state === "closed") return;
 
-    try {
-      // 1. Transcribe
-      const text = await voiceApi.transcribe(blob);
-      if (!text?.trim()) {
-        busyRef.current = false;
-        transition("listening");
-        return;
-      }
+    const samples = base64Pcm16ToFloat32(b64);
+    if (samples.length === 0) return;
 
-      // Add user message
-      const userMsg: ChatMessage = { role: "user", content: text };
-      setMessages(prev => [...prev, userMsg]);
+    const buf = ctx.createBuffer(1, samples.length, 24000);
+    buf.getChannelData(0).set(samples);
 
-      // 2. Chat — pass full conversation history for context
-      const allMessages = [...messagesRef.current, userMsg];
-      const chatRes = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          voice: true,  // use short voice-optimised prompt + 80 max_tokens
-          messages: allMessages.map(m => ({ role: m.role, content: m.content })),
-        }),
-      });
-      if (!chatRes.ok) throw new Error(`Chat error ${chatRes.status}`);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
 
-      const { message: answer = "" } = (await chatRes.json()) as { message?: string };
+    const now = ctx.currentTime;
+    if (playbackTimeRef.current < now) playbackTimeRef.current = now;
+    src.start(playbackTimeRef.current);
+    playbackTimeRef.current += buf.duration;
 
-      // Add assistant message
-      if (answer) {
-        setMessages(prev => [...prev, { role: "assistant", content: answer }]);
-      }
-
-      if (!answer) {
-        busyRef.current = false;
-        transition("listening");
-        return;
-      }
-
-      // 3. TTS — speak the reply
-      const audioUrl = await voiceApi.synthesize(answer);
-      const audio    = new Audio(audioUrl);
-      audioRef.current = audio;
-      transition("speaking");
-
-      const resume = () => {
-        URL.revokeObjectURL(audioUrl);
-        audioRef.current = null;
-        busyRef.current  = false;
-        speechStartRef.current  = null;
-        silenceStartRef.current = null;
-        transition("listening");
-      };
-      audio.onended = resume;
-      audio.onerror = resume;
-      await audio.play();
-
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-      busyRef.current = false;
-      transition("listening");
-    }
-  }, [transition]);
-
-  // ── Start recording when VAD detects speech ─────────────────────────────────
-  const startRecording = useCallback(() => {
-    if (!streamRef.current || busyRef.current) return;
-    if (mediaRecRef.current) return;
-
-    chunksRef.current       = [];
-    speechStartRef.current  = Date.now();
-    silenceStartRef.current = null;
-
-    const mr = new MediaRecorder(streamRef.current);
-    mr.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-    mr.onstop = async () => {
-      const dur = speechStartRef.current ? Date.now() - speechStartRef.current : 0;
-      if (dur >= MIN_SPEECH_MS && chunksRef.current.length > 0) {
-        await processAudio(new Blob(chunksRef.current, { type: "audio/webm" }));
-      } else {
-        busyRef.current = false;
-        transition("listening");
-      }
+    scheduledRef.current.push(src);
+    src.onended = () => {
+      scheduledRef.current = scheduledRef.current.filter((s) => s !== src);
     };
-    mr.start();
-    mediaRecRef.current = mr;
-    transition("recording");
-  }, [processAudio, transition]);
+  }, []);
 
-  // ── VAD loop ────────────────────────────────────────────────────────────────
-  const runVAD = useCallback(() => {
-    const analyser = analyserRef.current;
-    if (!analyser) return;
-    const data = new Uint8Array(analyser.fftSize);
+  // ── Handle messages from OpenAI (proxied via FastAPI) ───────────────────────
 
-    const tick = () => {
-      rafRef.current = requestAnimationFrame(tick);
-      const st = stateRef.current;
-      if (st === "thinking" || st === "speaking" || st === "idle") return;
-
-      analyser.getByteTimeDomainData(data);
-      let sum = 0;
-      for (let i = 0; i < data.length; i++) {
-        const v = (data[i] - 128) / 128;
-        sum += v * v;
+  const handleWsMessage = useCallback(
+    (ev: MessageEvent) => {
+      let data: Record<string, unknown>;
+      try {
+        data = JSON.parse(ev.data as string);
+      } catch {
+        return;
       }
-      const rms = Math.sqrt(sum / data.length);
-      const isSpeech = rms > SPEECH_THRESHOLD;
 
-      if (st === "listening") {
-        if (isSpeech) startRecording();
-      } else if (st === "recording") {
-        if (!isSpeech) {
-          if (silenceStartRef.current === null) {
-            silenceStartRef.current = Date.now();
-          } else if (Date.now() - silenceStartRef.current > SILENCE_MS) {
-            silenceStartRef.current = null;
-            stopRecording();
+      switch (data.type) {
+        case "session.created":
+        case "session.updated":
+          if (stateRef.current === "connecting") transition("listening");
+          break;
+
+        case "input_audio_buffer.speech_started":
+          // User interrupted — stop assistant playback
+          stopPlayback();
+          if (assistantIdRef.current) {
+            assistantIdRef.current = null;
+            assistantTextRef.current = "";
           }
-        } else {
-          silenceStartRef.current = null;
+          transition("recording");
+          break;
+
+        case "input_audio_buffer.speech_stopped":
+          transition("thinking");
+          break;
+
+        case "conversation.item.input_audio_transcription.completed": {
+          const transcript = (data.transcript as string | undefined)?.trim();
+          if (transcript) {
+            setMessages((prev) => [
+              ...prev,
+              { id: Date.now(), role: "user", content: transcript },
+            ]);
+          }
+          break;
+        }
+
+        case "response.audio.delta":
+          if (stateRef.current !== "speaking") transition("speaking");
+          if (data.delta) playChunk(data.delta as string);
+          break;
+
+        case "response.audio_transcript.delta": {
+          const delta = (data.delta as string) || "";
+          assistantTextRef.current += delta;
+
+          if (!assistantIdRef.current) {
+            const id = Date.now();
+            assistantIdRef.current = id;
+            setMessages((prev) => [
+              ...prev,
+              { id, role: "assistant", content: assistantTextRef.current },
+            ]);
+          } else {
+            const id = assistantIdRef.current;
+            const text = assistantTextRef.current;
+            setMessages((prev) =>
+              prev.map((m) => (m.id === id ? { ...m, content: text } : m))
+            );
+          }
+          break;
+        }
+
+        case "response.done": {
+          assistantIdRef.current = null;
+          assistantTextRef.current = "";
+
+          // Wait for queued audio to finish, then go back to listening
+          const ctx = playbackCtxRef.current;
+          if (ctx && playbackTimeRef.current > ctx.currentTime) {
+            const delay =
+              (playbackTimeRef.current - ctx.currentTime) * 1000 + 150;
+            setTimeout(() => {
+              if (stateRef.current === "speaking") transition("listening");
+            }, delay);
+          } else {
+            transition("listening");
+          }
+          break;
+        }
+
+        case "error": {
+          const errObj = data.error as { message?: string } | undefined;
+          setError(errObj?.message || "Realtime API error");
+          break;
         }
       }
-    };
-    rafRef.current = requestAnimationFrame(tick);
-  }, [startRecording, stopRecording]);
+    },
+    [transition, stopPlayback, playChunk]
+  );
 
   // ── Start conversation ──────────────────────────────────────────────────────
+
   const startConversation = async () => {
     setError("");
     setMessages([]);
-    busyRef.current = false;
+    assistantIdRef.current = null;
+    assistantTextRef.current = "";
+    transition("connecting");
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // 1. Get mic access
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
       streamRef.current = stream;
 
-      const ctx      = new AudioContext();
-      const source   = ctx.createMediaStreamSource(stream);
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 2048;
-      source.connect(analyser);
-      audioCtxRef.current = ctx;
-      analyserRef.current = analyser;
+      // 2. AudioContexts — 24 kHz to match OpenAI Realtime PCM16 format
+      const captureCtx = new AudioContext({ sampleRate: 24000 });
+      captureCtxRef.current = captureCtx;
 
-      transition("listening");
-      runVAD();
-    } catch {
-      setError("Microphone access denied.");
+      const playbackCtx = new AudioContext({ sampleRate: 24000 });
+      playbackCtxRef.current = playbackCtx;
+
+      // 3. Open WebSocket to the FastAPI proxy
+      const ws = new WebSocket(WS_URL);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        // Start streaming mic PCM16 to OpenAI via the proxy
+        const source = captureCtx.createMediaStreamSource(stream);
+        const processor = captureCtx.createScriptProcessor(4096, 1, 1);
+        processorRef.current = processor;
+
+        processor.onaudioprocess = (e) => {
+          if (ws.readyState !== WebSocket.OPEN) return;
+          const input = e.inputBuffer.getChannelData(0);
+          ws.send(
+            JSON.stringify({
+              type: "input_audio_buffer.append",
+              audio: float32ToPcm16Base64(input),
+            })
+          );
+        };
+
+        // Connect through a silent gain node so the processor fires
+        // but doesn't route mic audio back to speakers
+        const silencer = captureCtx.createGain();
+        silencer.gain.value = 0;
+        source.connect(processor);
+        processor.connect(silencer);
+        silencer.connect(captureCtx.destination);
+      };
+
+      ws.onmessage = handleWsMessage;
+
+      ws.onerror = () => {
+        setError(
+          "WebSocket error. Is the voice service running on port 8001?"
+        );
+        transition("idle");
+      };
+
+      ws.onclose = (e) => {
+        if (stateRef.current !== "idle") {
+          if (e.reason) setError(e.reason);
+          transition("idle");
+        }
+      };
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to start conversation"
+      );
+      transition("idle");
     }
   };
 
   // ── End conversation ────────────────────────────────────────────────────────
+
   const endConversation = useCallback(() => {
-    if (audioRef.current)  { audioRef.current.pause(); audioRef.current = null; }
-    stopRecording();
-    if (rafRef.current !== null) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
-    if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null; }
-    if (audioCtxRef.current) { audioCtxRef.current.close(); audioCtxRef.current = null; }
-    analyserRef.current     = null;
-    busyRef.current         = false;
-    speechStartRef.current  = null;
-    silenceStartRef.current = null;
+    stopPlayback();
+
+    if (processorRef.current) {
+      processorRef.current.disconnect();
+      processorRef.current = null;
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+    }
+    if (captureCtxRef.current) {
+      captureCtxRef.current.close();
+      captureCtxRef.current = null;
+    }
+    if (playbackCtxRef.current) {
+      playbackCtxRef.current.close();
+      playbackCtxRef.current = null;
+    }
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+
+    assistantIdRef.current = null;
+    assistantTextRef.current = "";
     transition("idle");
-  }, [stopRecording, transition]);
+  }, [stopPlayback, transition]);
 
   // Cleanup on unmount
-  useEffect(() => () => { endConversation(); }, [endConversation]);
+  useEffect(() => () => endConversation(), [endConversation]);
+
+  // ── Render ──────────────────────────────────────────────────────────────────
 
   const inConversation = appState !== "idle";
 
-  // Shared message card renderer
-  const renderMessage = (msg: ChatMessage, i: number) => (
+  const renderMessage = (msg: ChatMessage) => (
     <div
-      key={i}
+      key={msg.id}
       className={
         msg.role === "user"
           ? "relative border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 p-3"
           : "relative border border-amber-500/40 bg-stone-900 dark:bg-black p-3 text-amber-50"
       }
     >
-      <div className={`absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-      <div className={`absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-      <div className={`absolute -bottom-px -left-px w-3 h-3 border-b-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-      <div className={`absolute -bottom-px -right-px w-3 h-3 border-b-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`} aria-hidden="true" />
-      <p className={`uppercase tracking-[0.3em] text-xs mb-1 ${msg.role === "user" ? "text-amber-700 dark:text-amber-400" : "text-amber-400"}`}>
+      <div
+        className={`absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute -bottom-px -left-px w-3 h-3 border-b-2 border-l-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
+        aria-hidden="true"
+      />
+      <div
+        className={`absolute -bottom-px -right-px w-3 h-3 border-b-2 border-r-2 ${msg.role === "user" ? "border-amber-500/60" : "border-amber-500"}`}
+        aria-hidden="true"
+      />
+      <p
+        className={`uppercase tracking-[0.3em] text-xs mb-1 ${msg.role === "user" ? "text-amber-700 dark:text-amber-400" : "text-amber-400"}`}
+      >
         {msg.role === "user" ? "You" : "Assistant"}
       </p>
-      <p className={`text-sm leading-relaxed ${msg.role === "user" ? "text-stone-800 dark:text-stone-200" : ""}`}>
+      <p
+        className={`text-sm leading-relaxed ${msg.role === "user" ? "text-stone-800 dark:text-stone-200" : ""}`}
+      >
         {msg.content}
       </p>
     </div>
   );
 
   return (
-    // Fill exactly the viewport below the sticky nav — no page scroll ever
     <div
       className={`relative bg-amber-50 dark:bg-stone-950 flex flex-col ${inConversation ? "overflow-hidden" : "overflow-auto"}`}
-      style={inConversation
-        ? { height: "calc(100vh - 4rem)" }
-        : { minHeight: "calc(100vh - 4rem)" }
+      style={
+        inConversation
+          ? { height: "calc(100vh - 4rem)" }
+          : { minHeight: "calc(100vh - 4rem)" }
       }
     >
       {/* Art Deco pattern */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.06]" aria-hidden="true">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
+        aria-hidden="true"
+      >
         <svg width="100%" height="100%">
-          <pattern id="voice-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="currentColor" className="text-amber-700 dark:text-amber-400" strokeWidth="0.5" />
-            <circle cx="30" cy="30" r="8" fill="none" stroke="currentColor" className="text-amber-700 dark:text-amber-400" strokeWidth="0.5" />
+          <pattern
+            id="voice-deco"
+            width="60"
+            height="60"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M30 0 L60 30 L30 60 L0 30 Z"
+              fill="none"
+              stroke="currentColor"
+              className="text-amber-700 dark:text-amber-400"
+              strokeWidth="0.5"
+            />
+            <circle
+              cx="30"
+              cy="30"
+              r="8"
+              fill="none"
+              stroke="currentColor"
+              className="text-amber-700 dark:text-amber-400"
+              strokeWidth="0.5"
+            />
           </pattern>
           <rect width="100%" height="100%" fill="url(#voice-deco)" />
         </svg>
       </div>
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/10 blur-3xl" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/10 blur-3xl"
+        aria-hidden="true"
+      />
 
-      {/* ── IDLE: everything vertically centred, nothing below fold ── */}
+      {/* ── IDLE ── */}
       {!inConversation && (
         <div className="relative flex flex-col items-center justify-center flex-1 px-4 gap-4">
-          {/* Compact title */}
           <header className="text-center">
             <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
               Voice Assistant
@@ -319,7 +470,10 @@ export default function VoiceChatPage() {
             <h1 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-amber-50 mb-3">
               Speak with Wanderlust
             </h1>
-            <div className="flex items-center justify-center gap-2" aria-hidden="true">
+            <div
+              className="flex items-center justify-center gap-2"
+              aria-hidden="true"
+            >
               <div className="h-px w-10 bg-amber-500/50" />
               <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
               <div className="w-2 h-2 rotate-45 border border-amber-500" />
@@ -328,14 +482,21 @@ export default function VoiceChatPage() {
             </div>
           </header>
 
-          {/* Orb — constrained to 154px layout box so the button stays above fold */}
-          <div className="relative shrink-0" style={{ width: 154, height: 154 }}>
-            <div className="absolute top-1/2 left-1/2" style={{ transform: "translate(-50%, -50%) scale(0.7)", transformOrigin: "center" }}>
+          <div
+            className="relative shrink-0"
+            style={{ width: 154, height: 154 }}
+          >
+            <div
+              className="absolute top-1/2 left-1/2"
+              style={{
+                transform: "translate(-50%, -50%) scale(0.7)",
+                transformOrigin: "center",
+              }}
+            >
               <SoraBall state={appState} />
             </div>
           </div>
 
-          {/* Status */}
           <p
             className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.25em] text-xs min-h-[18px]"
             role="status"
@@ -344,13 +505,22 @@ export default function VoiceChatPage() {
             {STATE_LABELS[appState]}
           </p>
 
-          {/* Start button */}
           <button
             type="button"
             onClick={startConversation}
             className="flex items-center gap-3 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-medium uppercase tracking-[0.2em] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
               <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
               <line x1="12" y1="19" x2="12" y2="23" />
@@ -359,20 +529,28 @@ export default function VoiceChatPage() {
             Start Conversation
           </button>
 
-          {/* Error */}
+          <p className="text-stone-500 dark:text-stone-400 text-xs text-center max-w-xs">
+            Real-time voice &mdash; just speak naturally.
+            <br />
+            Powered by OpenAI Realtime API.
+          </p>
+
           {error && (
-            <p className="text-red-700 dark:text-red-400 text-sm text-center" role="alert">{error}</p>
+            <p
+              className="text-red-700 dark:text-red-400 text-sm text-center"
+              role="alert"
+            >
+              {error}
+            </p>
           )}
         </div>
       )}
 
-      {/* ── IN CONVERSATION: compact controls on top, scrollable log below ── */}
+      {/* ── IN CONVERSATION ── */}
       {inConversation && (
         <div className="relative flex flex-col items-center flex-1 overflow-hidden pt-4 px-4">
-
-          {/* Control strip — fixed height, never scrolls away */}
+          {/* Control strip */}
           <div className="flex flex-col items-center gap-2 shrink-0 mb-3">
-            {/* Orb scaled down so the log gets more space */}
             <div className="scale-75 origin-top">
               <SoraBall state={appState} />
             </div>
@@ -388,17 +566,28 @@ export default function VoiceChatPage() {
               onClick={endConversation}
               className="flex items-center gap-2 px-6 py-2.5 bg-stone-800 hover:bg-stone-700 text-amber-400 hover:text-amber-300 border border-stone-600 font-medium uppercase tracking-[0.2em] text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
                 <rect x="4" y="4" width="16" height="16" rx="2" />
               </svg>
               End Conversation
             </button>
             {error && (
-              <p className="text-red-700 dark:text-red-400 text-xs text-center" role="alert">{error}</p>
+              <p
+                className="text-red-700 dark:text-red-400 text-xs text-center"
+                role="alert"
+              >
+                {error}
+              </p>
             )}
           </div>
 
-          {/* Scrollable conversation log — fills remaining height */}
+          {/* Scrollable conversation log */}
           {messages.length > 0 && (
             <div className="w-full max-w-xl flex flex-col flex-1 overflow-hidden min-h-0">
               <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs text-center mb-2 shrink-0">
@@ -413,18 +602,30 @@ export default function VoiceChatPage() {
                 {/* Thinking indicator */}
                 {appState === "thinking" && (
                   <div className="relative border border-amber-500/40 bg-stone-900 dark:bg-black p-3 text-amber-50">
-                    <div className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-amber-500" aria-hidden="true" />
-                    <div className="absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 border-amber-500" aria-hidden="true" />
-                    <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">Assistant</p>
+                    <div
+                      className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-amber-500"
+                      aria-hidden="true"
+                    />
+                    <div
+                      className="absolute -top-px -right-px w-3 h-3 border-t-2 border-r-2 border-amber-500"
+                      aria-hidden="true"
+                    />
+                    <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+                      Assistant
+                    </p>
                     <div className="flex gap-1.5">
                       <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
-                      <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
-                      <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
+                      <span
+                        className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.1s" }}
+                      />
+                      <span
+                        className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.2s" }}
+                      />
                     </div>
                   </div>
                 )}
-
-                <div ref={logEndRef} />
               </div>
             </div>
           )}
