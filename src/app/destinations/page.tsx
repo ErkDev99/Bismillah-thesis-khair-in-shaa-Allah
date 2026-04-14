@@ -2,20 +2,12 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   destinations,
   getUniqueCountries,
   type Destination,
 } from "@/lib/data/destinations";
-
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // Destination Card Component
 function DestinationCard({
@@ -25,8 +17,6 @@ function DestinationCard({
   destination: Destination;
   index: number;
 }) {
-  const gradient = GRADIENTS[index % GRADIENTS.length];
-
   return (
     <Link href={`/destinations/${destination.slug}`} className="group relative block">
       {/* Corner Accents */}
@@ -36,19 +26,14 @@ function DestinationCard({
       <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10" aria-hidden="true" />
 
       <div className="relative h-80 md:h-96 overflow-hidden border border-stone-200 dark:border-stone-800 group-hover:border-amber-400 transition-colors">
-        {/* Background Gradient Placeholder */}
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${gradient} group-hover:scale-105 transition-transform duration-500`}
-        >
-          {/* Uncomment when you have images:
-          <Image
-            src={destination.image}
-            alt={destination.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          */}
-        </div>
+        {/* Destination Image */}
+        <Image
+          src={destination.image}
+          alt={destination.name}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        />
 
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" aria-hidden="true" />
@@ -199,6 +184,17 @@ export default function DestinationsPage() {
     <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
       {/* Hero Section */}
       <section className="relative bg-stone-900 dark:bg-stone-950 text-white overflow-hidden" aria-labelledby="destinations-heading">
+        {/* Background image */}
+        <Image
+          src="/images/hero/hero.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
         {/* Geometric SVG Pattern */}
         <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
           <svg width="100%" height="100%">

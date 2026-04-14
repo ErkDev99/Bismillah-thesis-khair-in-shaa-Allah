@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 // ─── SEO Metadata ─────────────────────────────────────────────────────────────
@@ -21,16 +22,6 @@ export const metadata: Metadata = {
     siteName: "Wanderlust",
   },
 };
-
-// ─── Shared gradient palette (warm / luxury tones) ───────────────────────────
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
 function DiamondDivider({ className = "" }: { className?: string }) {
@@ -66,14 +57,16 @@ function HeroSection() {
       aria-label="About Wanderlust"
       className="relative text-center text-white overflow-hidden"
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(150deg, #1c1917 0%, #292524 20%, #44403c 50%, #1c1917 100%)",
-        }}
+      <Image
+        src="/images/hero/hero.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover"
+        sizes="100vw"
         aria-hidden="true"
       />
+      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
       {/* Art Deco geometric pattern overlay */}
       <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
         <svg width="100%" height="100%">
@@ -127,25 +120,19 @@ function StorySection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Image Placeholder with gradient + corner accents */}
+          {/* Story Image */}
           <div className="group relative h-80 lg:h-[450px] overflow-hidden">
-            <div
-              className={`absolute inset-0 bg-gradient-to-br ${GRADIENTS[0]}`}
-              aria-hidden="true"
+            <Image
+              src="/images/hero/hero.jpg"
+              alt="Central Asian landscape"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
             />
-            <div className="absolute inset-0 opacity-[0.06]" aria-hidden="true">
-              <svg width="100%" height="100%">
-                <pattern id="story-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-                  <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
-                  <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
-                </pattern>
-                <rect width="100%" height="100%" fill="url(#story-deco)" />
-              </svg>
-            </div>
             <CornerAccents />
             {/* Decorative monogram */}
             <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-              <div className="w-24 h-24 border-2 border-amber-500/40 rotate-45 flex items-center justify-center">
+              <div className="w-24 h-24 border-2 border-amber-500/40 rotate-45 flex items-center justify-center bg-black/30 backdrop-blur-sm">
                 <span className="text-amber-400 text-3xl font-serif -rotate-45">W</span>
               </div>
             </div>
@@ -240,25 +227,25 @@ const teamMembers = [
     name: "Aibek Nurzhanov",
     role: "Founder & Lead Guide",
     bio: "Born in the Tian Shan foothills, Aibek has 15+ years of guiding experience across Central Asia.",
-    initial: "A",
+    image: "/images/team/aibek.jpg",
   },
   {
     name: "Sarah Mitchell",
     role: "Operations Director",
     bio: "Former travel journalist who fell in love with the region and never left. Manages logistics and partnerships.",
-    initial: "S",
+    image: "/images/team/sarah.jpg",
   },
   {
     name: "Bekzat Omarov",
     role: "Cultural Expert",
     bio: "Historian and storyteller specializing in Silk Road history and nomadic traditions.",
-    initial: "B",
+    image: "/images/team/bekzat.jpg",
   },
   {
     name: "Elena Petrova",
     role: "Customer Experience",
     bio: "Ensures every traveler feels supported from first inquiry to final farewell.",
-    initial: "E",
+    image: "/images/team/elena.jpg",
   },
 ];
 
@@ -294,24 +281,15 @@ function TeamSection() {
             >
               <CornerAccents />
 
-              {/* Avatar with gradient + monogram */}
-              <div
-                className={`relative h-56 bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} flex items-center justify-center`}
-                aria-hidden="true"
-              >
-                <div className="absolute inset-0 opacity-[0.06]">
-                  <svg width="100%" height="100%">
-                    <pattern id={`team-deco-${i}`} width="50" height="50" patternUnits="userSpaceOnUse">
-                      <path d="M25 0 L50 25 L25 50 L0 25 Z" fill="none" stroke="white" strokeWidth="0.5" />
-                    </pattern>
-                    <rect width="100%" height="100%" fill={`url(#team-deco-${i})`} />
-                  </svg>
-                </div>
-                <div className="relative w-20 h-20 border-2 border-amber-400/60 rotate-45 flex items-center justify-center">
-                  <span className="text-amber-300 text-3xl font-serif -rotate-45">
-                    {member.initial}
-                  </span>
-                </div>
+              {/* Team member photo */}
+              <div className="relative h-72 overflow-hidden">
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
               </div>
 
               <div className="p-6 text-center flex-1 flex flex-col">

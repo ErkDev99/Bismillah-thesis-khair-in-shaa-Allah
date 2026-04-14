@@ -46,7 +46,6 @@ Data:
   blog.ts            → Blog posts
 
 Missing:
-  - Real images (currently all gradients/placeholders)
   - Real booking/payment flow
   - User accounts
 ```
@@ -72,7 +71,7 @@ These are the standard tests applied to professional websites. We will go throug
 
 | # | Test Category | What It Checks | Status |
 |---|---|---|---|
-| 7 | **Content Quality** | Clear, readable, professional writing. No placeholder text. | ⚠️ Good but images missing |
+| 7 | **Content Quality** | Clear, readable, professional writing. No placeholder text. | ✅ Images wired, text solid |
 | 8 | **Cross-Browser Compatibility** | Works in Chrome, Firefox, Safari, Edge | ❌ Not tested |
 | 9 | **SEO Basics** | Page titles, meta descriptions, Open Graph, semantic HTML | ⚠️ Minimal |
 | 10 | **Form Usability & Validation** | Contact form works, validates input, gives feedback | ❌ Not tested |
@@ -383,5 +382,5 @@ Phase 6: Polish & Content
 
 ---
 
-*Last updated: 2026-04-11*
+*Last updated: 2026-04-14*
 *Working together step by step — quality over speed.*

@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getFeaturedTours, getAllTours, type Tour } from "@/lib/data/tours";
 import {
@@ -37,15 +38,6 @@ export const metadata: Metadata = {
   ],
 };
 
-// ─── Shared gradient palette (warm / luxury tones) ───────────────────────────
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
 function DiamondDivider({ className = "" }: { className?: string }) {
@@ -110,14 +102,16 @@ function HeroSection() {
       aria-label="Welcome to Wanderlust Central Asia Tours"
       className="relative text-center text-white overflow-hidden"
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(150deg, #1c1917 0%, #292524 20%, #44403c 50%, #1c1917 100%)",
-        }}
+      <Image
+        src="/images/hero/hero.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover"
+        sizes="100vw"
         aria-hidden="true"
       />
+      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
       {/* Art Deco geometric pattern overlay */}
       <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
         <svg width="100%" height="100%">
@@ -289,16 +283,18 @@ function WhyChooseUsSection() {
 function TourCard({ tour, index }: { tour: Tour; index: number }) {
   return (
     <article className="group bg-white dark:bg-stone-900 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600">
-      <div
-        className={`relative h-52 bg-gradient-to-br ${
-          GRADIENTS[index % GRADIENTS.length]
-        } shrink-0`}
-        aria-hidden="true"
-      >
-        <div className="absolute top-3 left-3">
+      <div className="relative h-52 shrink-0 overflow-hidden">
+        <Image
+          src={tour.image}
+          alt={tour.title}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        />
+        <div className="absolute top-3 left-3 z-10">
           <DifficultyBadge difficulty={tour.difficulty} />
         </div>
-        <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 flex items-center gap-1">
+        <div className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm text-white text-xs px-2.5 py-1 flex items-center gap-1">
           <svg
             className="w-3 h-3 text-amber-400 fill-current"
             viewBox="0 0 20 20"
@@ -311,7 +307,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
             <span className="text-white/60">({tour.reviewCount})</span>
           )}
         </div>
-        <div className="absolute bottom-3 left-3 text-white/70 text-xs uppercase tracking-[0.2em] font-medium">
+        <div className="absolute bottom-3 left-3 z-10 text-white/70 text-xs uppercase tracking-[0.2em] font-medium drop-shadow-md">
           {tour.category}
         </div>
       </div>
@@ -421,9 +417,12 @@ function DestinationCard({ destination, index }: { destination: Destination; ind
       aria-label={`Explore ${destination.name}, ${destination.country} — ${destination.tourCount} tours available`}
       className="group relative flex h-72 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
     >
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${GRADIENTS[(index + 2) % GRADIENTS.length]} group-hover:scale-105 transition-transform duration-500`}
-        aria-hidden="true"
+      <Image
+        src={destination.image}
+        alt={destination.name}
+        fill
+        className="object-cover group-hover:scale-105 transition-transform duration-500"
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" aria-hidden="true" />
 

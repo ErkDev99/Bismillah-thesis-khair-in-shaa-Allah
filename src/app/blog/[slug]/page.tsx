@@ -5,6 +5,7 @@
 // geometric diamond ornaments, wide tracking, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   getPostBySlug,
@@ -12,16 +13,6 @@ import {
   getRelatedPosts,
   type BlogPost,
 } from "@/lib/data/blog";
-
-// ─── Shared gradient palette ─────────────────────────────────────────────────
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // ─── Generate static params for all posts ───────────────────────────────────
 export async function generateStaticParams() {
@@ -132,11 +123,14 @@ function ArticleHeader({ post }: { post: BlogPost }) {
       </p>
 
       <div className="flex items-center gap-4 pt-6 border-t border-stone-200 dark:border-stone-800">
-        <div
-          className="relative w-12 h-12 bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-bold text-lg font-serif border border-amber-500/40"
-          aria-hidden="true"
-        >
-          {post.author.name.charAt(0)}
+        <div className="relative w-12 h-12 overflow-hidden border border-amber-500/40">
+          <Image
+            src={post.author.image}
+            alt={post.author.name}
+            fill
+            className="object-cover"
+            sizes="48px"
+          />
         </div>
         <div>
           <p className="font-semibold text-stone-900 dark:text-amber-100">
@@ -155,25 +149,20 @@ function ArticleHeader({ post }: { post: BlogPost }) {
 // FEATURED IMAGE
 // ═════════════════════════════════════════════════════════════════════════════
 function FeaturedImage({ post }: { post: BlogPost }) {
-  const gradientIndex = post.id % GRADIENTS.length;
   return (
-    <div
-      className={`group relative h-64 md:h-96 overflow-hidden mb-10 bg-gradient-to-br ${GRADIENTS[gradientIndex]}`}
-    >
-      <div className="absolute inset-0 opacity-[0.06]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="blog-featured-deco" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="40" cy="40" r="12" fill="none" stroke="white" strokeWidth="0.5" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#blog-featured-deco)" />
-        </svg>
-      </div>
+    <div className="relative h-64 md:h-96 overflow-hidden mb-10">
+      <Image
+        src={post.image}
+        alt={post.title}
+        fill
+        priority
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, 800px"
+      />
       <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-amber-500/60" aria-hidden="true" />
       <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-amber-500/60" aria-hidden="true" />
       <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-amber-500/60" aria-hidden="true" />
       <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-amber-500/60" aria-hidden="true" />
-      <span className="sr-only">Featured image placeholder for {post.title}</span>
     </div>
   );
 }
@@ -343,18 +332,14 @@ function RelatedPosts({ posts }: { posts: BlogPost[] }) {
           >
             <article className="relative bg-white dark:bg-stone-900 overflow-hidden shadow-sm hover:shadow-md transition-all border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600">
               <CornerAccents />
-              <div
-                className={`relative h-40 bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]}`}
-                aria-hidden="true"
-              >
-                <div className="absolute inset-0 opacity-[0.06]">
-                  <svg width="100%" height="100%">
-                    <pattern id={`related-deco-${i}`} width="50" height="50" patternUnits="userSpaceOnUse">
-                      <path d="M25 0 L50 25 L25 50 L0 25 Z" fill="none" stroke="white" strokeWidth="0.5" />
-                    </pattern>
-                    <rect width="100%" height="100%" fill={`url(#related-deco-${i})`} />
-                  </svg>
-                </div>
+              <div className="relative h-40 overflow-hidden">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
               </div>
               <div className="p-5">
                 <h3 className="font-bold text-stone-900 dark:text-amber-100 mb-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2 font-serif">

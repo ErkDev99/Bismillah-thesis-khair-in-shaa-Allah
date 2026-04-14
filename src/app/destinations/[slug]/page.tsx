@@ -6,6 +6,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   getDestinationBySlug,
@@ -13,16 +14,6 @@ import {
   type Destination,
 } from "@/lib/data/destinations";
 import { getToursByDestination, type Tour } from "@/lib/data/tours";
-
-// ─── Shared gradient palette (warm / luxury tones) ───────────────────────────
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
 function DiamondDivider({ className = "" }: { className?: string }) {
@@ -83,7 +74,15 @@ function DestinationHero({ destination }: { destination: Destination }) {
       aria-label={`${destination.name} hero`}
     >
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-stone-800 via-stone-900 to-stone-950">
+      <div className="absolute inset-0">
+        <Image
+          src={destination.image}
+          alt={destination.name}
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
       </div>
 
@@ -533,13 +532,16 @@ function ThingsToDoSection({ destination }: { destination: Destination }) {
               aria-hidden="true"
             />
 
-            {/* Image Placeholder — cycles through warm gradient palette */}
-            <div
-              className={`h-48 bg-gradient-to-br ${
-                GRADIENTS[index % GRADIENTS.length]
-              }`}
-              aria-hidden="true"
-            />
+            {/* Activity Image */}
+            <div className="relative h-48 overflow-hidden">
+              <Image
+                src={activity.image}
+                alt={activity.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              />
+            </div>
             <div className="p-5">
               <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-2 font-serif">
                 {activity.title}
@@ -598,13 +600,15 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
               aria-hidden="true"
             />
 
-            <div
-              className={`relative h-40 bg-gradient-to-br ${
-                GRADIENTS[(index + 1) % GRADIENTS.length]
-              }`}
-              aria-hidden="true"
-            >
-              <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm text-amber-300 text-sm font-bold font-serif px-3 py-1 uppercase tracking-wider">
+            <div className="relative h-40 overflow-hidden">
+              <Image
+                src={tour.image}
+                alt={tour.title}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
+              <div className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm text-amber-300 text-sm font-bold font-serif px-3 py-1 uppercase tracking-wider">
                 ${tour.price.toLocaleString()}
               </div>
             </div>

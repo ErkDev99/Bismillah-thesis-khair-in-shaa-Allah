@@ -6,18 +6,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTourBySlug, getAllTours, type Tour } from "@/lib/data/tours";
-
-// ─── Shared gradient palette (warm / luxury tones) ───────────────────────────
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
 function DiamondDivider({ className = "" }: { className?: string }) {
@@ -78,7 +69,15 @@ function TourHeader({ tour }: { tour: Tour }) {
   return (
     <section className="relative h-[50vh] min-h-[400px] flex items-end" aria-label={`${tour.title} hero`}>
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-stone-800 via-stone-900 to-stone-950">
+      <div className="absolute inset-0">
+        <Image
+          src={tour.image}
+          alt={tour.title}
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
       </div>
 

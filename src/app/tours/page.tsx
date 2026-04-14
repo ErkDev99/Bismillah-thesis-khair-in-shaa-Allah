@@ -9,6 +9,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   tours,
   getUniqueDestinations,
@@ -16,16 +17,6 @@ import {
   getUniqueDifficulties,
   type Tour,
 } from "@/lib/data/tours";
-
-// ─── Shared gradient palette (warm / luxury tones) ───────────────────────────
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
 function DiamondDivider({ className = "" }: { className?: string }) {
@@ -218,9 +209,12 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
     <article className="group bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-500 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       {/* Image */}
       <div className="relative h-52 overflow-hidden">
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${GRADIENTS[index % GRADIENTS.length]} group-hover:scale-105 transition-transform duration-500`}
-          aria-hidden="true"
+        <Image
+          src={tour.image}
+          alt={tour.title}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
 
         {/* Art Deco corner accents */}
@@ -410,6 +404,17 @@ export default function ToursPage() {
     <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
       {/* Page Header */}
       <section className="relative bg-stone-900 dark:bg-black text-white py-4 md:py-6 px-4 overflow-hidden">
+        {/* Background image */}
+        <Image
+          src="/images/hero/hero.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
         {/* Art Deco geometric pattern overlay */}
         <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
           <svg width="100%" height="100%">

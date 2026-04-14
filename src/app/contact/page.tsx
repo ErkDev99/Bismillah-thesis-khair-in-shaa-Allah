@@ -8,6 +8,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
 function DiamondDivider({ className = "" }: { className?: string }) {
@@ -97,14 +98,16 @@ function HeroSection() {
       aria-label="Contact Wanderlust"
       className="relative text-center text-white overflow-hidden"
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(150deg, #1c1917 0%, #292524 20%, #44403c 50%, #1c1917 100%)",
-        }}
+      <Image
+        src="/images/hero/hero.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover"
+        sizes="100vw"
         aria-hidden="true"
       />
+      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
       <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
         <svg width="100%" height="100%">
           <pattern id="contact-hero-deco" width="80" height="80" patternUnits="userSpaceOnUse">

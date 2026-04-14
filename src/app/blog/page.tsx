@@ -8,21 +8,12 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   blogPosts,
   getUniqueCategories,
   type BlogPost,
 } from "@/lib/data/blog";
-
-// ─── Shared gradient palette ─────────────────────────────────────────────────
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
 
 // ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
 function DiamondDivider({ className = "" }: { className?: string }) {
@@ -68,9 +59,12 @@ function FeaturedPostCard({ post }: { post: BlogPost }) {
       aria-label={`Read featured post: ${post.title}`}
       className="group relative block h-[400px] md:h-[500px] overflow-hidden focus:outline-none focus:ring-4 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
     >
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-amber-700 via-amber-900 to-stone-950 group-hover:scale-105 transition-transform duration-500"
-        aria-hidden="true"
+      <Image
+        src={post.image}
+        alt={post.title}
+        fill
+        className="object-cover group-hover:scale-105 transition-transform duration-500"
+        sizes="100vw"
       />
       <div className="absolute inset-0 opacity-[0.06]" aria-hidden="true">
         <svg width="100%" height="100%">
@@ -128,19 +122,15 @@ function PostCard({ post, index }: { post: BlogPost; index: number }) {
     >
       <article className="relative bg-white dark:bg-stone-900 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600">
         <CornerAccents />
-        <div
-          className={`relative h-48 bg-gradient-to-br ${GRADIENTS[index % GRADIENTS.length]}`}
-          aria-hidden="true"
-        >
-          <div className="absolute inset-0 opacity-[0.06]">
-            <svg width="100%" height="100%">
-              <pattern id={`post-deco-${index}`} width="50" height="50" patternUnits="userSpaceOnUse">
-                <path d="M25 0 L50 25 L25 50 L0 25 Z" fill="none" stroke="white" strokeWidth="0.5" />
-              </pattern>
-              <rect width="100%" height="100%" fill={`url(#post-deco-${index})`} />
-            </svg>
-          </div>
-          <div className="absolute top-3 left-3">
+        <div className="relative h-48 overflow-hidden">
+          <Image
+            src={post.image}
+            alt={post.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+          <div className="absolute top-3 left-3 z-10">
             <span className="bg-black/50 backdrop-blur-sm text-amber-300 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] border border-amber-500/30">
               {post.category}
             </span>
@@ -225,14 +215,16 @@ function HeroSection() {
       aria-label="Travel blog"
       className="relative text-center text-white overflow-hidden"
     >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(150deg, #1c1917 0%, #292524 20%, #44403c 50%, #1c1917 100%)",
-        }}
+      <Image
+        src="/images/hero/hero.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover"
+        sizes="100vw"
         aria-hidden="true"
       />
+      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
       <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
         <svg width="100%" height="100%">
           <pattern id="blog-hero-deco" width="80" height="80" patternUnits="userSpaceOnUse">

@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-13 (Session 17)*
+*Last updated: 2026-04-14 (Session 19)*
 
 ---
 
@@ -9,10 +9,12 @@
 | Phase | Status |
 |-------|--------|
 | Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete |
+| Phase 1.1 — Real images | ✅ Complete — all 89 images wired via Next.js `<Image>`, gradient placeholders removed |
 | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |
 | Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech, ChatGPT-style conversation UI |
 | ChatWidget Mic (chat bubble) | ✅ Complete — Dictation mode (record → waveform → confirm/cancel → Whisper STT → text in input) |
 | Chat streaming fix | ✅ Complete — SSE buffering bug fixed in `/api/chat` route |
+| Dark mode (light/dark toggle) | ✅ Complete — class-based Tailwind v4, ThemeProvider, FOUC prevention, Header toggle |
 | Phase 3 — Performance (Lighthouse) | ⬜ Not started |
 | Phase 4 — SEO | ⬜ Not started |
 | Phase 5 — Cross-browser & Responsive | ⬜ Not started |
@@ -22,9 +24,20 @@
 
 ## Quick Start for Next Session
 
-1. **Hero consistency fix complete.** All pages now match Home's standard: `text-3xl sm:text-4xl md:text-5xl`, `py-4 md:py-6`, description `text-base md:text-lg`. Fixed in Session 18: Destinations, About, Blog, Contact, Practical Info, FAQ, Privacy, Terms.
+1. **Phase 1.1 (images) is done.** All 89 images live in `public/images/{hero,tours,destinations,blog,team}/` and are wired into components via Next.js `<Image>`. Build passes (33 routes). Next up: Phase 3 (Performance / Lighthouse), then Phase 4 (SEO), 5 (cross-browser), 6 (polish — custom 404, loading states, form validation).
 
-2. **After hero consistency**, continue with Phase 3–6. See `CLAUDE.md` for full phase specs.
+2. **Suggested next task: Phase 3.4 — Run Lighthouse.** `npm run build && npm run start`, open Chrome DevTools → Lighthouse, target 90+ on all four metrics. Hero `<Image>` components have `priority` + `sizes="100vw"` already; most other cards use `fill` + responsive `sizes`. LCP should be good.
+
+   **What was done in Session 19:**
+   - **Wired all 89 images** into the site. Replaced every CSS gradient placeholder with Next.js `<Image>` across 12 pages: home hero, tour cards + detail heroes, destination cards + detail heroes + `thingsToDo` activities, blog cards + article heroes, about page team photos + hero + story section, and `hero.jpg` as background on contact/faq/practical-info/privacy/terms compact headers.
+   - **Tours & Destinations listing headers** (`/tours`, `/destinations`) initially had solid dark bg (no image) for "content above the fold" reasons. User flagged the inconsistency; added `hero.jpg` as background with `bg-black/70` overlay (darker than `/about`'s `/50` since these headers are much shorter — stronger overlay keeps amber title readable).
+   - **Team photo framing fix**: Original `h-56 object-cover` was cropping heads (hats, tops of heads). Bumped to `h-72 object-cover object-[center_20%]`. The `20%` is a compromise across 4 differently-framed photos — if it needs tuning, lower (e.g. 10%) pulls subjects up, higher (30%) pushes them down.
+   - **Removed all unused `GRADIENTS` constant arrays** and one stray `gradient` variable from 9 files after the image wiring was done. Build still passes.
+
+   **What was done in Session 18:**
+   - **Dark mode toggle**: Implemented class-based dark mode for Tailwind CSS v4. Added `@custom-variant dark` to `globals.css`, created `src/components/ThemeProvider.tsx` (context + localStorage + system preference), added FOUC-prevention inline script in `layout.tsx`, and sun/moon toggle button in Header. Toggle persists across page loads. No flash on reload.
+   - **Header responsive fix**: Toggle was being pushed off-screen on narrower desktop viewports. Fixed by putting the toggle inside the desktop nav flow with tighter spacing (`text-xs px-2` at `md`, `text-sm px-3` at `lg`), and a separate mobile container with toggle + hamburger.
+   - **Image folder structure**: Created `public/images/{hero,tours,destinations,blog,team}/`. Provided user with complete 89-image download list (filenames, search keywords, what to look for) mapped to every `image` and `gallery` path in `tours.ts`, `destinations.ts`, and `blog.ts`.
 
    **What was done in Session 17:**
    - **Vercel deployment fix**: Project had Output Directory misconfigured to "public" instead of `.next`. User had two Vercel projects — deleted the broken one, fixed the remaining one.
@@ -48,7 +61,10 @@
 - **Focus ring contrast (WCAG 1.4.11)**: `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1 for UI). ~20 instances in form/card contexts. Deferred — flag before Phase 3 audit.
 - **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. Low priority.
 - **WebSocket URL**: Voice-chat page now uses `NEXT_PUBLIC_VOICE_WS_URL` env var for production (Render backend), falls back to `ws://localhost:8001` for dev. Backend deployed at `bismillah-thesis-khair-in-shaa-allah.onrender.com`.
-- **Hero size inconsistency**: ✅ Resolved — all pages now match Home's standard.
+- **Hero size inconsistency**: ✅ Resolved — all pages now match Home's standard. Tours/Destinations listing headers also have `hero.jpg` background (Session 19) with `bg-black/70` overlay for the shorter header height.
+- **Dark mode**: ✅ Implemented. Class-based (`@custom-variant dark` in globals.css), `ThemeProvider` context, FOUC-prevention script in `<head>`, sun/moon toggle in Header. Persists to localStorage, defaults to system preference. All existing `dark:` classes across the site now work.
+- **Images**: ✅ All 89 wired. `hero/hero.jpg` (1), `tours/*.jpg` (24), `destinations/*.jpg` (54), `blog/*.jpg` (6), `team/*.jpg` (4). Data files (`tours.ts`, `destinations.ts`, `blog.ts`) own the paths.
+- **Team photo cropping**: Team grid on `/about` uses `h-72 object-cover object-[center_20%]` to handle 4 differently-framed portraits. If any specific face looks wrong, switch to per-member `objectPosition` values rather than a single shared percentage.
 - **Chat widget on Vercel needs OPENAI_API_KEY**: Without it, the API returns mock JSON responses and the streaming reader displays raw JSON. User needs to add `OPENAI_API_KEY` env var in Vercel project settings.
 
 ---
@@ -72,8 +88,10 @@
 15. `src/app/privacy/page.tsx` — Privacy policy
 16. `src/app/terms/page.tsx` — Terms of service
 
+17. `src/components/ThemeProvider.tsx` — Dark mode context provider (Session 18)
+
 **NOT yet restyled (risky — do not touch without explicit user confirmation):**
-- `src/app/layout.tsx` — Root layout. Fonts are Geist. `font-serif` falls back to system serif, which works fine. Do NOT add Cormorant Garamond — it broke the site once.
+- `src/app/layout.tsx` — Root layout. Fonts are Geist. `font-serif` falls back to system serif, which works fine. Do NOT add Cormorant Garamond — it broke the site once. **Session 18 changes:** Added ThemeProvider wrapper, `suppressHydrationWarning` on `<html>`, FOUC-prevention inline script in `<head>`, dark variant on skip-to-content link.
 
 **DO NOT TOUCH:**
 - `src/app/globals.css` — caused horizontal overflow bug TWICE. `git reset --hard` both times.
@@ -222,6 +240,8 @@ const GRADIENTS = [
 - **`flex-1` inside `overflow-y-auto`** — always pair with `min-h-0` on the flex child, and use `el.scrollTop = el.scrollHeight` (not `scrollIntoView`) to confine scrolling to the container.
 - **Windows cp1252 kills non-ASCII `print()`** — `voice-actor/main.py` runs on Windows where the console defaults to cp1252. Any `print()` with emojis, Cyrillic, or other non-ASCII chars throws `UnicodeEncodeError` which becomes a 500 to the browser. **Never print raw user text or emojis in voice-actor.** Use `print(f"[ASR] Transcript ({len(text)} chars)")` style instead.
 - **SSE streaming needs line buffering** — OpenAI SSE `data: {...}\n\n` lines can split across TCP chunks. A naive `text.split("\n")` per chunk drops partial lines. Must buffer incomplete lines across `transform()` calls and process in `flush()`.
+- **globals.css dark variant is safe** — `@custom-variant dark (&:where(.dark, .dark *));` is a Tailwind config directive, not a layout style. It was added in Session 18 without triggering the horizontal overflow bug. The ban on `globals.css` applies to layout-affecting CSS rules, not Tailwind variant configuration.
+- **Dark mode FOUC prevention** — Next.js server-renders without knowing the user's theme preference. An inline `<script>` in `<head>` reads localStorage and adds the `dark` class before paint. `suppressHydrationWarning` on `<html>` prevents React from complaining about the class mismatch between server and client.
 - **OpenAI Realtime transcription arrives late** — `conversation.item.input_audio_transcription.completed` (user's words) arrives *after* `response.audio_transcript.delta` (assistant starts replying). Insert a placeholder user message on `speech_stopped` and fill it when transcription arrives, otherwise messages appear out of order.
 
 ---
