@@ -113,6 +113,7 @@ function HeroSection() {
         alt=""
         fill
         priority
+        fetchPriority="high"
         className="object-cover"
         sizes="100vw"
         aria-hidden="true"
@@ -358,7 +359,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
 
         <Link
           href={`/tours/${tour.slug}`}
-          aria-label={`View details for ${tour.title}`}
+          aria-label={`View Tour: ${tour.title}`}
           className="block w-full text-center bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white py-2.5 font-semibold uppercase tracking-wider text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900"
         >
           View Tour
@@ -393,7 +394,6 @@ function FeaturedToursSection({ tours }: { tours: Tour[] }) {
           </div>
           <Link
             href="/tours"
-            aria-label="View all available tours"
             className="shrink-0 inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
           >
             View all tours
@@ -420,7 +420,6 @@ function DestinationCard({ destination, index }: { destination: Destination; ind
   return (
     <Link
       href={`/destinations/${destination.slug}`}
-      aria-label={`Explore ${destination.name}, ${destination.country} — ${destination.tourCount} tours available`}
       className="group relative flex h-72 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
     >
       <Image
@@ -482,7 +481,6 @@ function FeaturedDestinationsSection({ destinations }: { destinations: Destinati
           </div>
           <Link
             href="/destinations"
-            aria-label="View all destinations"
             className="shrink-0 inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
           >
             All destinations

@@ -580,7 +580,7 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
           <Link
             key={tour.id}
             href={`/tours/${tour.slug}`}
-            aria-label={`View details for ${tour.title}`}
+            aria-label={`View Tour: ${tour.title}`}
             className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
           >
             <div

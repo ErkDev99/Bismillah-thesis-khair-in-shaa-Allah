@@ -283,7 +283,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
         {/* CTA */}
         <Link
           href={`/tours/${tour.slug}`}
-          aria-label={`View details for ${tour.title}`}
+          aria-label={`View Tour: ${tour.title}`}
           className="block w-full text-center bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white py-2.5 font-semibold uppercase tracking-wider text-sm transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900"
         >
           View Tour
