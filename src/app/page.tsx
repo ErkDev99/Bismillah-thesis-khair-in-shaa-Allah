@@ -8,12 +8,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getFeaturedTours, getAllTours, type Tour } from "@/lib/data/tours";
+import {
+  getFeaturedTours,
+  getAllTours,
+  getUniqueDestinations,
+  type Tour,
+} from "@/lib/data/tours";
 import {
   getFeaturedDestinations,
   getAllDestinations,
   type Destination,
 } from "@/lib/data/destinations";
+import QuickSearchBar from "@/components/home/QuickSearchBar";
 
 // ─── SEO Metadata ─────────────────────────────────────────────────────────────
 export const metadata: Metadata = {
@@ -730,9 +736,12 @@ export default function Home() {
       ? getFeaturedDestinations().slice(0, 6)
       : getAllDestinations().slice(0, 6);
 
+  const tourDestinations = getUniqueDestinations();
+
   return (
     <>
       <HeroSection />
+      <QuickSearchBar destinations={tourDestinations} />
       <div className="bg-stone-900 dark:bg-black border-t border-amber-500/20" aria-label="Key stats">
         <div className="max-w-3xl mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-amber-500/20 text-center">
           {([

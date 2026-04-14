@@ -7,7 +7,8 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { Suspense, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -332,13 +333,14 @@ function SortOptions({
 // ═════════════════════════════════════════════════════════════════════════════
 // MAIN PAGE
 // ═════════════════════════════════════════════════════════════════════════════
-export default function ToursPage() {
+function ToursPageInner() {
+  const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterState>({
-    destination: "",
-    category: "",
-    difficulty: "",
+    destination: searchParams.get("destination") ?? "",
+    category: searchParams.get("category") ?? "",
+    difficulty: searchParams.get("difficulty") ?? "",
     priceRange: [0, 5000],
-    duration: "",
+    duration: searchParams.get("duration") ?? "",
   });
   const [sortBy, setSortBy] = useState("featured");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -552,5 +554,13 @@ export default function ToursPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ToursPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-amber-50 dark:bg-stone-950" />}>
+      <ToursPageInner />
+    </Suspense>
   );
 }

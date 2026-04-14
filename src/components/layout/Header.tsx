@@ -42,16 +42,24 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
             {navLinks.map((link) => {
               const active = isActive(link.href);
+              const isCTA = link.href === "/contact";
+              const base =
+                "transition-colors text-xs lg:text-sm uppercase tracking-wider whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black";
+              const classes = isCTA
+                ? `${base} ml-1 lg:ml-2 px-3 lg:px-4 py-2 font-semibold bg-amber-500 text-stone-900 hover:bg-amber-400 ${
+                    active ? "ring-2 ring-amber-300" : ""
+                  }`
+                : `${base} px-2 lg:px-3 py-2 ${
+                    active
+                      ? "text-amber-400 border-b-2 border-amber-400"
+                      : "text-stone-300 hover:text-amber-400"
+                  }`;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`transition-colors text-xs lg:text-sm uppercase tracking-wider px-2 lg:px-3 py-2 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black ${
-                    active
-                      ? "text-amber-400 border-b-2 border-amber-400"
-                      : "text-stone-300 hover:text-amber-400"
-                  }`}
+                  className={classes}
                 >
                   {link.label}
                 </Link>
@@ -137,16 +145,24 @@ export default function Header() {
           <div id="mobile-menu" className="md:hidden py-4 border-t border-amber-500/20">
             {navLinks.map((link) => {
               const active = isActive(link.href);
+              const isCTA = link.href === "/contact";
+              const base =
+                "uppercase tracking-wider text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black";
+              const classes = isCTA
+                ? `${base} block text-center mt-3 py-3 px-4 font-semibold bg-amber-500 text-stone-900 hover:bg-amber-400 ${
+                    active ? "ring-2 ring-amber-300" : ""
+                  }`
+                : `${base} block py-2.5 px-2 ${
+                    active
+                      ? "text-amber-400"
+                      : "text-stone-300 hover:text-amber-400"
+                  }`;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className={`block py-2.5 px-2 uppercase tracking-wider text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black ${
-                    active
-                      ? "text-amber-400"
-                      : "text-stone-300 hover:text-amber-400"
-                  }`}
+                  className={classes}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}

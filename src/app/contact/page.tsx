@@ -431,31 +431,16 @@ function MapSection() {
           </h2>
           <DiamondDivider className="mt-4" />
         </div>
-        <div className="group relative h-80 bg-gradient-to-br from-stone-700 via-stone-800 to-stone-950 flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.05]" aria-hidden="true">
-            <svg width="100%" height="100%">
-              <pattern id="map-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-                <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
-                <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
-              </pattern>
-              <rect width="100%" height="100%" fill="url(#map-deco)" />
-            </svg>
-          </div>
+        <div className="group relative h-80 md:h-96 overflow-hidden border border-amber-500/20">
           <CornerAccents />
-          <div className="relative text-center text-stone-400">
-            <svg
-              className="w-12 h-12 mx-auto mb-3 text-amber-400/80"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
-            <p className="uppercase tracking-[0.2em] text-xs text-amber-400/80">
-              Google Maps integration coming soon
-            </p>
-          </div>
+          <iframe
+            title="Our location in Bishkek, Kyrgyzstan"
+            src="https://www.google.com/maps?q=Bishkek,Kyrgyzstan&z=12&output=embed"
+            className="w-full h-full border-0"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
         </div>
       </div>
     </section>
