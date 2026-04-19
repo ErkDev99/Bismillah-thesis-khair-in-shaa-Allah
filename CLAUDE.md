@@ -96,11 +96,13 @@ These are the standard tests applied to professional websites. We will go throug
 
 ## Root Cause of Teacher's Feedback — All Resolved
 
-All four original complaints have been fixed:
-1. ✅ **Nav priority** — Contact styled as amber CTA button; all 7 links kept per user preference
+All original complaints plus Session 24 feedback have been addressed:
+1. ✅ **Nav priority** — Contact styled as CTA button; all 7 links kept per user preference
 2. ✅ **No images** — All 89 real images wired via Next.js `<Image>`
 3. ✅ **Homepage layout** — Hero → Search bar (with instant results & prices) → Stats → Why Us → Featured Tours → Destinations → Testimonials → Newsletter → CTA Banner
-4. ✅ **Card hierarchy** — Redesigned with Art Deco design system, clear prices/ratings/CTAs
+4. ✅ **Card hierarchy** — Redesigned with clear prices/ratings/CTAs
+5. ✅ **Dark photos** (Session 24) — Hero overlay removed entirely; bright photography
+6. 🔄 **Green palette** (Session 24) — Teacher said "Kyrgyzstan is green, use green." Homepage done, remaining pages in progress
 
 ---
 
@@ -315,7 +317,7 @@ Phase 6: Polish & Content
 
 ## Progress Tracker
 
-> **Phase 1 (UI/UX Redesign) is tracked per-file in `HANDOVER.md`.** See the "Files Completed" and "Files NOT Yet Restyled" sections there for current status. The current design system is **Luxury / Art Deco** (amber + stone palette, serif headings, geometric ornaments) — full specification in HANDOVER.
+> **Phase 1 (UI/UX Redesign) is tracked per-file in `HANDOVER.md`.** The design system was changed in Session 24 from **Luxury / Art Deco** (amber) to **Nature / Travel Magazine** (emerald green + cream, rounded corners, leaf dividers, bright photography). Homepage is done; remaining pages need the green retheme. See "Pages Needing Green Retheme" and "Design System" sections in HANDOVER.
 
 ### Phase 2 — Accessibility
 | Step | Task | Status |
@@ -357,5 +359,5 @@ Phase 6: Polish & Content
 
 ---
 
-*Last updated: 2026-04-19 (Session 23)*
+*Last updated: 2026-04-19 (Session 24)*
 *Working together step by step — quality over speed.*

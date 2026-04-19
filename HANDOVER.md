@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-19 (Session 23)*
+*Last updated: 2026-04-19 (Session 24)*
 
 ---
 
@@ -8,14 +8,15 @@
 
 | Phase | Status |
 |-------|--------|
-| Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete |
+| Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete (Art Deco) |
 | Phase 1.1 — Real images | ✅ Complete — all 89 images wired via Next.js `<Image>`, gradient placeholders removed |
+| **Design System Retheme** (Art Deco → Nature/Green) | 🔄 In progress — homepage done, 15 pages + Header/Footer/ChatWidget remaining |
 | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |
 | Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech, ChatGPT-style conversation UI |
 | ChatWidget Mic (chat bubble) | ✅ Complete — Dictation mode (record → waveform → confirm/cancel → Whisper STT → text in input) |
 | Chat streaming fix | ✅ Complete — SSE buffering bug fixed in `/api/chat` route |
 | Dark mode (light/dark toggle) | ✅ Complete — class-based Tailwind v4, ThemeProvider, FOUC prevention, Header toggle |
-| Header CTA button | ✅ Complete — Contact link styled as filled amber button (Session 20) |
+| Header CTA button | ✅ Complete — Contact link styled as filled button (Session 20; needs green retheme) |
 | QuickSearchBar on homepage | ✅ Complete — destination + duration dropdowns with **instant results panel** showing matching tours with prices (Session 22, upgraded from Session 20) |
 | Contact page Google Map | ✅ Complete — Bishkek embed via Google Maps iframe (Session 20) |
 | Phase 3 — Performance (Lighthouse) | ✅ Complete — Desktop 96/100/100/100, Mobile ~82/100/100/100 (Session 21) |
@@ -28,9 +29,28 @@
 
 ## Quick Start for Next Session
 
-1. **Phases 1–3 are done.** Phase 4 (SEO) skipped — thesis site, not commercial. Phase 6.5 (trust signals) done via review system. Remaining: Phase 5 (cross-browser/responsive testing), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
+1. **PRIORITY: Green retheme is in progress.** Homepage (`page.tsx`) is done — all other pages still use the old amber/Art Deco palette. Teacher's latest feedback: "make pictures bright, remove the darkness" and "change to green, pleasant — Kyrgyzstan is green." The design system has been changed from Art Deco/amber to Nature/Travel Magazine/emerald (see Design System section below).
 
-2. **Suggested next tasks:** Phase 5.1 responsive breakpoint testing, Phase 6.1 custom 404 page (`not-found.tsx`), Phase 6.3 contact form validation. All additive and low-risk.
+2. **Next task: Retheme remaining pages.** Apply the new emerald/nature palette to all pages and components listed in the "Pages Needing Green Retheme" section below. Follow the new 12-rule restyle checklist. Proceed file by file, starting with Header.tsx and Footer.tsx (they appear on every page).
+
+3. **After retheme:** Phase 5 (cross-browser/responsive testing), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
+
+   **What was done in Session 24:**
+   - **Design system changed** from Luxury/Art Deco (amber + stone, sharp corners, diamond dividers, geometric SVG patterns) to **Nature/Travel Magazine** (emerald + cream, rounded corners, leaf dividers, bright photography).
+   - **Homepage fully restyled** (`src/app/page.tsx`):
+     - Hero overlay **removed entirely** (was `bg-black/50`; now only a subtle bottom gradient `from-black/40 via-transparent to-transparent`) — teacher said photos were too dark.
+     - **AnimatedHeadline** added — rotating country names ("Kazakhstan" → "Kyrgyzstan" → "Uzbekistan") in emerald green with spring animation, using framer-motion.
+     - All `amber-*` colors → `emerald-*` throughout.
+     - `DiamondDivider` → `NatureDivider` (leaf SVG icon between horizontal lines).
+     - Art Deco corner accents removed from all cards.
+     - All sharp edges → `rounded-xl` / `rounded-lg` (cards, buttons, badges).
+     - DifficultyBadge "Easy" changed from amber to emerald (semantic: green = easy). Stars kept amber (universal convention).
+     - Section backgrounds: alternating `emerald-50` / `white` / `stone-50` (light mode), `slate-950` / `slate-900` (dark mode).
+     - Newsletter + CTA banner: deep forest green (`emerald-950` / `emerald-900`) instead of stone dark.
+     - CTA banner globe icon now in a circle (was a rotated diamond).
+   - **New component**: `src/components/home/AnimatedHeadline.tsx` — client component, framer-motion spring animation.
+   - **New dependency**: `framer-motion` installed.
+   - **Build verified**: `next build` passes cleanly with no errors.
 
    **What was done in Session 23:**
    - **Review & rating system** (teacher feedback on ratings): Three-part implementation —
@@ -61,7 +81,7 @@
 
 ## Open Issues
 
-- **Focus ring contrast (WCAG 1.4.11)**: `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1 for UI). ~20 instances in form/card contexts. Doesn't affect Lighthouse score (still 100) but is a real WCAG gap.
+- **Focus ring contrast (WCAG 1.4.11)**: Homepage now uses `focus:ring-emerald-*` (better contrast than amber). Other pages still have `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1). Will be fixed as pages are rethemed. Doesn't affect Lighthouse score (still 100) but is a real WCAG gap.
 - **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. Low priority.
 - **WebSocket URL**: Voice-chat page uses `NEXT_PUBLIC_VOICE_WS_URL` env var for production (Render backend), falls back to `ws://localhost:8001` for dev.
 - **Team photo cropping**: `/about` uses `h-72 object-cover object-[center_20%]`. If any face looks wrong, switch to per-member `objectPosition`.
@@ -95,6 +115,7 @@
 18. `src/components/home/QuickSearchBar.tsx` — Homepage quick-search bar with instant results panel: pick country → see tours with prices inline (Session 20, upgraded Session 22)
 19. `src/app/review/page.tsx` — Multi-step verified review form: booking ref + email verification → star rating + review fields → success with link to /reviews (Session 23)
 20. `src/app/reviews/page.tsx` — All reviews page: 6 seed reviews always visible + dynamically reads localStorage submitted reviews, shows them at top with "New" badge (Session 23)
+21. `src/components/home/AnimatedHeadline.tsx` — Client component, framer-motion spring animation for rotating country names in hero (Session 24)
 
 **NOT yet restyled (risky — do not touch without explicit user confirmation):**
 - `src/app/layout.tsx` — Root layout. Fonts are Geist. `font-serif` falls back to system serif, which works fine. Do NOT add Cormorant Garamond — it broke the site once. **Session 18 changes:** Added ThemeProvider wrapper, `suppressHydrationWarning` on `<html>`, FOUC-prevention inline script in `<head>`, dark variant on skip-to-content link.
@@ -102,6 +123,35 @@
 **DO NOT TOUCH:**
 - `src/app/globals.css` — caused horizontal overflow bug TWICE. `git reset --hard` both times.
 - `voice-actor/main.py` — Backend with REST + WebSocket proxy endpoints. All working. Do not touch.
+
+---
+
+## Pages Needing Green Retheme
+
+The homepage (`src/app/page.tsx`) has been fully restyled to the new Nature/Travel Magazine green palette (Session 24). All other pages still use the old amber/Art Deco palette and need to be converted. Apply the new design system (see section below) to each file.
+
+**Priority order** (start with Header/Footer since they appear on every page):
+
+| # | File | Notes |
+|---|------|-------|
+| 1 | `src/components/layout/Header.tsx` | Sticky nav — change amber CTA to emerald, amber accents → emerald, add rounded corners |
+| 2 | `src/components/layout/Footer.tsx` | 4-column footer — amber → emerald, stone dark → emerald-950 |
+| 3 | `src/components/chat/ChatWidget.tsx` | Floating chat — amber accents → emerald |
+| 4 | `src/components/home/QuickSearchBar.tsx` | Homepage search bar — amber accents → emerald (high visibility, on homepage) |
+| 5 | `src/app/tours/page.tsx` | Tours listing — cards, filters, sort — amber → emerald |
+| 6 | `src/app/tours/[slug]/page.tsx` | Tour detail — amber → emerald, remove Art Deco patterns |
+| 7 | `src/app/destinations/page.tsx` | Destinations listing — amber → emerald |
+| 8 | `src/app/destinations/[slug]/page.tsx` | Destination detail — amber → emerald |
+| 9 | `src/app/about/page.tsx` | About page — amber → emerald |
+| 10 | `src/app/contact/page.tsx` | Contact form — amber → emerald |
+| 11 | `src/app/practical-info/page.tsx` | Travel tips — amber → emerald |
+| 12 | `src/app/faq/page.tsx` | FAQ accordion — amber → emerald |
+| 13 | `src/app/blog/page.tsx` | Blog listing — amber → emerald |
+| 14 | `src/app/blog/[slug]/page.tsx` | Blog post — amber → emerald |
+| 15 | `src/app/review/page.tsx` | Review form — amber → emerald |
+| 16 | `src/app/reviews/page.tsx` | All reviews — amber → emerald |
+| 17 | `src/app/privacy/page.tsx` | Privacy — amber → emerald |
+| 18 | `src/app/terms/page.tsx` | Terms — amber → emerald |
 
 ---
 
@@ -136,103 +186,91 @@
 
 ---
 
-## Design System: Luxury / Art Deco
+## Design System: Nature / Travel Magazine (Session 24)
+
+> **Changed from Art Deco/amber to Nature/Travel Magazine/emerald in Session 24.** Teacher's feedback: "Kyrgyzstan is green — use green, it's pleasant to the eyes." The old amber/gold Art Deco read as Middle Eastern luxury; the new green palette matches Central Asian mountain landscapes.
 
 ### Color Palette
-| Old | New |
-|-----|-----|
-| `emerald-*` | `amber-*` |
-| `gray-*` | `stone-*` |
-| `bg-white` (sections) | alternating `bg-amber-50` / `bg-stone-100` |
-| `bg-gray-900` (dark sections) | `bg-stone-900` / `bg-stone-950` / `bg-black` |
-| `text-emerald-600` (accent) | `text-amber-700` (light bg) / `text-amber-400` (dark bg) |
+| Role | Light Mode | Dark Mode |
+|------|-----------|-----------|
+| Primary accent | `emerald-600` / `emerald-700` | `emerald-400` / `emerald-500` |
+| Text accent (labels, links) | `text-emerald-700` | `text-emerald-400` |
+| Text heading highlight | `text-emerald-100` (dark bg) | `text-emerald-100` |
+| Section bg (tinted) | `bg-emerald-50` | `bg-slate-950` |
+| Section bg (neutral) | `bg-stone-50` or `bg-white` | `bg-slate-900` |
+| Dark sections (newsletter, CTA) | `bg-emerald-950` | `bg-emerald-950` |
+| Card bg | `bg-white` | `bg-slate-900` |
+| Card border | `border-stone-200 hover:border-emerald-400` | `border-slate-800 hover:border-emerald-600` |
+| Body text | `text-stone-600` | `text-stone-400` |
+| Stars (ratings) | `text-amber-400` (keep amber — universal) | `text-amber-400` |
 
 ### Typography
 - **Headings**: `font-serif` on all `h1`, `h2`, `h3`
-- **Labels/eyebrows**: `uppercase tracking-[0.2em]` or `tracking-[0.3em]`, `text-xs`, `text-amber-700 dark:text-amber-400`
-- **Buttons/CTAs**: `uppercase tracking-wider`
+- **Labels/eyebrows**: `uppercase tracking-[0.3em] text-xs text-emerald-700 dark:text-emerald-400`
+- **Buttons/CTAs**: `tracking-wide` (not `tracking-wider` — softer than Art Deco)
 - **Body text minimum**: `text-stone-600 dark:text-stone-400` (stone-500 fails contrast)
 
 ### Shape Language
-- **NO rounded corners** — remove all `rounded-xl`, `rounded-2xl`, `rounded-lg` from cards/buttons/inputs
-- Exception: `rounded-full` OK for animation dots and avatar circles
-- Cards: `border border-stone-200 dark:border-stone-800 hover:border-amber-400`
+- **Rounded corners everywhere** — `rounded-xl` on cards, `rounded-lg` on buttons/inputs/badges
+- `rounded-full` for DifficultyBadge pills, avatar circles
+- Cards: `border border-stone-200 dark:border-slate-800 hover:border-emerald-400 rounded-xl`
 
-### Art Deco Ornamental Elements
+### Nature Ornamental Elements
 
-**Diamond Divider:**
+**Nature Divider (replaces Diamond Divider):**
 ```jsx
-<div className="flex items-center justify-center gap-2" aria-hidden="true">
-  <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-  <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-  <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-  <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-  <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-</div>
-```
-
-**Corner Accents** (4 corners on cards):
-```jsx
-<div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
-```
-
-**Geometric SVG Pattern** (dark sections — use unique `id` per file):
-```jsx
-<div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
-  <svg width="100%" height="100%">
-    <pattern id="unique-id" width="60" height="60" patternUnits="userSpaceOnUse">
-      <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5"/>
-      <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5"/>
-    </pattern>
-    <rect width="100%" height="100%" fill="url(#unique-id)"/>
+<div className="flex items-center justify-center gap-3" aria-hidden="true">
+  <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+  <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
   </svg>
+  <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
 </div>
 ```
 
-**Radial Amber Glow:**
+**Radial Emerald Glow (dark sections):**
 ```jsx
-<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-3xl" aria-hidden="true" />
+<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl" aria-hidden="true" />
 ```
 
 **Section Eyebrow** (above each h2):
 ```jsx
-<p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+<p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
   Section Label
 </p>
 ```
 
+**NO Art Deco elements** — remove all corner accents, diamond dividers, geometric SVG patterns from pages as they're rethemed.
+
 ### Buttons
-- **Primary**: `bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white uppercase tracking-wider`
-- **Secondary/Ghost**: `border-2 border-amber-500/50 text-amber-400 hover:bg-amber-500 hover:text-white uppercase tracking-wider`
+- **Primary**: `bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg tracking-wide`
+- **Secondary/Ghost**: `border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white rounded-lg tracking-wide`
+- **On dark bg**: `bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-lg`
 
-### Gradients (placeholder images)
-```js
-const GRADIENTS = [
-  "from-amber-800 via-amber-900 to-stone-950",
-  "from-stone-700 via-stone-800 to-stone-950",
-  "from-amber-700 via-orange-800 to-amber-950",
-  "from-stone-600 via-stone-700 to-stone-900",
-  "from-amber-600 via-amber-700 to-stone-900",
-  "from-stone-800 via-stone-900 to-black",
-];
-```
+### Hero Image Treatment
+- **NO dark overlay** on hero photos — teacher explicitly said "remove that darkness"
+- Use only a subtle bottom gradient: `bg-gradient-to-t from-black/40 via-transparent to-transparent`
+- Add `drop-shadow-md` to text for readability against bright photos
 
-### How to Restyle a File (15-rule checklist)
-1. Replace `emerald-*` → `amber-*`, `gray-*` → `stone-*`
-2. Remove all `rounded-xl`, `rounded-2xl`, `rounded-lg` (keep `rounded-full` only for dots/avatars)
-3. Add `font-serif` to all `h1`, `h2`, `h3`
-4. Add eyebrow labels above section headings
-5. Add diamond dividers where appropriate
-6. Replace `<hr>` with diamond dividers
-7. Add corner accents to cards
-8. Add geometric SVG pattern + radial glow to dark hero/header sections
+### DifficultyBadge
+- Easy: emerald (green = easy, semantic)
+- Moderate: orange (unchanged)
+- Challenging: red (unchanged)
+- All use `rounded-full` pill shape
+
+### How to Restyle a File (12-rule checklist)
+1. Replace all `amber-*` → `emerald-*` (except star ratings — keep `text-amber-400` for stars)
+2. Replace `stone-900`/`stone-950` dark bg → `slate-900`/`slate-950`; `bg-amber-50` → `bg-emerald-50`
+3. Add `rounded-xl` to cards, `rounded-lg` to buttons/inputs/badges
+4. Replace `DiamondDivider` with `NatureDivider` (leaf icon)
+5. Remove Art Deco corner accents (`border-t-2 border-l-2` corner elements)
+6. Remove geometric SVG pattern overlays from dark sections
+7. Keep `font-serif` on all `h1`, `h2`, `h3`
+8. Keep eyebrow labels but change color to `text-emerald-700 dark:text-emerald-400`
 9. Add full `dark:` variants to every element
 10. Add `aria-hidden="true"` to decorative elements, `aria-label`/`aria-labelledby` to sections
-11. Add `htmlFor`/`id` pairs to all label+input/select combos
-12. Use GRADIENTS array for placeholder image backgrounds
-13. Use standard button styles (primary gradient, secondary ghost)
-14. Replace `bg-white` sections with `bg-amber-50 dark:bg-stone-950` or `bg-stone-100 dark:bg-stone-900`
-15. Page wrapper: `<div>` (NOT `<main>` — layout.tsx owns the single `<main id="main-content">`) with `min-h-screen bg-amber-50 dark:bg-stone-950`
+11. Use new button styles (solid emerald, not gradient)
+12. Page wrapper: `<div>` (NOT `<main>`) with `min-h-screen bg-emerald-50 dark:bg-slate-950`
 
 ---
 
