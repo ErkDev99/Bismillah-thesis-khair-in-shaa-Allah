@@ -11,7 +11,6 @@ import type { Metadata } from "next";
 import {
   getFeaturedTours,
   getAllTours,
-  getUniqueDestinations,
   type Tour,
 } from "@/lib/data/tours";
 import {
@@ -734,12 +733,24 @@ export default function Home() {
       ? getFeaturedDestinations().slice(0, 6)
       : getAllDestinations().slice(0, 6);
 
-  const tourDestinations = getUniqueDestinations();
+  // Slim tour data for the search bar (no itineraries, descriptions, etc.)
+  const searchTours = getAllTours().map((t) => ({
+    id: t.id,
+    slug: t.slug,
+    title: t.title,
+    destination: t.destination,
+    duration: t.duration,
+    durationDays: t.durationDays,
+    price: t.price,
+    rating: t.rating,
+    image: t.image,
+    difficulty: t.difficulty,
+  }));
 
   return (
     <>
       <HeroSection />
-      <QuickSearchBar destinations={tourDestinations} />
+      <QuickSearchBar tours={searchTours} />
       <div className="bg-stone-900 dark:bg-black border-t border-amber-500/20" aria-label="Key stats">
         <div className="max-w-3xl mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-amber-500/20 text-center">
           {([

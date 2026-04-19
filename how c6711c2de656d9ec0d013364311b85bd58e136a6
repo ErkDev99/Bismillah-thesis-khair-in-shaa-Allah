@@ -1,0 +1,91 @@
+[33mcommit 8a37c2f764fd3dd9aaf5072f93ff714d51f241df[m
+Author: Erkebulan100 <67504870+Erkebulan100@users.noreply.github.com>
+Date:   Tue Apr 14 07:30:26 2026 +0600
+
+    Added and placed pics
+
+[1mdiff --git a/CLAUDE.md b/CLAUDE.md[m
+[1mindex 8781229..ca15dae 100644[m
+[1m--- a/CLAUDE.md[m
+[1m+++ b/CLAUDE.md[m
+[36m@@ -46,7 +46,6 @@[m [mData:[m
+   blog.ts            → Blog posts[m
+ [m
+ Missing:[m
+[31m-  - Real images (currently all gradients/placeholders)[m
+   - Real booking/payment flow[m
+   - User accounts[m
+ ```[m
+[36m@@ -72,7 +71,7 @@[m [mThese are the standard tests applied to professional websites. We will go throug[m
+ [m
+ | # | Test Category | What It Checks | Status |[m
+ |---|---|---|---|[m
+[31m-| 7 | **Content Quality** | Clear, readable, professional writing. No placeholder text. | ⚠️ Good but images missing |[m
+[32m+[m[32m| 7 | **Content Quality** | Clear, readable, professional writing. No placeholder text. | ✅ Images wired, text solid |[m
+ | 8 | **Cross-Browser Compatibility** | Works in Chrome, Firefox, Safari, Edge | ❌ Not tested |[m
+ | 9 | **SEO Basics** | Page titles, meta descriptions, Open Graph, semantic HTML | ⚠️ Minimal |[m
+ | 10 | **Form Usability & Validation** | Contact form works, validates input, gives feedback | ❌ Not tested |[m
+[36m@@ -383,5 +382,5 @@[m [mPhase 6: Polish & Content[m
+ [m
+ ---[m
+ [m
+[31m-*Last updated: 2026-04-11*[m
+[32m+[m[32m*Last updated: 2026-04-14*[m
+ *Working together step by step — quality over speed.*[m
+[1mdiff --git a/HANDOVER.md b/HANDOVER.md[m
+[1mindex 211319a..6f090b0 100644[m
+[1m--- a/HANDOVER.md[m
+[1m+++ b/HANDOVER.md[m
+[36m@@ -1,6 +1,6 @@[m
+ # Handover: Wanderlust Thesis Site[m
+ [m
+[31m-*Last updated: 2026-04-13 (Session 17)*[m
+[32m+[m[32m*Last updated: 2026-04-14 (Session 19)*[m
+ [m
+ ---[m
+ [m
+[36m@@ -9,10 +9,12 @@[m
+ | Phase | Status |[m
+ |-------|--------|[m
+ | Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete |[m
+[32m+[m[32m| Phase 1.1 — Real images | ✅ Complete — all 89 images wired via Next.js `<Image>`, gradient placeholders removed |[m
+ | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |[m
+ | Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech, ChatGPT-style conversation UI |[m
+ | ChatWidget Mic (chat bubble) | ✅ Complete — Dictation mode (record → waveform → confirm/cancel → Whisper STT → text in input) |[m
+ | Chat streaming fix | ✅ Complete — SSE buffering bug fixed in `/api/chat` route |[m
+[32m+[m[32m| Dark mode (light/dark toggle) | ✅ Complete — class-based Tailwind v4, ThemeProvider, FOUC prevention, Header toggle |[m
+ | Phase 3 — Performance (Lighthouse) | ⬜ Not started |[m
+ | Phase 4 — SEO | ⬜ Not started |[m
+ | Phase 5 — Cross-browser & Responsive | ⬜ Not started |[m
+[36m@@ -22,9 +24,20 @@[m
+ [m
+ ## Quick Start for Next Session[m
+ [m
+[31m-1. **Hero consistency fix complete.** All pages now match Home's standard: `text-3xl sm:text-4xl md:text-5xl`, `py-4 md:py-6`, description `text-base md:text-lg`. Fixed in Session 18: Destinations, About, Blog, Contact, Practical Info, FAQ, Privacy, Terms.[m
+[32m+[m[32m1. **Phase 1.1 (images) is done.** All 89 images live in `public/images/{hero,tours,destinations,blog,team}/` and are wired into components via Next.js `<Image>`. Build passes (33 routes). Next up: Phase 3 (Performance / Lighthouse), then Phase 4 (SEO), 5 (cross-browser), 6 (polish — custom 404, loading states, form validation).[m
+ [m
+[31m-2. **After hero consistency**, continue with Phase 3–6. See `CLAUDE.md` for full phase specs.[m
+[32m+[m[32m2. **Suggested next task: Phase 3.4 — Run Lighthouse.** `npm run build && npm run start`, open Chrome DevTools → Lighthouse, target 90+ on all four metrics. Hero `<Image>` components have `priority` + `sizes="100vw"` already; most other cards use `fill` + responsive `sizes`. LCP should be good.[m
+[32m+[m
+[32m+[m[32m   **What was done in Session 19:**[m
+[32m+[m[32m   - **Wired all 89 images** into the site. Replaced every CSS gradient placeholder with Next.js `<Image>` across 12 pages: home hero, tour cards + detail heroes, destination cards + detail heroes + `thingsToDo` activities, blog cards + article heroes, about page team photos + hero + story section, and `hero.jpg` as background on contact/faq/practical-info/privacy/terms compact headers.[m
+[32m+[m[32m   - **Tours & Destinations listing headers** (`/tours`, `/destinations`) initially had solid dark bg (no image) for "content above the fold" reasons. User flagged the inconsistency; added `hero.jpg` as background with `bg-black/70` overlay (darker than `/about`'s `/50` since these headers are much shorter — stronger overlay keeps amber title readable).[m
+[32m+[m[32m   - **Team photo framing fix**: Original `h-56 object-cover` was cropping heads (hats, tops of heads). Bumped to `h-72 object-cover object-[center_20%]`. The `20%` is a compromise across 4 differently-framed photos — if it needs tuning, lower (e.g. 10%) pulls subjects up, higher (30%) pushes them down.[m
+[32m+[m[32m   - **Removed all unused `GRADIENTS` constant arrays** and one stray `gradient` variable from 9 files after the image wiring was done. Build still passes.[m
+[32m+[m
+[32m+[m[32m   **What was done in Session 18:**[m
+[32m+[m[32m   - **Dark mode toggle**: Implemented class-based dark mode for Tailwind CSS v4. Added `@custom-variant dark` to `globals.css`, created `src/components/ThemeProvider.tsx` (context + localStorage + system preference), added FOUC-prevention inline script in `layout.tsx`, and sun/moon toggle button in Header. Toggle persists across page loads. No flash on reload.[m
+[32m+[m[32m   - **Header responsive fix**: Toggle was being pushed off-screen on narrower desktop viewports. Fixed by putting the toggle inside the desktop nav flow with tighter spacing (`text-xs px-2` at `md`, `text-sm px-3` at `lg`), and a separate mobile container with toggle + hamburger.[m
+[32m+[m[32m   - **Image folder structure**: Created `public/images/{hero,tours,destinations,blog,team}/`. Provided user with complete 89-image download list (filenames, search keywords, what to look for) mapped to every `image` and `gallery` path in `tours.ts`, `destinations.ts`, and `blog.ts`.[m
+ [m
+    **What was done in Session 17:**[m
+    - **Vercel deployment fix**: Project had Output Directory misconfigured to "public" instead of `.next`. User had two Vercel projects — deleted the broken one, fixed the remaining one.[m
+[36m@@ -48,7 +61,10 @@[m
+ - **Focus ring contrast (WCAG 1.4.11)**: `focus:ring-amber-500` on white bg = 2.15:1 (fails 3:1 for UI). ~20 instances in form/card contexts. Deferred — flag before Phase 3 audit.[m
+ - **Kyrgyz TTS quality**: gTTS fallback for Kyrgyz is mediocre. Low priority.[m
+ - **WebSocket URL**: Voice-chat page now uses `NEXT_PUBLIC_VOICE_WS_URL` env var for production (Render backend), falls back to `ws://localhost:8001` for dev. Backend deployed at `bismillah-thesis-khair-in-shaa-allah.onrender.com`.[m
+[31m-- **Hero size inconsistency**: ✅ Resolved — all pages now match Home's standard.[m
+[32m+[m[32m- **Hero size inconsistency**: ✅ Resolved — all pages now match Home's standard. Tours/Destinations listing headers also have `hero.jpg` background (Session 19) with `bg-black/70` overlay for the shorter header height.[m
+[32m+[m[32m- **Dark mode**: ✅ Implemented. Class-based (`@custom-variant dark` in globals.css), `ThemeProvider` context, FOUC-prevention script in `<head>`, sun/moon toggle in Header. Persists to localStorage, defaults to system preference. All existing `dark:` classes across the site now work.[m
+[32m+[m[32m- **Images**: ✅ All 89 wired. `hero/hero.jpg` (1), `tours/*.jpg` (24), `destinations/*.jpg` (54), `blog/*.jpg` (6), `team/*.jpg` (4). Data files (`tours.ts`, `destinations.ts`, `blog.ts`) own the paths.[m
+[32m+[m[32m- **Team photo cropping**: Team grid on `/about` uses `h-72 object-cover object-[center_20%]` to handle 4 differently-framed portraits. If any

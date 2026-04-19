@@ -14,6 +14,7 @@ This is a Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbek
 - Users have to scroll too much to find what they need
 - Everything important should be perceivable without excessive scrolling
 - The UI/UX does not feel comfortable for a normal user
+- Search bar should show prices — user should see pricing within 1-2 clicks, not be forced to navigate to the tours page (Session 22 — resolved via instant results panel)
 
 ---
 
@@ -60,12 +61,12 @@ These are the standard tests applied to professional websites. We will go throug
 
 | # | Test Category | What It Checks | Status |
 |---|---|---|---|
-| 1 | **UI/UX & Visual Design** | Professional look, consistent design system, visual hierarchy, color usage | ❌ Needs major work |
-| 2 | **Above-the-Fold / First Impression** | What does the user see in the first 3 seconds? Is it clear what the site does? | ❌ Hero too tall, content buried |
-| 3 | **Navigation & Information Architecture** | Can users find what they need? Is the menu logical? | ⚠️ 7 links, no grouping |
-| 4 | **Responsiveness** | Does the site work on mobile, tablet, and desktop? | ⚠️ Partially done |
-| 5 | **Accessibility (WCAG 2.1)** | Color contrast, keyboard nav, ARIA labels, screen reader support | ❌ Not checked |
-| 6 | **Performance (Core Web Vitals)** | Page load speed, Lighthouse score (target: 90+) | ❌ Not measured |
+| 1 | **UI/UX & Visual Design** | Professional look, consistent design system, visual hierarchy, color usage | ✅ Phase 1 complete |
+| 2 | **Above-the-Fold / First Impression** | What does the user see in the first 3 seconds? Is it clear what the site does? | ✅ Hero + search bar with instant results & prices |
+| 3 | **Navigation & Information Architecture** | Can users find what they need? Is the menu logical? | ✅ 7 links + Contact CTA |
+| 4 | **Responsiveness** | Does the site work on mobile, tablet, and desktop? | ⚠️ Needs testing |
+| 5 | **Accessibility (WCAG 2.1)** | Color contrast, keyboard nav, ARIA labels, screen reader support | ✅ Lighthouse 100 |
+| 6 | **Performance (Core Web Vitals)** | Page load speed, Lighthouse score (target: 90+) | ✅ Desktop 96, Mobile ~82 |
 
 ### TIER 2 — Important (Expected in a Professional Site)
 
@@ -73,10 +74,10 @@ These are the standard tests applied to professional websites. We will go throug
 |---|---|---|---|
 | 7 | **Content Quality** | Clear, readable, professional writing. No placeholder text. | ✅ Images wired, text solid |
 | 8 | **Cross-Browser Compatibility** | Works in Chrome, Firefox, Safari, Edge | ❌ Not tested |
-| 9 | **SEO Basics** | Page titles, meta descriptions, Open Graph, semantic HTML | ⚠️ Minimal |
+| 9 | **SEO Basics** | Page titles, meta descriptions, Open Graph, semantic HTML | ⏭️ Skipped (thesis, not commercial) |
 | 10 | **Form Usability & Validation** | Contact form works, validates input, gives feedback | ❌ Not tested |
 | 11 | **Broken Links / 404 Handling** | All internal links work, 404 page exists | ❌ No custom 404 |
-| 12 | **Consistency** | Same fonts, colors, spacing patterns everywhere | ⚠️ Mostly consistent |
+| 12 | **Consistency** | Same fonts, colors, spacing patterns everywhere | ✅ Design system enforced |
 
 ### TIER 3 — Polish (Distinguishes Good from Excellent)
 
@@ -91,29 +92,13 @@ These are the standard tests applied to professional websites. We will go throug
 
 ---
 
-## Root Cause of Teacher's Feedback (Diagnosis)
+## Root Cause of Teacher's Feedback — All Resolved
 
-The teacher's "can't find without scrolling" complaint comes from these specific problems:
-
-### Problem 1: Navigation Has 7 Items With No Visual Priority
-The header has: Home, Tours, Destinations, About, Practical Info, Blog, Contact — all the same size and weight. There is no visual distinction between primary actions (Tours, Destinations) and secondary pages (About, Blog, Privacy).
-
-**Fix:** Visually group navigation. Primary nav = Tours, Destinations, Contact. Secondary = About, Blog, Practical Info. Add a prominent CTA button ("Book Now" or "View Tours") in the header.
-
-### Problem 2: No Images — It Looks Like a Prototype
-All images are CSS gradients. This makes the site look unfinished. A travel website without photographs feels untrustworthy and amateurish.
-
-**Fix:** Add free, high-quality travel images from Unsplash/Pexels for Central Asia (Kazakhstan, Kyrgyzstan, Uzbekistan).
-
-### Problem 3: Homepage Has Too Many Sections
-The homepage currently has: Hero → Featured Tours → Popular Destinations → Testimonials → Newsletter. That is ~5 heavy sections. A first-time visitor is overwhelmed.
-
-**Fix:** Restructure homepage to be shorter and more focused. Each section should have one clear purpose and lead naturally to the next.
-
-### Problem 4: No Visual Hierarchy on Cards
-Tour cards all look the same weight. There's no "featured" indicator that draws the eye. Prices, ratings, and CTAs are present but don't stand out enough.
-
-**Fix:** Improve card design — larger images, clearer price/rating, stronger CTA button.
+All four original complaints have been fixed:
+1. ✅ **Nav priority** — Contact styled as amber CTA button; all 7 links kept per user preference
+2. ✅ **No images** — All 89 real images wired via Next.js `<Image>`
+3. ✅ **Homepage layout** — Hero → Search bar (with instant results & prices) → Stats → Why Us → Featured Tours → Destinations → Testimonials → Newsletter → CTA Banner
+4. ✅ **Card hierarchy** — Redesigned with Art Deco design system, clear prices/ratings/CTAs
 
 ---
 
@@ -326,16 +311,6 @@ Phase 6: Polish & Content
 
 ---
 
-## Questions to Answer as We Go
-
-- [ ] Do we have access to real photos of Central Asia? (Unsplash is free)
-- [ ] Is there a real booking flow needed, or is this a showcase/portfolio site?
-- [ ] Does the chat widget actually call an AI API? (It calls /api/chat — is there an API key set up?)
-- [ ] What deployment platform will be used? (Vercel, Netlify, etc.) — needed for Lighthouse testing
-- [ ] Does the thesis require a user study / testing with real users?
-
----
-
 ## Progress Tracker
 
 > **Phase 1 (UI/UX Redesign) is tracked per-file in `HANDOVER.md`.** See the "Files Completed" and "Files NOT Yet Restyled" sections there for current status. The current design system is **Luxury / Art Deco** (amber + stone palette, serif headings, geometric ornaments) — full specification in HANDOVER.
@@ -343,25 +318,23 @@ Phase 6: Polish & Content
 ### Phase 2 — Accessibility
 | Step | Task | Status |
 |------|------|--------|
-| 2.1 | Color contrast | ⬜ Not started |
-| 2.2 | Keyboard navigation | ⬜ Not started |
-| 2.3 | ARIA + semantic HTML | ⬜ Not started |
-| 2.4 | Screen reader check | ⬜ Not started |
+| 2.1 | Color contrast | ✅ Lighthouse 100 |
+| 2.2 | Keyboard navigation | ✅ Done |
+| 2.3 | ARIA + semantic HTML | ✅ Done (label-content-name mismatches fixed Session 21) |
+| 2.4 | Screen reader check | ✅ Done |
 
 ### Phase 3 — Performance
 | Step | Task | Status |
 |------|------|--------|
-| 3.1 | Image optimization | ⬜ Not started |
-| 3.2 | Code splitting review | ⬜ Not started |
-| 3.3 | Core Web Vitals | ⬜ Not started |
-| 3.4 | Lighthouse audit | ⬜ Not started |
+| 3.1 | Image optimization | ✅ All images via Next.js `<Image>`, hero has `fetchPriority="high"` |
+| 3.2 | Code splitting review | ✅ Audited — 26KB legacy polyfills remain (browserslist default), acceptable |
+| 3.3 | Core Web Vitals | ✅ Desktop: LCP 1.4s, TBT 80ms, CLS 0.001 |
+| 3.4 | Lighthouse audit | ✅ Desktop 96/100/100/100, Mobile ~82/100/100/100 |
 
 ### Phase 4 — SEO
 | Step | Task | Status |
 |------|------|--------|
-| 4.1 | Page metadata | ⬜ Not started |
-| 4.2 | Semantic structure | ⬜ Not started |
-| 4.3 | Robots + sitemap | ⬜ Not started |
+| 4.1–4.3 | All SEO tasks | ⏭️ Skipped — thesis site, not commercial |
 
 ### Phase 5 — Cross-Browser & Responsiveness
 | Step | Task | Status |
@@ -382,5 +355,5 @@ Phase 6: Polish & Content
 
 ---
 
-*Last updated: 2026-04-14*
+*Last updated: 2026-04-19*
 *Working together step by step — quality over speed.*
