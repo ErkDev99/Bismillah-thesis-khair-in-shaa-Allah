@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-19 (Session 24)*
+*Last updated: 2026-04-19 (Session 25)*
 
 ---
 
@@ -10,13 +10,13 @@
 |-------|--------|
 | Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete (Art Deco) |
 | Phase 1.1 — Real images | ✅ Complete — all 89 images wired via Next.js `<Image>`, gradient placeholders removed |
-| **Design System Retheme** (Art Deco → Nature/Green) | 🔄 In progress — homepage done, 15 pages + Header/Footer/ChatWidget remaining |
+| **Design System Retheme** (Art Deco → Nature/Green) | 🔄 In progress — homepage + Header + Footer + ChatWidget done (Session 25), 15 pages remaining |
 | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |
 | Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech, ChatGPT-style conversation UI |
 | ChatWidget Mic (chat bubble) | ✅ Complete — Dictation mode (record → waveform → confirm/cancel → Whisper STT → text in input) |
 | Chat streaming fix | ✅ Complete — SSE buffering bug fixed in `/api/chat` route |
 | Dark mode (light/dark toggle) | ✅ Complete — class-based Tailwind v4, ThemeProvider, FOUC prevention, Header toggle |
-| Header CTA button | ✅ Complete — Contact link styled as filled button (Session 20; needs green retheme) |
+| Header CTA button | ✅ Complete — Contact link styled as filled emerald button (Session 20; green retheme applied Session 25) |
 | QuickSearchBar on homepage | ✅ Complete — destination + duration dropdowns with **instant results panel** showing matching tours with prices (Session 22, upgraded from Session 20) |
 | Contact page Google Map | ✅ Complete — Bishkek embed via Google Maps iframe (Session 20) |
 | Phase 3 — Performance (Lighthouse) | ✅ Complete — Desktop 96/100/100/100, Mobile ~82/100/100/100 (Session 21) |
@@ -29,11 +29,18 @@
 
 ## Quick Start for Next Session
 
-1. **PRIORITY: Green retheme is in progress.** Homepage (`page.tsx`) is done — all other pages still use the old amber/Art Deco palette. Teacher's latest feedback: "make pictures bright, remove the darkness" and "change to green, pleasant — Kyrgyzstan is green." The design system has been changed from Art Deco/amber to Nature/Travel Magazine/emerald (see Design System section below).
+1. **PRIORITY: Green retheme is in progress.** Homepage, Header, Footer, and ChatWidget are done. 15 pages still use the old amber/Art Deco palette. The design system is Nature/Travel Magazine/emerald (see Design System section below).
 
-2. **Next task: Retheme remaining pages.** Apply the new emerald/nature palette to all pages and components listed in the "Pages Needing Green Retheme" section below. Follow the new 12-rule restyle checklist. Proceed file by file, starting with Header.tsx and Footer.tsx (they appear on every page).
+2. **Next task: Retheme remaining pages, starting with QuickSearchBar.tsx (#4).** Apply the new emerald/nature palette to all pages listed in the "Pages Needing Green Retheme" section below. Follow the 12-rule restyle checklist. Proceed file by file.
 
 3. **After retheme:** Phase 5 (cross-browser/responsive testing), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
+
+   **What was done in Session 25:**
+   - **Green retheme applied to 3 global components** (Header, Footer, ChatWidget) — these appear on every page, so the entire site now has a consistent emerald nav/footer/chat.
+   - **Header.tsx**: `bg-stone-900` → `bg-emerald-950`, all `amber-*` → `emerald-*`, Contact CTA now `bg-emerald-600 text-white rounded-lg`, `tracking-wider` → `tracking-wide`.
+   - **Footer.tsx**: `bg-stone-950` → `bg-emerald-950`, Art Deco geometric SVG overlay → radial emerald glow, diamond ornaments → leaf NatureDivider, all amber → emerald.
+   - **ChatWidget.tsx**: All amber → emerald, `rounded-full` on toggle button, `rounded-xl` on chat window, `rounded-lg` on message bubbles/inputs/buttons, gradient send button → solid `bg-emerald-600`, prompt bubble bg → `bg-emerald-950`, chat header → `bg-emerald-950`, dark mode refs updated (`stone-900` → `slate-900`).
+   - **Build verified**: `next build` passes cleanly with no errors.
 
    **What was done in Session 24:**
    - **Design system changed** from Luxury/Art Deco (amber + stone, sharp corners, diamond dividers, geometric SVG patterns) to **Nature/Travel Magazine** (emerald + cream, rounded corners, leaf dividers, bright photography).
@@ -128,16 +135,16 @@
 
 ## Pages Needing Green Retheme
 
-The homepage (`src/app/page.tsx`) has been fully restyled to the new Nature/Travel Magazine green palette (Session 24). All other pages still use the old amber/Art Deco palette and need to be converted. Apply the new design system (see section below) to each file.
+The homepage (`src/app/page.tsx`) was restyled in Session 24. Header, Footer, and ChatWidget were restyled in Session 25. The remaining 15 pages still use the old amber/Art Deco palette and need to be converted. Apply the new design system (see section below) to each file.
 
-**Priority order** (start with Header/Footer since they appear on every page):
+**Priority order** (continue from #4 — QuickSearchBar):
 
 | # | File | Notes |
 |---|------|-------|
-| 1 | `src/components/layout/Header.tsx` | Sticky nav — change amber CTA to emerald, amber accents → emerald, add rounded corners |
-| 2 | `src/components/layout/Footer.tsx` | 4-column footer — amber → emerald, stone dark → emerald-950 |
-| 3 | `src/components/chat/ChatWidget.tsx` | Floating chat — amber accents → emerald |
-| 4 | `src/components/home/QuickSearchBar.tsx` | Homepage search bar — amber accents → emerald (high visibility, on homepage) |
+| 1 | ~~`src/components/layout/Header.tsx`~~ | ✅ Done (Session 25) |
+| 2 | ~~`src/components/layout/Footer.tsx`~~ | ✅ Done (Session 25) |
+| 3 | ~~`src/components/chat/ChatWidget.tsx`~~ | ✅ Done (Session 25) |
+| 4 | `src/components/home/QuickSearchBar.tsx` | **Next** — Homepage search bar — amber accents → emerald (high visibility, on homepage) |
 | 5 | `src/app/tours/page.tsx` | Tours listing — cards, filters, sort — amber → emerald |
 | 6 | `src/app/tours/[slug]/page.tsx` | Tour detail — amber → emerald, remove Art Deco patterns |
 | 7 | `src/app/destinations/page.tsx` | Destinations listing — amber → emerald |

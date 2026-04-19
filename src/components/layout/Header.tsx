@@ -27,13 +27,13 @@ export default function Header() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="bg-stone-900 dark:bg-black shadow-lg sticky top-0 z-50 border-b border-amber-500/20">
+    <header className="bg-emerald-950 dark:bg-black shadow-lg sticky top-0 z-50 border-b border-emerald-500/20">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Primary">
         <div className="flex justify-between items-center h-16">
-          {/* Logo — serif, luxury feel */}
+          {/* Logo — serif, nature feel */}
           <Link
             href="/"
-            className="text-2xl font-bold text-amber-400 font-serif tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
+            className="text-2xl font-bold text-emerald-400 font-serif tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black"
           >
             Wanderlust
           </Link>
@@ -44,15 +44,15 @@ export default function Header() {
               const active = isActive(link.href);
               const isCTA = link.href === "/contact";
               const base =
-                "transition-colors text-xs lg:text-sm uppercase tracking-wider whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black";
+                "transition-colors text-xs lg:text-sm uppercase tracking-wide whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black";
               const classes = isCTA
-                ? `${base} ml-1 lg:ml-2 px-3 lg:px-4 py-2 font-semibold bg-amber-500 text-stone-900 hover:bg-amber-400 ${
-                    active ? "ring-2 ring-amber-300" : ""
+                ? `${base} ml-1 lg:ml-2 px-3 lg:px-4 py-2 font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 ${
+                    active ? "ring-2 ring-emerald-300" : ""
                   }`
                 : `${base} px-2 lg:px-3 py-2 ${
                     active
-                      ? "text-amber-400 border-b-2 border-amber-400"
-                      : "text-stone-300 hover:text-amber-400"
+                      ? "text-emerald-400 border-b-2 border-emerald-400"
+                      : "text-stone-300 hover:text-emerald-400"
                   }`;
               return (
                 <Link
@@ -69,7 +69,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                className="ml-1 p-2 text-stone-300 hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
+                className="ml-1 p-2 text-stone-300 hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black"
                 aria-label={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
               >
                 {resolvedTheme === "dark" ? (
@@ -91,7 +91,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                className="p-2 text-stone-300 hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
+                className="p-2 text-stone-300 hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black"
                 aria-label={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
               >
                 {resolvedTheme === "dark" ? (
@@ -107,7 +107,7 @@ export default function Header() {
             )}
             <button
               type="button"
-              className="p-2 text-stone-300 hover:text-amber-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
+              className="p-2 text-stone-300 hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMenuOpen}
@@ -142,20 +142,20 @@ export default function Header() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div id="mobile-menu" className="md:hidden py-4 border-t border-amber-500/20">
+          <div id="mobile-menu" className="md:hidden py-4 border-t border-emerald-500/20">
             {navLinks.map((link) => {
               const active = isActive(link.href);
               const isCTA = link.href === "/contact";
               const base =
-                "uppercase tracking-wider text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black";
+                "uppercase tracking-wide text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black";
               const classes = isCTA
-                ? `${base} block text-center mt-3 py-3 px-4 font-semibold bg-amber-500 text-stone-900 hover:bg-amber-400 ${
-                    active ? "ring-2 ring-amber-300" : ""
+                ? `${base} block text-center mt-3 py-3 px-4 font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-500 ${
+                    active ? "ring-2 ring-emerald-300" : ""
                   }`
                 : `${base} block py-2.5 px-2 ${
                     active
-                      ? "text-amber-400"
-                      : "text-stone-300 hover:text-amber-400"
+                      ? "text-emerald-400"
+                      : "text-stone-300 hover:text-emerald-400"
                   }`;
               return (
                 <Link

@@ -332,25 +332,25 @@ export default function ChatWidget() {
           <button
             type="button"
             onClick={handlePromptClick}
-            className="relative block w-full text-left bg-stone-900 p-4 border border-amber-500/30 shadow-2xl cursor-pointer hover:border-amber-500/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950"
+            className="relative block w-full text-left bg-emerald-950 rounded-xl p-4 border border-emerald-500/30 shadow-2xl cursor-pointer hover:border-emerald-500/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             aria-label="Open chat with travel assistant"
           >
             {/* Avatar and message */}
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shrink-0" aria-hidden="true">
+              <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-700 flex items-center justify-center shrink-0" aria-hidden="true">
                 <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-medium text-amber-100 mb-1">Need help planning your trip?</p>
+                <p className="text-sm font-medium text-emerald-100 mb-1">Need help planning your trip?</p>
                 <p className="text-xs text-stone-400">Click to chat with our travel assistant!</p>
               </div>
             </div>
 
             {/* Small arrow pointing to button */}
             <span
-              className="absolute -bottom-2 right-8 w-4 h-4 bg-stone-900 border-r border-b border-amber-500/30 transform rotate-45"
+              className="absolute -bottom-2 right-8 w-4 h-4 bg-emerald-950 border-r border-b border-emerald-500/30 transform rotate-45"
               aria-hidden="true"
             />
           </button>
@@ -359,7 +359,7 @@ export default function ChatWidget() {
           <button
             type="button"
             onClick={handleDismissPrompt}
-            className="absolute -top-2 -right-2 w-6 h-6 bg-stone-800 hover:bg-stone-700 flex items-center justify-center text-stone-400 hover:text-amber-400 transition-colors border border-amber-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-950"
+            className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-stone-800 hover:bg-stone-700 flex items-center justify-center text-stone-400 hover:text-emerald-400 transition-colors border border-emerald-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             aria-label="Dismiss chat prompt"
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -374,7 +374,7 @@ export default function ChatWidget() {
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         style={{ position: 'fixed', bottom: '24px', right: '24px' }}
-        className="z-50 w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-950"
+        className="z-50 w-14 h-14 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950"
         aria-label={isOpen ? "Close chat" : "Open chat"}
         aria-expanded={isOpen}
         aria-controls="chat-dialog"
@@ -426,11 +426,11 @@ export default function ChatWidget() {
             height: '500px',
             maxHeight: 'calc(100vh - 120px)',
           }}
-          className="z-50 w-[350px] sm:w-[400px] bg-stone-50 dark:bg-stone-900 shadow-2xl flex flex-col overflow-hidden border border-amber-500/30"
+          className="z-50 w-[350px] sm:w-[400px] rounded-xl bg-stone-50 dark:bg-slate-900 shadow-2xl flex flex-col overflow-hidden border border-emerald-500/30"
         >
           {/* Header */}
-          <div className="flex-shrink-0 bg-stone-900 dark:bg-black text-white px-4 py-3 flex items-center gap-3 border-b border-amber-500/20">
-            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center" aria-hidden="true">
+          <div className="flex-shrink-0 bg-emerald-950 dark:bg-black text-white px-4 py-3 flex items-center gap-3 border-b border-emerald-500/20">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-700 flex items-center justify-center" aria-hidden="true">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -448,14 +448,14 @@ export default function ChatWidget() {
             </div>
             <div className="flex-1">
               <h3 id="chat-dialog-title" className="font-semibold font-serif">Wanderlust Assistant</h3>
-              <p className="text-amber-400/70 text-xs uppercase tracking-wider" aria-live="polite">
+              <p className="text-emerald-400/70 text-xs uppercase tracking-wider" aria-live="polite">
                 {isLoading ? "Typing..." : "Online"}
               </p>
             </div>
             <Link
               href="/voice-chat"
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 hover:bg-amber-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-amber-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
+              className="w-8 h-8 hover:bg-emerald-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
               aria-label="Open immersive voice mode"
               title="Voice mode"
             >
@@ -466,7 +466,7 @@ export default function ChatWidget() {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 hover:bg-amber-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-amber-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
+              className="w-8 h-8 hover:bg-emerald-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
               aria-label="Close chat"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -491,10 +491,10 @@ export default function ChatWidget() {
                 }`}
               >
                 <div
-                  className={`max-w-[80%] px-4 py-2 ${
+                  className={`max-w-[80%] px-4 py-2 rounded-lg ${
                     message.role === "user"
-                      ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
-                      : "bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-stone-700"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-white dark:bg-slate-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-slate-700"
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">
@@ -510,13 +510,13 @@ export default function ChatWidget() {
               <div className="flex justify-start" aria-label="Assistant is typing">
                 <div className="bg-white dark:bg-stone-800 text-stone-800 shadow-sm border border-stone-200 dark:border-stone-700 px-4 py-2">
                   <div className="flex gap-1" aria-hidden="true">
-                    <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
+                    <span className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" />
                     <span
-                      className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"
                       style={{ animationDelay: "0.1s" }}
                     />
                     <span
-                      className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
+                      className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"
                       style={{ animationDelay: "0.2s" }}
                     />
                   </div>
@@ -528,7 +528,7 @@ export default function ChatWidget() {
           {/* Voice error strip */}
           {voiceError && (
             <div
-              className="flex-shrink-0 px-3 py-2 bg-stone-900 dark:bg-black border-t border-amber-500/20 text-xs uppercase tracking-[0.2em]"
+              className="flex-shrink-0 px-3 py-2 bg-stone-900 dark:bg-black border-t border-emerald-500/20 text-xs uppercase tracking-[0.2em]"
               role="status"
               aria-live="polite"
             >
@@ -546,7 +546,7 @@ export default function ChatWidget() {
                   {audioLevels.map((level, i) => (
                     <div
                       key={i}
-                      className="w-[3px] bg-amber-500 transition-all duration-75"
+                      className="w-[3px] bg-emerald-500 transition-all duration-75"
                       style={{
                         height: `${Math.max(2, level * 28)}px`,
                         opacity: 0.4 + level * 0.6,
@@ -559,7 +559,7 @@ export default function ChatWidget() {
                 <button
                   type="button"
                   onClick={cancelDictation}
-                  className="w-10 h-10 flex items-center justify-center text-stone-500 dark:text-stone-400 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                  className="w-10 h-10 flex items-center justify-center text-stone-500 dark:text-stone-400 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
                   aria-label="Cancel recording"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
@@ -571,7 +571,7 @@ export default function ChatWidget() {
                 <button
                   type="button"
                   onClick={confirmDictation}
-                  className="w-10 h-10 flex items-center justify-center text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                  className="w-10 h-10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
                   aria-label="Confirm and transcribe recording"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
@@ -583,9 +583,9 @@ export default function ChatWidget() {
               /* ── Transcribing state ── */
               <div className="flex items-center justify-center h-10 gap-2" role="status" aria-label="Transcribing audio">
                 <div className="flex gap-1" aria-hidden="true">
-                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" />
-                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
-                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
                 </div>
                 <span className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wider">Transcribing...</span>
               </div>
@@ -602,7 +602,7 @@ export default function ChatWidget() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Ask about tours, destinations..."
-                    className="flex-1 px-4 py-2 border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-200 placeholder-stone-500 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 dark:focus:ring-amber-400 focus:border-transparent text-sm"
+                    className="flex-1 px-4 py-2 rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-stone-900 dark:text-stone-200 placeholder-stone-500 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 focus:border-transparent text-sm"
                     disabled={isLoading}
                   />
                   <button
@@ -611,7 +611,7 @@ export default function ChatWidget() {
                     disabled={isLoading}
                     aria-label="Dictate — click to record voice"
                     title="Dictate"
-                    className="w-10 h-10 flex items-center justify-center bg-white dark:bg-stone-800 border border-amber-500/60 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-stone-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-10 h-10 rounded-lg flex items-center justify-center bg-white dark:bg-slate-800 border border-emerald-500/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg
                       className="w-5 h-5"
@@ -633,7 +633,7 @@ export default function ChatWidget() {
                   <button
                     type="submit"
                     disabled={isLoading || !input.trim()}
-                    className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-stone-300 disabled:to-stone-300 dark:disabled:from-stone-600 dark:disabled:to-stone-600 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 dark:focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
+                    className="w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-stone-300 dark:disabled:bg-slate-600 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
                     aria-label="Send message"
                   >
                     <svg
