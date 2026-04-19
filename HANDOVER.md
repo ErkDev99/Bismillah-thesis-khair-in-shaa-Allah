@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-19 (Session 22)*
+*Last updated: 2026-04-19 (Session 23)*
 
 ---
 
@@ -21,15 +21,24 @@
 | Phase 3 — Performance (Lighthouse) | ✅ Complete — Desktop 96/100/100/100, Mobile ~82/100/100/100 (Session 21) |
 | Phase 4 — SEO | ⏭️ Skipped — thesis site, not commercial |
 | Phase 5 — Cross-browser & Responsive | ⬜ Not started |
-| Phase 6 — Polish & Content | ⬜ Not started |
+| Phase 6 — Polish & Content | 🔄 In progress — 6.5 trust signals done (review system) |
+| Review & Rating System | ✅ Complete — social proof strip, /review (verified form), /reviews (all reviews page) |
 
 ---
 
 ## Quick Start for Next Session
 
-1. **Phases 1–3 are done.** Phase 4 (SEO) skipped — thesis site, not commercial. Remaining: Phase 5 (cross-browser/responsive testing), Phase 6 (custom 404, form validation).
+1. **Phases 1–3 are done.** Phase 4 (SEO) skipped — thesis site, not commercial. Phase 6.5 (trust signals) done via review system. Remaining: Phase 5 (cross-browser/responsive testing), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
 
-2. **Suggested next tasks:** Phase 5.1 responsive breakpoint testing, Phase 6.1 custom 404 page (`not-found.tsx`), Phase 6.3 contact form validation. All additive and low-risk. Avoid any task that involves removing sections/content — user vetoed.
+2. **Suggested next tasks:** Phase 5.1 responsive breakpoint testing, Phase 6.1 custom 404 page (`not-found.tsx`), Phase 6.3 contact form validation. All additive and low-risk.
+
+   **What was done in Session 23:**
+   - **Review & rating system** (teacher feedback on ratings): Three-part implementation —
+     1. **Social proof strip** (homepage, between Why Choose Us and Featured Tours): aggregate 4.9★ rating, "524 verified travelers" badge, 3 mini review cards, "Leave a review" link, **"View All Reviews" button** (new).
+     2. **`/review` page**: Multi-step form — Step 1 verifies booking ref + email against 6 mock credentials (WL-2025-001 to WL-2025-006); Step 2 collects stars/title/body/name/recommend; saves to `localStorage("wanderlust-reviews")` with auto-captured ISO date. Success screen links to `/reviews`.
+     3. **`/reviews` page** (new): Client component showing 6 hardcoded seed reviews (always visible) + any localStorage-submitted reviews at the top with "New" badge. Stats bar (avg rating + total count recalculates dynamically). "Leave a Review" + "Back to Home" CTAs at bottom.
+   - **Homepage testimonials section**: Renamed hardcoded names (Sarah M. → Emma B., David K. → Lars M., Aiko T. → Hana K.) so demo submissions don't duplicate them. Added **"Read All Reviews"** (outlined) + **"Leave a Review"** (solid amber) buttons below the 3-card grid.
+   - **Mock booking credentials** (for demo): `WL-2025-001 / sarah@example.com`, `WL-2025-002 / david@example.com`, `WL-2025-003 / aiko@example.com`, `WL-2024-004 / maria@example.com`, `WL-2024-005 / john@example.com`, `WL-2025-006 / elena@example.com`.
 
    **What was done in Session 22:**
    - **QuickSearchBar upgraded** (teacher feedback): Search bar now shows instant results with prices when a country is selected. User picks a country → matching tours appear below with thumbnail, name, duration, difficulty, and price. Duration dropdown dynamically updates to only show ranges available for the selected country. "Find Tours" button becomes "See All Tours" when results are visible. Addresses teacher's concern: "user shouldn't have to go to the tours page to find prices — everything within 1-2 clicks." Files changed: `QuickSearchBar.tsx` (rewritten), `page.tsx` (passes slim tour data instead of destination strings).
@@ -84,6 +93,8 @@
 
 17. `src/components/ThemeProvider.tsx` — Dark mode context provider (Session 18)
 18. `src/components/home/QuickSearchBar.tsx` — Homepage quick-search bar with instant results panel: pick country → see tours with prices inline (Session 20, upgraded Session 22)
+19. `src/app/review/page.tsx` — Multi-step verified review form: booking ref + email verification → star rating + review fields → success with link to /reviews (Session 23)
+20. `src/app/reviews/page.tsx` — All reviews page: 6 seed reviews always visible + dynamically reads localStorage submitted reviews, shows them at top with "New" badge (Session 23)
 
 **NOT yet restyled (risky — do not touch without explicit user confirmation):**
 - `src/app/layout.tsx` — Root layout. Fonts are Geist. `font-serif` falls back to system serif, which works fine. Do NOT add Cormorant Garamond — it broke the site once. **Session 18 changes:** Added ThemeProvider wrapper, `suppressHydrationWarning` on `<html>`, FOUC-prevention inline script in `<head>`, dark variant on skip-to-content link.

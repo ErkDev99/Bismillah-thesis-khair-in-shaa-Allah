@@ -289,17 +289,17 @@ function WhyChooseUsSection() {
 const MINI_REVIEWS = [
   {
     quote: "Best travel decision I ever made — our guide knew every hidden spot.",
-    name: "Sarah M.",
+    name: "Emma B.",
     country: "United Kingdom",
   },
   {
     quote: "Sleeping in a yurt under the stars is something I'll never forget.",
-    name: "David K.",
+    name: "Lars M.",
     country: "Germany",
   },
   {
     quote: "Perfectly balanced — adventurous but never rushed. Absolutely perfect.",
-    name: "Aiko T.",
+    name: "Hana K.",
     country: "Japan",
   },
 ];
@@ -341,6 +341,13 @@ function SocialProofStrip() {
             className="text-sm text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 underline underline-offset-2 transition-colors"
           >
             Leave a review
+          </Link>
+          <div className="h-8 w-px bg-stone-300 dark:bg-stone-700 hidden sm:block" aria-hidden="true" />
+          <Link
+            href="/reviews"
+            className="text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 px-4 py-1.5 uppercase tracking-wider transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
+          >
+            View All Reviews
           </Link>
         </div>
 
@@ -591,7 +598,7 @@ function FeaturedDestinationsSection({ destinations }: { destinations: Destinati
 // ═════════════════════════════════════════════════════════════════════════════
 const TESTIMONIALS = [
   {
-    name: "Sarah M.",
+    name: "Emma B.",
     country: "United Kingdom",
     tour: "Silk Road Adventure",
     rating: 5,
@@ -599,7 +606,7 @@ const TESTIMONIALS = [
       "The Silk Road tour was the trip of a lifetime. Our guide's knowledge of local history was extraordinary — I learned more in 10 days than in years of reading.",
   },
   {
-    name: "David K.",
+    name: "Lars M.",
     country: "Germany",
     tour: "Nomadic Life Experience",
     rating: 5,
@@ -607,7 +614,7 @@ const TESTIMONIALS = [
       "Sleeping in a traditional yurt under a sky full of stars in Kyrgyzstan is something I will carry with me forever. Wanderlust made it feel effortless.",
   },
   {
-    name: "Aiko T.",
+    name: "Hana K.",
     country: "Japan",
     tour: "Mountain Expedition",
     rating: 5,
@@ -662,6 +669,28 @@ function TestimonialsSection() {
               </footer>
             </blockquote>
           ))}
+        </div>
+
+        {/* Reviews CTAs */}
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            href="/reviews"
+            className="inline-flex items-center gap-2 border-2 border-amber-500 text-amber-700 dark:text-amber-400 hover:bg-amber-500 hover:text-white px-8 py-3 font-semibold uppercase tracking-wider text-sm transition-all focus:outline-none focus:ring-4 focus:ring-amber-300"
+          >
+            Read All Reviews
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+          <Link
+            href="/review"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-3 font-semibold uppercase tracking-wider text-sm transition-all focus:outline-none focus:ring-4 focus:ring-amber-300"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Leave a Review
+          </Link>
         </div>
       </div>
     </section>

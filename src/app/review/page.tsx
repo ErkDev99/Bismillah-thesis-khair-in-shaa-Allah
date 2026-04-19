@@ -43,6 +43,7 @@ interface ReviewData {
   body: string;
   name: string;
   recommend: boolean;
+  date: string;
 }
 
 export default function ReviewPage() {
@@ -137,6 +138,7 @@ export default function ReviewPage() {
       body: reviewBody.trim(),
       name: displayName.trim(),
       recommend,
+      date: new Date().toISOString(),
     };
 
     const updated = [...savedReviews, newReview];
@@ -488,7 +490,10 @@ export default function ReviewPage() {
               Your review for <strong className="text-stone-900 dark:text-amber-100">{verifiedTour}</strong> has been submitted successfully.
             </p>
             <p className="text-sm text-stone-500 dark:text-stone-500 mb-6">
-              Your verified review will appear on the tour page after a brief moderation check.
+              Your verified review is now live.{" "}
+              <Link href="/reviews" className="text-amber-600 dark:text-amber-400 underline underline-offset-2 hover:text-amber-700">
+                View all traveler reviews →
+              </Link>
             </p>
             <DiamondDivider className="mb-6" />
 

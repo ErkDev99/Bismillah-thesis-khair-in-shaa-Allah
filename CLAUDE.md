@@ -35,6 +35,8 @@ Pages:
   /faq               → FAQ accordion
   /privacy           → Privacy policy
   /terms             → Terms of service
+  /review            → Multi-step verified review form (booking ref + email verification)
+  /reviews           → All reviews page (6 seed reviews + localStorage submitted reviews)
 
 Components:
   Header.tsx         → Sticky top nav with 7 links + mobile hamburger
@@ -349,11 +351,11 @@ Phase 6: Polish & Content
 | 6.2 | Loading states | ⬜ Not started |
 | 6.3 | Form validation | ⬜ Not started |
 | 6.4 | Micro-interactions | ⬜ Not started |
-| 6.5 | Trust signals | ⬜ Not started |
+| 6.5 | Trust signals | ✅ Review/rating system: social proof strip, verified review form (/review), all-reviews page (/reviews) |
 
 > **Lessons learned and safe patterns** (horizontal overflow bug, `globals.css` rule, confirmed safe editing patterns) are documented in `HANDOVER.md`. Read that file before making any changes.
 
 ---
 
-*Last updated: 2026-04-19*
+*Last updated: 2026-04-19 (Session 23)*
 *Working together step by step — quality over speed.*
