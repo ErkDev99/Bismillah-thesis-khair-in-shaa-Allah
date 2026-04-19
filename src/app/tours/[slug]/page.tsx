@@ -202,6 +202,16 @@ function PriceCard({ tour }: { tour: Tour }) {
         Save to Wishlist
       </button>
 
+      <Link
+        href={`/review?tour=${encodeURIComponent(tour.title)}`}
+        className="w-full border-2 border-stone-300 dark:border-stone-600 hover:border-amber-500 dark:hover:border-amber-500 text-stone-700 dark:text-stone-300 hover:text-amber-700 dark:hover:text-amber-400 py-3 font-medium uppercase tracking-wider transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900 mt-3"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+        Rate This Tour
+      </Link>
+
       <DiamondDivider className="my-6" />
 
       <div className="space-y-4 text-sm">
@@ -372,6 +382,24 @@ export default async function TourDetailPage({
               <TourHighlights tour={tour} />
               <TourItinerary tour={tour} />
               <TourInclusions tour={tour} />
+
+              {/* Review CTA */}
+              <section className="bg-stone-100 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-6 flex flex-col sm:flex-row items-center gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 font-serif mb-1">
+                    Been on this tour?
+                  </h3>
+                  <p className="text-sm text-stone-600 dark:text-stone-400">
+                    Share your experience to help future travelers. Only verified bookings can leave reviews.
+                  </p>
+                </div>
+                <Link
+                  href={`/review?tour=${encodeURIComponent(tour.title)}`}
+                  className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-6 py-2.5 font-semibold uppercase tracking-wider transition-all text-sm whitespace-nowrap focus:outline-none focus:ring-4 focus:ring-amber-300"
+                >
+                  Write a Review
+                </Link>
+              </section>
             </div>
 
             {/* Sidebar */}
