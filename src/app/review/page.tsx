@@ -1,23 +1,23 @@
 // src/app/review/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Client Component — multi-step review form with booking verification.
-// Style: Luxury / Art Deco — amber + stone palette, serif headings,
-// geometric diamond ornaments, wide tracking, dark mode throughout.
+// Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
+// leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-// ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
-function DiamondDivider({ className = "" }: { className?: string }) {
+// ─── Nature Divider — leaf ornament ─────────────────────────────────────────
+function NatureDivider({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    <div className={`flex items-center justify-center gap-3 ${className}`} aria-hidden="true">
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+      <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+      </svg>
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
     </div>
   );
 }
@@ -153,29 +153,24 @@ export default function ReviewPage() {
   }
 
   return (
-    <main className="min-h-screen bg-stone-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       {/* Page Header */}
-      <div className="relative bg-stone-900 dark:bg-black text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-          <svg width="100%" height="100%">
-            <pattern id="review-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
-              <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#review-deco)" />
-          </svg>
-        </div>
+      <div className="relative bg-emerald-950 text-white overflow-hidden">
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"
+          aria-hidden="true"
+        />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 text-center">
-          <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+          <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
             Share Your Experience
           </p>
           <h1 className="text-3xl md:text-4xl font-bold font-serif mb-3">
-            Leave a <span className="text-amber-400">Review</span>
+            Leave a <span className="text-emerald-400">Review</span>
           </h1>
           <p className="text-stone-400 max-w-xl mx-auto">
             Your feedback helps future travelers choose the right adventure and helps us improve our tours.
           </p>
-          <DiamondDivider className="mt-5" />
+          <NatureDivider className="mt-5" />
         </div>
       </div>
 
@@ -192,19 +187,19 @@ export default function ReviewPage() {
                 {i > 0 && (
                   <div
                     className={`w-8 sm:w-12 h-px ${
-                      isDone ? "bg-amber-500" : "bg-stone-300 dark:bg-stone-700"
+                      isDone ? "bg-emerald-500" : "bg-stone-300 dark:bg-slate-700"
                     }`}
                     aria-hidden="true"
                   />
                 )}
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-7 h-7 flex items-center justify-center text-xs font-bold border-2 transition-colors ${
+                    className={`w-7 h-7 flex items-center justify-center text-xs font-bold border-2 transition-colors rounded-full ${
                       isActive
-                        ? "border-amber-500 bg-amber-500 text-white"
+                        ? "border-emerald-500 bg-emerald-500 text-white"
                         : isDone
-                        ? "border-amber-500 bg-amber-500/20 text-amber-500"
-                        : "border-stone-300 dark:border-stone-600 text-stone-400"
+                        ? "border-emerald-500 bg-emerald-500/20 text-emerald-500"
+                        : "border-stone-300 dark:border-slate-600 text-stone-400"
                     }`}
                   >
                     {isDone ? (
@@ -218,9 +213,9 @@ export default function ReviewPage() {
                   <span
                     className={`text-xs uppercase tracking-wider hidden sm:inline ${
                       isActive
-                        ? "text-amber-700 dark:text-amber-400 font-semibold"
+                        ? "text-emerald-700 dark:text-emerald-400 font-semibold"
                         : isDone
-                        ? "text-amber-600 dark:text-amber-500"
+                        ? "text-emerald-600 dark:text-emerald-500"
                         : "text-stone-400"
                     }`}
                   >
@@ -234,10 +229,8 @@ export default function ReviewPage() {
 
         {/* ─── Step 1: Verify Booking ─────────────────────────────────────── */}
         {step === "verify" && (
-          <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-6 sm:p-8">
-            <div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40" aria-hidden="true" />
-
-            <h2 className="text-xl font-bold text-stone-900 dark:text-amber-100 font-serif mb-2">
+          <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-6 sm:p-8 rounded-xl">
+            <h2 className="text-xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
               Verify Your Booking
             </h2>
             <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
@@ -245,12 +238,12 @@ export default function ReviewPage() {
             </p>
 
             {/* How it works info box */}
-            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 p-4 mb-6">
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 p-4 mb-6 rounded-xl">
               <div className="flex gap-2">
-                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <div className="text-sm text-amber-800 dark:text-amber-300">
+                <div className="text-sm text-emerald-800 dark:text-emerald-300">
                   <p className="font-semibold mb-1">Where to find your booking reference</p>
                   <p>Check the confirmation email you received after booking. Your reference starts with &ldquo;WL-&rdquo; followed by the year and a number (e.g., WL-2025-001).</p>
                 </div>
@@ -269,7 +262,7 @@ export default function ReviewPage() {
                   onChange={(e) => setBookingRef(e.target.value)}
                   placeholder="e.g. WL-2025-001"
                   required
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-600 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
                 />
               </div>
 
@@ -284,12 +277,12 @@ export default function ReviewPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="The email you used when booking"
                   required
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-600 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
                 />
               </div>
 
               {verifyError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-3 text-sm text-red-700 dark:text-red-300">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-3 text-sm text-red-700 dark:text-red-300 rounded-xl">
                   {verifyError}
                 </div>
               )}
@@ -297,7 +290,7 @@ export default function ReviewPage() {
               <button
                 type="submit"
                 disabled={isVerifying}
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white px-6 py-3 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-6 py-3 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isVerifying ? (
                   <span className="flex items-center justify-center gap-2">
@@ -317,9 +310,9 @@ export default function ReviewPage() {
 
         {/* ─── Step 2: Write Review ───────────────────────────────────────── */}
         {step === "review" && (
-          <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-6 sm:p-8">
+          <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-6 sm:p-8 rounded-xl">
             {/* Verified badge */}
-            <div className="flex items-center gap-2 mb-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 px-3 py-2 w-fit">
+            <div className="flex items-center gap-2 mb-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 px-3 py-2 w-fit rounded-lg">
               <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
@@ -328,7 +321,7 @@ export default function ReviewPage() {
               </span>
             </div>
 
-            <h2 className="text-xl font-bold text-stone-900 dark:text-amber-100 font-serif mb-2">
+            <h2 className="text-xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
               Write Your Review
             </h2>
             <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
@@ -349,7 +342,7 @@ export default function ReviewPage() {
                       onClick={() => setRating(star)}
                       onMouseEnter={() => setHoverRating(star)}
                       onMouseLeave={() => setHoverRating(0)}
-                      className="p-0.5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-transform hover:scale-110"
+                      className="p-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-transform hover:scale-110"
                       role="radio"
                       aria-checked={rating === star}
                       aria-label={`${star} star${star > 1 ? "s" : ""}`}
@@ -358,7 +351,7 @@ export default function ReviewPage() {
                         className={`w-8 h-8 transition-colors ${
                           star <= (hoverRating || rating)
                             ? "text-amber-400 fill-current"
-                            : "text-stone-300 dark:text-stone-600"
+                            : "text-stone-300 dark:text-slate-600"
                         }`}
                         viewBox="0 0 20 20"
                         fill={star <= (hoverRating || rating) ? "currentColor" : "none"}
@@ -394,7 +387,7 @@ export default function ReviewPage() {
                   placeholder="Summarize your experience in a few words"
                   required
                   maxLength={100}
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-600 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
                 />
               </div>
 
@@ -411,7 +404,7 @@ export default function ReviewPage() {
                   required
                   rows={5}
                   minLength={20}
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-600 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y"
+                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y"
                 />
                 <p className="text-xs text-stone-400 mt-1">
                   {reviewBody.length < 20
@@ -433,7 +426,7 @@ export default function ReviewPage() {
                   placeholder="How your name will appear (e.g. Sarah M.)"
                   required
                   maxLength={50}
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-600 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
                 />
               </div>
 
@@ -444,8 +437,8 @@ export default function ReviewPage() {
                   role="switch"
                   aria-checked={recommend}
                   onClick={() => setRecommend(!recommend)}
-                  className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 ${
-                    recommend ? "bg-amber-500" : "bg-stone-300 dark:bg-stone-600"
+                  className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
+                    recommend ? "bg-emerald-500" : "bg-stone-300 dark:bg-slate-600"
                   }`}
                 >
                   <span
@@ -460,14 +453,14 @@ export default function ReviewPage() {
               </div>
 
               {reviewError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-3 text-sm text-red-700 dark:text-red-300">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-3 text-sm text-red-700 dark:text-red-300 rounded-xl">
                   {reviewError}
                 </div>
               )}
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white px-6 py-3 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-6 py-3 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2"
               >
                 Submit Review
               </button>
@@ -477,28 +470,28 @@ export default function ReviewPage() {
 
         {/* ─── Step 3: Success ─────────────────────────────────────────────── */}
         {step === "success" && (
-          <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-6 sm:p-8 text-center">
-            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-5 border-2 border-emerald-500">
+          <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-6 sm:p-8 text-center rounded-xl">
+            <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mx-auto mb-5 border-2 border-emerald-500 rounded-full">
               <svg className="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-stone-900 dark:text-amber-100 font-serif mb-2">
+            <h2 className="text-2xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
               Thank You!
             </h2>
             <p className="text-stone-600 dark:text-stone-400 mb-2">
-              Your review for <strong className="text-stone-900 dark:text-amber-100">{verifiedTour}</strong> has been submitted successfully.
+              Your review for <strong className="text-stone-900 dark:text-emerald-100">{verifiedTour}</strong> has been submitted successfully.
             </p>
             <p className="text-sm text-stone-500 dark:text-stone-500 mb-6">
               Your verified review is now live.{" "}
-              <Link href="/reviews" className="text-amber-600 dark:text-amber-400 underline underline-offset-2 hover:text-amber-700">
+              <Link href="/reviews" className="text-emerald-600 dark:text-emerald-400 underline underline-offset-2 hover:text-emerald-700">
                 View all traveler reviews →
               </Link>
             </p>
-            <DiamondDivider className="mb-6" />
+            <NatureDivider className="mb-6" />
 
             {/* Show submitted review preview */}
-            <div className="bg-stone-50 dark:bg-stone-800/50 border border-stone-200 dark:border-stone-700 p-5 text-left mb-6">
+            <div className="bg-stone-50 dark:bg-slate-800/50 border border-stone-200 dark:border-slate-700 p-5 text-left mb-6 rounded-xl">
               <div className="flex items-center gap-2 mb-2">
                 <div className="flex gap-0.5" aria-hidden="true">
                   {[...Array(5)].map((_, i) => (
@@ -511,9 +504,9 @@ export default function ReviewPage() {
                     </svg>
                   ))}
                 </div>
-                <span className="text-sm font-semibold text-stone-900 dark:text-amber-100">{rating}.0</span>
+                <span className="text-sm font-semibold text-stone-900 dark:text-emerald-100">{rating}.0</span>
               </div>
-              <p className="font-semibold text-stone-900 dark:text-amber-100 mb-1">{reviewTitle}</p>
+              <p className="font-semibold text-stone-900 dark:text-emerald-100 mb-1">{reviewTitle}</p>
               <p className="text-sm text-stone-700 dark:text-stone-300 italic font-serif leading-relaxed mb-2">
                 &ldquo;{reviewBody}&rdquo;
               </p>
@@ -526,13 +519,13 @@ export default function ReviewPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/tours"
-                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-6 py-2.5 font-semibold uppercase tracking-wider transition-all text-sm focus:outline-none focus:ring-4 focus:ring-amber-300"
+                className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-6 py-2.5 font-semibold uppercase tracking-wide transition-all text-sm rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
               >
                 Browse More Tours
               </Link>
               <Link
                 href="/"
-                className="border-2 border-stone-300 dark:border-stone-600 hover:border-amber-500 dark:hover:border-amber-500 text-stone-700 dark:text-stone-300 px-6 py-2.5 font-semibold uppercase tracking-wider transition-all text-sm focus:outline-none focus:ring-4 focus:ring-amber-300"
+                className="border-2 border-stone-300 dark:border-slate-600 hover:border-emerald-500 dark:hover:border-emerald-500 text-stone-700 dark:text-stone-300 px-6 py-2.5 font-semibold uppercase tracking-wide transition-all text-sm rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
               >
                 Back to Home
               </Link>
@@ -542,25 +535,25 @@ export default function ReviewPage() {
 
         {/* Why we verify section */}
         {step === "verify" && (
-          <div className="mt-8 bg-stone-100 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-800 p-5">
-            <h3 className="text-sm font-semibold text-stone-900 dark:text-amber-100 mb-2 font-serif">
+          <div className="mt-8 bg-stone-50 dark:bg-slate-900/50 border border-stone-200 dark:border-slate-800 p-5 rounded-xl">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
               Why do we verify reviews?
             </h3>
             <ul className="space-y-2 text-sm text-stone-600 dark:text-stone-400">
               <li className="flex gap-2">
-                <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span><strong>Authenticity</strong> — Every review comes from someone who actually traveled with us</span>
               </li>
               <li className="flex gap-2">
-                <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span><strong>Trust</strong> — Future travelers can book with confidence knowing reviews are real</span>
               </li>
               <li className="flex gap-2">
-                <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 <span><strong>Quality</strong> — Verified feedback helps us continuously improve our tours</span>
@@ -569,6 +562,6 @@ export default function ReviewPage() {
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }

@@ -1,8 +1,8 @@
 // src/app/blog/[slug]/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Server Component — no "use client" needed.
-// Style: Luxury / Art Deco — amber + stone palette, serif headings,
-// geometric diamond ornaments, wide tracking, dark mode throughout.
+// Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
+// leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 import Link from "next/link";
 import Image from "next/image";
@@ -49,28 +49,16 @@ export async function generateMetadata({
   };
 }
 
-// ─── Diamond Divider ─────────────────────────────────────────────────────────
-function DiamondDivider({ className = "" }: { className?: string }) {
+// ─── Nature Divider — leaf ornament ─────────────────────────────────────────
+function NatureDivider({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    <div className={`flex items-center justify-center gap-3 ${className}`} aria-hidden="true">
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+      <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+      </svg>
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
     </div>
-  );
-}
-
-// ─── Corner Accents ──────────────────────────────────────────────────────────
-function CornerAccents() {
-  return (
-    <>
-      <div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-    </>
   );
 }
 
@@ -91,7 +79,7 @@ function ArticleHeader({ post }: { post: BlogPost }) {
     <header className="mb-8">
       <Link
         href="/blog"
-        className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 mb-6 text-xs font-semibold uppercase tracking-[0.2em] transition-colors focus:outline-none focus:underline"
+        className="inline-flex items-center gap-2 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 mb-6 text-xs font-semibold uppercase tracking-[0.2em] transition-colors focus:outline-none focus:underline"
       >
         <svg
           className="w-4 h-4"
@@ -106,7 +94,7 @@ function ArticleHeader({ post }: { post: BlogPost }) {
       </Link>
 
       <div className="flex flex-wrap items-center gap-3 mb-5">
-        <span className="bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] border border-amber-300 dark:border-amber-700">
+        <span className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] border border-emerald-300 dark:border-emerald-700 rounded-lg">
           {post.category}
         </span>
         <span className="text-stone-600 dark:text-stone-400 text-xs uppercase tracking-[0.15em]">
@@ -114,7 +102,7 @@ function ArticleHeader({ post }: { post: BlogPost }) {
         </span>
       </div>
 
-      <h1 className="text-3xl md:text-5xl font-bold text-stone-900 dark:text-amber-100 mb-5 leading-tight font-serif">
+      <h1 className="text-3xl md:text-5xl font-bold text-stone-900 dark:text-emerald-100 mb-5 leading-tight font-serif">
         {post.title}
       </h1>
 
@@ -122,8 +110,8 @@ function ArticleHeader({ post }: { post: BlogPost }) {
         {post.excerpt}
       </p>
 
-      <div className="flex items-center gap-4 pt-6 border-t border-stone-200 dark:border-stone-800">
-        <div className="relative w-12 h-12 overflow-hidden border border-amber-500/40">
+      <div className="flex items-center gap-4 pt-6 border-t border-stone-200 dark:border-slate-800">
+        <div className="relative w-12 h-12 overflow-hidden border border-emerald-500/40 rounded-full">
           <Image
             src={post.author.image}
             alt={post.author.name}
@@ -133,7 +121,7 @@ function ArticleHeader({ post }: { post: BlogPost }) {
           />
         </div>
         <div>
-          <p className="font-semibold text-stone-900 dark:text-amber-100">
+          <p className="font-semibold text-stone-900 dark:text-emerald-100">
             {post.author.name}
           </p>
           <p className="text-xs text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em] mt-0.5">
@@ -150,7 +138,7 @@ function ArticleHeader({ post }: { post: BlogPost }) {
 // ═════════════════════════════════════════════════════════════════════════════
 function FeaturedImage({ post }: { post: BlogPost }) {
   return (
-    <div className="relative h-64 md:h-96 overflow-hidden mb-10">
+    <div className="relative h-64 md:h-96 overflow-hidden mb-10 rounded-xl">
       <Image
         src={post.image}
         alt={post.title}
@@ -159,10 +147,6 @@ function FeaturedImage({ post }: { post: BlogPost }) {
         className="object-cover"
         sizes="(max-width: 768px) 100vw, 800px"
       />
-      <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-amber-500/60" aria-hidden="true" />
-      <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-amber-500/60" aria-hidden="true" />
-      <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-amber-500/60" aria-hidden="true" />
-      <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-amber-500/60" aria-hidden="true" />
     </div>
   );
 }
@@ -179,7 +163,7 @@ function ArticleContent({ content }: { content: string }) {
         return (
           <h2
             key={index}
-            className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-amber-100 mt-10 mb-4 font-serif"
+            className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-emerald-100 mt-10 mb-4 font-serif"
           >
             {line.replace("## ", "")}
           </h2>
@@ -190,7 +174,7 @@ function ArticleContent({ content }: { content: string }) {
         return (
           <h3
             key={index}
-            className="text-xl font-bold text-stone-900 dark:text-amber-100 mt-8 mb-3 font-serif"
+            className="text-xl font-bold text-stone-900 dark:text-emerald-100 mt-8 mb-3 font-serif"
           >
             {line.replace("### ", "")}
           </h3>
@@ -203,7 +187,7 @@ function ArticleContent({ content }: { content: string }) {
           <p key={index} className="text-stone-600 dark:text-stone-400 mb-4 leading-relaxed">
             {parts.map((part, i) =>
               i % 2 === 1 ? (
-                <strong key={i} className="font-semibold text-stone-900 dark:text-amber-100">
+                <strong key={i} className="font-semibold text-stone-900 dark:text-emerald-100">
                   {part}
                 </strong>
               ) : (
@@ -216,7 +200,7 @@ function ArticleContent({ content }: { content: string }) {
       // List items
       if (line.startsWith("- ")) {
         return (
-          <li key={index} className="text-stone-600 dark:text-stone-400 ml-6 mb-2 list-disc marker:text-amber-500">
+          <li key={index} className="text-stone-600 dark:text-stone-400 ml-6 mb-2 list-disc marker:text-emerald-500">
             {line.replace("- ", "")}
           </li>
         );
@@ -224,7 +208,7 @@ function ArticleContent({ content }: { content: string }) {
       // Numbered list items
       if (/^\d+\.\s/.test(line)) {
         return (
-          <li key={index} className="text-stone-600 dark:text-stone-400 ml-6 mb-2 list-decimal marker:text-amber-500">
+          <li key={index} className="text-stone-600 dark:text-stone-400 ml-6 mb-2 list-decimal marker:text-emerald-500">
             {line.replace(/^\d+\.\s/, "")}
           </li>
         );
@@ -249,15 +233,15 @@ function ArticleContent({ content }: { content: string }) {
 // ═════════════════════════════════════════════════════════════════════════════
 function TagList({ tags }: { tags: string[] }) {
   return (
-    <div className="mt-10 pt-8 border-t border-stone-200 dark:border-stone-800">
-      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-[10px] mb-3">
+    <div className="mt-10 pt-8 border-t border-stone-200 dark:border-slate-800">
+      <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-[10px] mb-3">
         Tags
       </p>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
           <span
             key={tag}
-            className="bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border border-amber-300/50 dark:border-amber-700/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em]"
+            className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border border-emerald-300/50 dark:border-emerald-700/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.15em] rounded-lg"
           >
             #{tag}
           </span>
@@ -272,10 +256,10 @@ function TagList({ tags }: { tags: string[] }) {
 // ═════════════════════════════════════════════════════════════════════════════
 function ShareButtons() {
   const buttonClass =
-    "w-10 h-10 border border-amber-500/30 hover:border-amber-500 hover:bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-amber-500";
+    "w-10 h-10 border border-emerald-500/30 hover:border-emerald-500 hover:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center justify-center transition-all rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
   return (
-    <div className="flex flex-wrap items-center gap-4 mt-8 pt-8 border-t border-stone-200 dark:border-stone-800">
+    <div className="flex flex-wrap items-center gap-4 mt-8 pt-8 border-t border-stone-200 dark:border-slate-800">
       <span className="text-stone-700 dark:text-stone-300 font-semibold text-xs uppercase tracking-[0.2em]">
         Share this article
       </span>
@@ -309,29 +293,28 @@ function RelatedPosts({ posts }: { posts: BlogPost[] }) {
   return (
     <section
       aria-labelledby="related-heading"
-      className="mt-16 pt-10 border-t border-stone-200 dark:border-stone-800"
+      className="mt-16 pt-10 border-t border-stone-200 dark:border-slate-800"
     >
       <div className="mb-8">
-        <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+        <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
           Keep Reading
         </p>
         <h2
           id="related-heading"
-          className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-amber-100 font-serif"
+          className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-emerald-100 font-serif"
         >
           Related Articles
         </h2>
       </div>
       <div className="grid md:grid-cols-3 gap-6">
-        {posts.map((post, i) => (
+        {posts.map((post) => (
           <Link
             key={post.id}
             href={`/blog/${post.slug}`}
             aria-label={`Read: ${post.title}`}
-            className="group relative focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
+            className="group relative focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
           >
-            <article className="relative bg-white dark:bg-stone-900 overflow-hidden shadow-sm hover:shadow-md transition-all border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600">
-              <CornerAccents />
+            <article className="relative bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 rounded-xl">
               <div className="relative h-40 overflow-hidden">
                 <Image
                   src={post.image}
@@ -342,7 +325,7 @@ function RelatedPosts({ posts }: { posts: BlogPost[] }) {
                 />
               </div>
               <div className="p-5">
-                <h3 className="font-bold text-stone-900 dark:text-amber-100 mb-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2 font-serif">
+                <h3 className="font-bold text-stone-900 dark:text-emerald-100 mb-2 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors line-clamp-2 font-serif">
                   {post.title}
                 </h3>
                 <p className="text-xs text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
@@ -364,24 +347,15 @@ function CTASection() {
   return (
     <section
       aria-labelledby="blog-cta-heading"
-      className="relative mt-16 bg-stone-900 dark:bg-black text-white p-10 md:p-14 text-center border border-amber-500/20 overflow-hidden"
+      className="relative mt-16 bg-emerald-950 text-white p-10 md:p-14 text-center rounded-xl overflow-hidden"
     >
-      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="post-cta-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#post-cta-deco)" />
-        </svg>
-      </div>
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-amber-500/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative">
-        <p className="text-amber-400/70 uppercase tracking-[0.3em] text-xs mb-3">
+        <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-3">
           Inspired?
         </p>
         <h2 id="blog-cta-heading" className="text-2xl md:text-3xl font-bold mb-4 font-serif">
@@ -392,18 +366,18 @@ function CTASection() {
           to plan your custom journey.
         </p>
 
-        <DiamondDivider className="mb-8" />
+        <NatureDivider className="mb-8" />
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/tours"
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-stone-900"
+            className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
             Explore Tours
           </Link>
           <Link
             href="/contact"
-            className="border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-300 px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-400/50 focus:ring-offset-2 focus:ring-offset-stone-900"
+            className="border-2 border-emerald-500 hover:bg-emerald-600 hover:text-white text-emerald-300 px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
             Contact Us
           </Link>
@@ -431,27 +405,17 @@ export default async function BlogPostPage({
   const relatedPosts = getRelatedPosts(slug, 3);
 
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       {/* Dark banner band */}
       <div
-        className="relative bg-stone-900 dark:bg-black h-32 overflow-hidden"
+        className="relative bg-emerald-950 h-32 overflow-hidden"
         aria-hidden="true"
       >
-        <div className="absolute inset-0 opacity-[0.04]">
-          <svg width="100%" height="100%">
-            <pattern id="post-banner-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
-              <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#post-banner-deco)" />
-          </svg>
-        </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-emerald-500/10 rounded-full blur-3xl" />
       </div>
 
       <article className="max-w-4xl mx-auto px-4 -mt-16 pb-16">
-        <div className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-lg p-6 md:p-10">
-          <CornerAccents />
+        <div className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 shadow-lg p-6 md:p-10 rounded-xl">
           <ArticleHeader post={post} />
           <FeaturedImage post={post} />
           <ArticleContent content={post.content} />

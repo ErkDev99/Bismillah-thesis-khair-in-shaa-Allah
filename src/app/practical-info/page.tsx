@@ -1,8 +1,8 @@
 // src/app/practical-info/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Server Component — no "use client" needed.
-// Style: Luxury / Art Deco — amber + stone palette, serif headings,
-// geometric diamond ornaments, wide tracking, dark mode throughout.
+// Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
+// leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 import Link from "next/link";
 import Image from "next/image";
@@ -22,35 +22,23 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
-function DiamondDivider({ className = "" }: { className?: string }) {
+// ─── Nature Divider — leaf ornament ─────────────────────────────────────────
+function NatureDivider({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    <div className={`flex items-center justify-center gap-3 ${className}`} aria-hidden="true">
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+      <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+      </svg>
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
     </div>
-  );
-}
-
-// ─── Corner Accents — 4 corners on a card ────────────────────────────────────
-function CornerAccents() {
-  return (
-    <>
-      <div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
-      <div className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
-      <div className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
-      <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors" aria-hidden="true" />
-    </>
   );
 }
 
 // ─── Eyebrow Label ───────────────────────────────────────────────────────────
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+    <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
       {children}
     </p>
   );
@@ -245,42 +233,32 @@ function HeroSection() {
         sizes="100vw"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
-      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="info-hero-deco" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="white" strokeWidth="1" />
-            <circle cx="40" cy="40" r="12" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="40" cy="40" r="3" fill="white" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#info-hero-deco)" />
-        </svg>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-amber-500/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
-          <div className="h-px w-12 md:w-20 bg-amber-500/60" />
-          <span className="text-amber-400/80 text-xs tracking-[0.3em] uppercase">Travel Guide</span>
-          <div className="h-px w-12 md:w-20 bg-amber-500/60" />
+          <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+          <span className="text-emerald-300/80 text-xs tracking-[0.3em] uppercase drop-shadow-md">Travel Guide</span>
+          <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
         </div>
 
-        <p className="text-amber-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3">
+        <p className="text-emerald-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3 drop-shadow-md">
           Know Before You Go
         </p>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
-          Practical <span className="text-amber-400">Information</span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-md">
+          Practical <span className="text-emerald-400">Information</span>
         </h1>
 
-        <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto mb-4 leading-relaxed">
+        <p className="text-base md:text-lg text-stone-200 max-w-2xl mx-auto mb-4 leading-relaxed drop-shadow-md">
           Everything you need to know to prepare for your Central Asian adventure.
         </p>
 
-        <DiamondDivider />
+        <NatureDivider />
       </div>
     </section>
   );
@@ -302,7 +280,7 @@ function QuickNav() {
   return (
     <nav
       aria-label="Practical info sections"
-      className="bg-stone-900 dark:bg-black border-b border-amber-500/20 sticky top-16 z-40 shadow-sm"
+      className="bg-emerald-950 dark:bg-slate-950 border-b border-emerald-500/20 sticky top-16 z-40 shadow-sm"
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex overflow-x-auto gap-2 py-3 scrollbar-hide">
@@ -310,7 +288,7 @@ function QuickNav() {
             <a
               key={section.id}
               href={`#${section.id}`}
-              className="flex items-center gap-2 px-4 py-2 border border-amber-500/30 hover:border-amber-500 hover:bg-amber-500/10 text-amber-300 hover:text-amber-200 text-xs font-semibold uppercase tracking-[0.15em] transition-all whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="flex items-center gap-2 px-4 py-2 border border-emerald-500/30 hover:border-emerald-500 hover:bg-emerald-500/10 text-emerald-300 hover:text-emerald-200 text-xs font-semibold uppercase tracking-[0.15em] transition-all whitespace-nowrap rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             >
               {section.label}
             </a>
@@ -329,32 +307,31 @@ function VisaSection() {
     <section
       id="visa"
       aria-labelledby="visa-heading"
-      className="py-16 md:py-20 px-4 scroll-mt-32 bg-amber-50 dark:bg-stone-950"
+      className="py-16 md:py-20 px-4 scroll-mt-32 bg-emerald-50 dark:bg-slate-950"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Eyebrow>Entry Requirements</Eyebrow>
           <h2
             id="visa-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-3 font-serif"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
             Visa Information
           </h2>
-          <DiamondDivider className="mt-4" />
+          <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {visaInfo.map((country) => (
             <article
               key={country.country}
-              className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-6"
+              className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
             >
-              <CornerAccents />
               <div className="flex items-center gap-3 mb-5">
                 <span className="text-4xl" aria-hidden="true">
                   {country.flag}
                 </span>
-                <h3 className="text-xl font-bold text-stone-900 dark:text-amber-100 font-serif">
+                <h3 className="text-xl font-bold text-stone-900 dark:text-emerald-100 font-serif">
                   {country.country}
                 </h3>
               </div>
@@ -363,7 +340,7 @@ function VisaSection() {
                   <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
                     Visa-free duration
                   </p>
-                  <p className="font-semibold text-amber-700 dark:text-amber-400 font-serif text-lg">
+                  <p className="font-semibold text-emerald-700 dark:text-emerald-400 font-serif text-lg">
                     {country.duration}
                   </p>
                 </div>
@@ -375,7 +352,7 @@ function VisaSection() {
                     {country.visaFree.join(", ")}
                   </p>
                 </div>
-                <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
+                <div className="pt-4 border-t border-stone-200 dark:border-slate-700">
                   <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
                     {country.notes}
                   </p>
@@ -387,9 +364,9 @@ function VisaSection() {
 
         <div
           role="note"
-          className="relative mt-8 bg-amber-100/50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 p-5"
+          className="relative mt-8 bg-emerald-100/50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700 p-5 rounded-xl"
         >
-          <p className="text-amber-900 dark:text-amber-200 text-sm leading-relaxed">
+          <p className="text-emerald-900 dark:text-emerald-200 text-sm leading-relaxed">
             <strong className="uppercase tracking-wider text-xs">Note:</strong>{" "}
             Visa requirements change frequently. Always verify current
             requirements with the official embassy or consulate before traveling.
@@ -408,40 +385,39 @@ function WeatherSection() {
     <section
       id="weather"
       aria-labelledby="weather-heading"
-      className="py-16 md:py-20 px-4 scroll-mt-32 bg-stone-100 dark:bg-stone-900"
+      className="py-16 md:py-20 px-4 scroll-mt-32 bg-stone-50 dark:bg-slate-900"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Eyebrow>When to Visit</Eyebrow>
           <h2
             id="weather-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-3 font-serif"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
             Weather &amp; Best Time to Visit
           </h2>
-          <DiamondDivider className="mt-4" />
+          <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {weatherData.map((season) => (
             <article
               key={season.season}
-              className="group relative bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-6"
+              className="relative bg-white dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
             >
-              <CornerAccents />
               <div className="text-4xl mb-3" aria-hidden="true">
                 {season.icon}
               </div>
-              <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-2 font-serif">
+              <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
                 {season.season}
               </h3>
-              <p className="text-amber-700 dark:text-amber-400 font-serif text-sm mb-3">
+              <p className="text-emerald-700 dark:text-emerald-400 font-serif text-sm mb-3">
                 {season.temp}
               </p>
               <p className="text-stone-600 dark:text-stone-400 text-sm mb-4 leading-relaxed">
                 {season.description}
               </p>
-              <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
+              <div className="pt-4 border-t border-stone-200 dark:border-slate-700">
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
                   Best for
                 </p>
@@ -470,15 +446,14 @@ function PackingCard({
   items: string[];
 }) {
   return (
-    <article className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-6">
-      <CornerAccents />
+    <article className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl">
       <div className="flex items-center gap-3 mb-5">
-        <div className="w-11 h-11 border border-amber-500/40 bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+        <div className="w-11 h-11 border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center rounded-lg">
           <span className="text-xl" aria-hidden="true">
             {emoji}
           </span>
         </div>
-        <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 font-serif">
+        <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 font-serif">
           {title}
         </h3>
       </div>
@@ -489,7 +464,7 @@ function PackingCard({
             className="flex items-start gap-2 text-stone-600 dark:text-stone-400 text-sm"
           >
             <svg
-              className="w-4 h-4 text-amber-500 shrink-0 mt-0.5"
+              className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -510,18 +485,18 @@ function PackingSection() {
     <section
       id="packing"
       aria-labelledby="packing-heading"
-      className="py-16 md:py-20 px-4 scroll-mt-32 bg-amber-50 dark:bg-stone-950"
+      className="py-16 md:py-20 px-4 scroll-mt-32 bg-emerald-50 dark:bg-slate-950"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Eyebrow>What to Bring</Eyebrow>
           <h2
             id="packing-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-3 font-serif"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
             Packing Lists
           </h2>
-          <DiamondDivider className="mt-4" />
+          <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -542,32 +517,31 @@ function HealthSection() {
     <section
       id="health"
       aria-labelledby="health-heading"
-      className="py-16 md:py-20 px-4 scroll-mt-32 bg-stone-100 dark:bg-stone-900"
+      className="py-16 md:py-20 px-4 scroll-mt-32 bg-stone-50 dark:bg-slate-900"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Eyebrow>Stay Well</Eyebrow>
           <h2
             id="health-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-3 font-serif"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
             Health &amp; Safety
           </h2>
-          <DiamondDivider className="mt-4" />
+          <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
           {healthSafety.map((item) => (
             <article
               key={item.title}
-              className="group relative bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-6 flex gap-4"
+              className="relative bg-white dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 flex gap-4 rounded-xl"
             >
-              <CornerAccents />
               <div className="text-3xl shrink-0" aria-hidden="true">
                 {item.icon}
               </div>
               <div>
-                <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-2 font-serif">
+                <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
                   {item.title}
                 </h3>
                 <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
@@ -580,7 +554,7 @@ function HealthSection() {
 
         <div
           role="alert"
-          className="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 p-5"
+          className="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 p-5 rounded-xl"
         >
           <p className="text-red-800 dark:text-red-200 text-sm leading-relaxed">
             <strong className="uppercase tracking-wider text-xs">Emergency Numbers:</strong>{" "}
@@ -600,28 +574,27 @@ function MoneySection() {
     <section
       id="money"
       aria-labelledby="money-heading"
-      className="py-16 md:py-20 px-4 scroll-mt-32 bg-amber-50 dark:bg-stone-950"
+      className="py-16 md:py-20 px-4 scroll-mt-32 bg-emerald-50 dark:bg-slate-950"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Eyebrow>Currency</Eyebrow>
           <h2
             id="money-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-3 font-serif"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
             Money &amp; Currency
           </h2>
-          <DiamondDivider className="mt-4" />
+          <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {moneyInfo.map((info) => (
             <article
               key={info.country}
-              className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-6"
+              className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
             >
-              <CornerAccents />
-              <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-5 font-serif">
+              <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-5 font-serif">
                 {info.country}
               </h3>
               <div className="space-y-4">
@@ -629,7 +602,7 @@ function MoneySection() {
                   <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
                     Currency
                   </p>
-                  <p className="font-semibold text-stone-900 dark:text-amber-100 font-serif">
+                  <p className="font-semibold text-stone-900 dark:text-emerald-100 font-serif">
                     {info.currency}
                   </p>
                 </div>
@@ -637,11 +610,11 @@ function MoneySection() {
                   <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
                     Approximate rate
                   </p>
-                  <p className="font-semibold text-amber-700 dark:text-amber-400 font-serif">
+                  <p className="font-semibold text-emerald-700 dark:text-emerald-400 font-serif">
                     {info.rate}
                   </p>
                 </div>
-                <div className="pt-4 border-t border-stone-200 dark:border-stone-700">
+                <div className="pt-4 border-t border-stone-200 dark:border-slate-700">
                   <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
                     {info.tips}
                   </p>
@@ -653,9 +626,9 @@ function MoneySection() {
 
         <div
           role="note"
-          className="mt-8 bg-amber-100/50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 p-5"
+          className="mt-8 bg-emerald-100/50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700 p-5 rounded-xl"
         >
-          <p className="text-amber-900 dark:text-amber-200 text-sm leading-relaxed">
+          <p className="text-emerald-900 dark:text-emerald-200 text-sm leading-relaxed">
             <strong className="uppercase tracking-wider text-xs">Tip:</strong>{" "}
             Bring clean, unmarked US dollars (2009 or newer) for the best
             exchange rates. Torn or marked bills may be refused.
@@ -674,28 +647,27 @@ function CultureSection() {
     <section
       id="culture"
       aria-labelledby="culture-heading"
-      className="py-16 md:py-20 px-4 scroll-mt-32 bg-stone-100 dark:bg-stone-900"
+      className="py-16 md:py-20 px-4 scroll-mt-32 bg-stone-50 dark:bg-slate-900"
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <Eyebrow>Local Customs</Eyebrow>
           <h2
             id="culture-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-amber-100 mb-3 font-serif"
+            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
             Cultural Etiquette
           </h2>
-          <DiamondDivider className="mt-4" />
+          <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {culturalTips.map((tip) => (
             <article
               key={tip.title}
-              className="group relative bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors p-6"
+              className="relative bg-white dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
             >
-              <CornerAccents />
-              <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-2 font-serif">
+              <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
                 {tip.title}
               </h3>
               <p className="text-stone-600 dark:text-stone-400 text-sm leading-relaxed">
@@ -716,25 +688,15 @@ function CTASection() {
   return (
     <section
       aria-labelledby="info-cta-heading"
-      className="relative py-20 px-4 overflow-hidden bg-stone-900 dark:bg-black text-white"
+      className="relative py-20 px-4 overflow-hidden bg-emerald-950 text-white"
     >
-      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="info-cta-deco" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="white" strokeWidth="1" />
-            <circle cx="40" cy="40" r="15" fill="none" stroke="white" strokeWidth="1" />
-            <circle cx="40" cy="40" r="5" fill="white" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#info-cta-deco)" />
-        </svg>
-      </div>
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] bg-amber-500/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative max-w-3xl mx-auto text-center">
-        <p className="text-amber-400/70 uppercase tracking-[0.3em] text-xs mb-3">
+        <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-3">
           Your Next Step
         </p>
         <h2
@@ -747,18 +709,18 @@ function CTASection() {
           Now that you know what to expect, let us help you plan the perfect trip.
         </p>
 
-        <DiamondDivider className="mb-10" />
+        <NatureDivider className="mb-10" />
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/tours"
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-stone-900"
+            className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
             Browse Tours
           </Link>
           <Link
             href="/contact"
-            className="border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-300 px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-400/50 focus:ring-offset-2 focus:ring-offset-stone-900"
+            className="border-2 border-emerald-500 hover:bg-emerald-600 hover:text-white text-emerald-300 px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
             Contact Us
           </Link>
@@ -773,7 +735,7 @@ function CTASection() {
 // ═════════════════════════════════════════════════════════════════════════════
 export default function PracticalInfoPage() {
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       <HeroSection />
       <QuickNav />
       <VisaSection />

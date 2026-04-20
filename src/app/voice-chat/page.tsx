@@ -411,43 +411,12 @@ export default function VoiceChatPage() {
 
   return (
     <div
-      className="relative bg-amber-50 dark:bg-stone-950 flex flex-col overflow-hidden"
+      className="relative bg-emerald-50 dark:bg-slate-950 flex flex-col overflow-hidden"
       style={{ height: "calc(100vh - 4rem)" }}
     >
-      {/* Art Deco pattern */}
+      {/* Radial emerald glow */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.04] dark:opacity-[0.06]"
-        aria-hidden="true"
-      >
-        <svg width="100%" height="100%">
-          <pattern
-            id="voice-deco"
-            width="60"
-            height="60"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M30 0 L60 30 L30 60 L0 30 Z"
-              fill="none"
-              stroke="currentColor"
-              className="text-amber-700 dark:text-amber-400"
-              strokeWidth="0.5"
-            />
-            <circle
-              cx="30"
-              cy="30"
-              r="8"
-              fill="none"
-              stroke="currentColor"
-              className="text-amber-700 dark:text-amber-400"
-              strokeWidth="0.5"
-            />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#voice-deco)" />
-        </svg>
-      </div>
-      <div
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/10 blur-3xl"
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-emerald-500/10 blur-3xl"
         aria-hidden="true"
       />
 
@@ -455,21 +424,18 @@ export default function VoiceChatPage() {
       {!inConversation && (
         <div className="relative flex flex-col items-center justify-center flex-1 px-4 gap-4">
           <header className="text-center">
-            <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+            <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
               Voice Assistant
             </p>
-            <h1 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-amber-50 mb-3">
+            <h1 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-emerald-100 mb-3">
               Speak with Wanderlust
             </h1>
-            <div
-              className="flex items-center justify-center gap-2"
-              aria-hidden="true"
-            >
-              <div className="h-px w-10 bg-amber-500/50" />
-              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-              <div className="w-2 h-2 rotate-45 border border-amber-500" />
-              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-              <div className="h-px w-10 bg-amber-500/50" />
+            <div className="flex items-center justify-center gap-3" aria-hidden="true">
+              <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+              <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+              </svg>
+              <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
             </div>
           </header>
 
@@ -489,7 +455,7 @@ export default function VoiceChatPage() {
           </div>
 
           <p
-            className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.25em] text-xs min-h-[18px]"
+            className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.25em] text-xs min-h-[18px]"
             role="status"
             aria-live="polite"
           >
@@ -499,7 +465,7 @@ export default function VoiceChatPage() {
           <button
             type="button"
             onClick={startConversation}
-            className="flex items-center gap-3 px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-medium uppercase tracking-[0.2em] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-amber-50 dark:focus-visible:ring-offset-stone-950"
+            className="flex items-center gap-3 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold uppercase tracking-wide text-sm transition-colors rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-50 dark:focus-visible:ring-offset-slate-950"
           >
             <svg
               width="18"
@@ -541,7 +507,7 @@ export default function VoiceChatPage() {
       {inConversation && (
         <div className="relative flex flex-col flex-1 overflow-hidden">
           {/* Compact top bar: orb + status + end button */}
-          <div className="shrink-0 flex items-center justify-between px-4 py-3 bg-stone-900/80 dark:bg-black/80 backdrop-blur-sm border-b border-amber-500/20 z-10">
+          <div className="shrink-0 flex items-center justify-between px-4 py-3 bg-emerald-950/90 dark:bg-slate-950/90 backdrop-blur-sm border-b border-emerald-500/20 z-10">
             <div className="flex items-center gap-3">
               <div className="relative" style={{ width: 40, height: 40 }}>
                 <div
@@ -555,9 +521,9 @@ export default function VoiceChatPage() {
                 </div>
               </div>
               <div>
-                <p className="text-amber-50 text-sm font-semibold font-serif">Wanderlust Voice</p>
+                <p className="text-white text-sm font-semibold font-serif">Wanderlust Voice</p>
                 <p
-                  className="text-amber-400/70 text-xs uppercase tracking-wider"
+                  className="text-emerald-400/70 text-xs uppercase tracking-wider"
                   role="status"
                   aria-live="polite"
                 >
@@ -568,7 +534,7 @@ export default function VoiceChatPage() {
             <button
               type="button"
               onClick={endConversation}
-              className="flex items-center gap-2 px-4 py-2 bg-stone-800 hover:bg-stone-700 text-amber-400 hover:text-amber-300 border border-stone-600 font-medium uppercase tracking-[0.15em] text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 border border-slate-600 font-medium uppercase tracking-[0.15em] text-xs transition-colors rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950"
             >
               <svg
                 width="12"
@@ -615,17 +581,17 @@ export default function VoiceChatPage() {
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 ${
+                    className={`max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-lg ${
                       msg.role === "user"
-                        ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
-                        : "bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-stone-700"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-white dark:bg-slate-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-slate-700"
                     }`}
                   >
                     <p
                       className={`uppercase tracking-[0.2em] text-[10px] mb-1 font-medium ${
                         msg.role === "user"
-                          ? "text-amber-100/70"
-                          : "text-amber-600 dark:text-amber-400"
+                          ? "text-emerald-100/70"
+                          : "text-emerald-600 dark:text-emerald-400"
                       }`}
                     >
                       {msg.role === "user" ? "You" : "Assistant"}
@@ -649,18 +615,18 @@ export default function VoiceChatPage() {
               {/* Thinking indicator */}
               {appState === "thinking" && (
                 <div className="flex justify-start">
-                  <div className="max-w-[85%] sm:max-w-[75%] px-4 py-3 bg-white dark:bg-stone-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-stone-700">
-                    <p className="uppercase tracking-[0.2em] text-[10px] mb-1 font-medium text-amber-600 dark:text-amber-400">
+                  <div className="max-w-[85%] sm:max-w-[75%] px-4 py-3 bg-white dark:bg-slate-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-slate-700 rounded-lg">
+                    <p className="uppercase tracking-[0.2em] text-[10px] mb-1 font-medium text-emerald-600 dark:text-emerald-400">
                       Assistant
                     </p>
                     <div className="flex gap-1.5" aria-label="Assistant is thinking">
-                      <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" />
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" />
                       <span
-                        className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"
                         style={{ animationDelay: "0.1s" }}
                       />
                       <span
-                        className="w-2 h-2 bg-amber-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"
                         style={{ animationDelay: "0.2s" }}
                       />
                     </div>

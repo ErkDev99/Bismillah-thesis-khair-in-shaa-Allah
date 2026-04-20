@@ -1,8 +1,8 @@
 // src/app/destinations/[slug]/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Server Component — individual destination detail page.
-// Style: Luxury / Art Deco — amber + stone palette, serif headings,
-// geometric diamond ornaments, wide tracking, dark mode throughout.
+// Style: Nature / Travel Magazine — emerald + cream palette, serif headings,
+// leaf ornaments, rounded corners, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
@@ -15,18 +15,18 @@ import {
 } from "@/lib/data/destinations";
 import { getToursByDestination, type Tour } from "@/lib/data/tours";
 
-// ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
-function DiamondDivider({ className = "" }: { className?: string }) {
+// ─── Nature Divider — leaf ornament ──────────────────────────────────────────
+function NatureDivider({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`flex items-center justify-center gap-2 ${className}`}
+      className={`flex items-center justify-center gap-3 ${className}`}
       aria-hidden="true"
     >
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+      <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+      </svg>
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
     </div>
   );
 }
@@ -86,47 +86,9 @@ function DestinationHero({ destination }: { destination: Destination }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
       </div>
 
-      {/* Art Deco geometric pattern overlay */}
-      <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern
-            id="dest-hero-deco"
-            width="80"
-            height="80"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M40 0 L80 40 L40 80 L0 40 Z"
-              fill="none"
-              stroke="white"
-              strokeWidth="1"
-            />
-            <circle
-              cx="40"
-              cy="40"
-              r="12"
-              fill="none"
-              stroke="white"
-              strokeWidth="0.5"
-            />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#dest-hero-deco)" />
-        </svg>
-      </div>
-
       {/* Radial glow */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-amber-500/10 rounded-full blur-3xl"
-        aria-hidden="true"
-      />
-
-      {/* Corner accents */}
-      <div
-        className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-amber-500/30 z-10"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-amber-500/30 z-10"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
@@ -134,7 +96,7 @@ function DestinationHero({ destination }: { destination: Destination }) {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 pb-12">
         <Link
           href="/destinations"
-          className="inline-flex items-center gap-2 text-amber-400/80 hover:text-amber-400 mb-4 transition-colors uppercase tracking-wider text-sm font-medium"
+          className="inline-flex items-center gap-2 text-emerald-400/80 hover:text-emerald-400 mb-4 transition-colors uppercase tracking-wide text-sm font-medium"
         >
           <svg
             className="w-5 h-5"
@@ -154,10 +116,10 @@ function DestinationHero({ destination }: { destination: Destination }) {
         </Link>
 
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <span className="px-3 py-1 text-sm font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30 uppercase tracking-wider">
+          <span className="px-3 py-1 rounded-full text-sm font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wide">
             {destination.country}
           </span>
-          <span className="px-3 py-1 text-sm font-medium bg-white/10 text-white/90 border border-white/20 uppercase tracking-wider">
+          <span className="px-3 py-1 rounded-full text-sm font-medium bg-white/10 text-white/90 border border-white/20 uppercase tracking-wide">
             {destination.tourCount} tours available
           </span>
         </div>
@@ -179,29 +141,11 @@ function DestinationHero({ destination }: { destination: Destination }) {
 // ═════════════════════════════════════════════════════════════════════════════
 function QuickFactsCard({ destination }: { destination: Destination }) {
   return (
-    <div className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 shadow-lg p-6 sticky top-24">
-      {/* Art Deco corner accents */}
-      <div
-        className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40"
-        aria-hidden="true"
-      />
-
-      <p className="text-xs text-amber-700 dark:text-amber-400 uppercase tracking-[0.2em] mb-1">
+    <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 rounded-xl shadow-lg p-6 sticky top-24">
+      <p className="text-xs text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.2em] mb-1">
         Know Before You Go
       </p>
-      <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif">
+      <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-4 font-serif">
         Quick Facts
       </h3>
 
@@ -211,22 +155,22 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
             key={index}
             className="flex justify-between items-baseline gap-3 text-sm"
           >
-            <span className="text-stone-600 dark:text-stone-400 uppercase tracking-wider text-xs">
+            <span className="text-stone-600 dark:text-stone-400 uppercase tracking-wide text-xs">
               {fact.label}
             </span>
-            <span className="font-semibold text-stone-900 dark:text-amber-100 text-right">
+            <span className="font-semibold text-stone-900 dark:text-emerald-100 text-right">
               {fact.value}
             </span>
           </div>
         ))}
       </div>
 
-      <DiamondDivider className="my-5" />
+      <NatureDivider className="my-5" />
 
       <div className="space-y-4 text-sm">
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
+            className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -240,7 +184,7 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
             />
           </svg>
           <div>
-            <span className="font-semibold text-stone-900 dark:text-amber-100">
+            <span className="font-semibold text-stone-900 dark:text-emerald-100">
               Languages:{" "}
             </span>
             <span className="text-stone-600 dark:text-stone-300">
@@ -251,7 +195,7 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
 
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
+            className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -265,7 +209,7 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
             />
           </svg>
           <div>
-            <span className="font-semibold text-stone-900 dark:text-amber-100">
+            <span className="font-semibold text-stone-900 dark:text-emerald-100">
               Currency:{" "}
             </span>
             <span className="text-stone-600 dark:text-stone-300">
@@ -276,7 +220,7 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
 
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
+            className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -290,7 +234,7 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
             />
           </svg>
           <div>
-            <span className="font-semibold text-stone-900 dark:text-amber-100">
+            <span className="font-semibold text-stone-900 dark:text-emerald-100">
               Timezone:{" "}
             </span>
             <span className="text-stone-600 dark:text-stone-300">
@@ -300,11 +244,11 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
         </div>
       </div>
 
-      <DiamondDivider className="my-5" />
+      <NatureDivider className="my-5" />
 
       <Link
         href="/contact"
-        className="block w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:from-amber-700 active:to-amber-800 text-white text-center py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-900"
+        className="block w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg text-center py-4 font-semibold uppercase tracking-wide transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
       >
         Plan Your Visit
       </Link>
@@ -318,47 +262,30 @@ function QuickFactsCard({ destination }: { destination: Destination }) {
 function OverviewSection({ destination }: { destination: Destination }) {
   return (
     <section className="mb-12" aria-labelledby="overview-heading">
-      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+      <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
         About This Place
       </p>
       <h2
         id="overview-heading"
-        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+        className="text-2xl font-bold text-stone-900 dark:text-emerald-100 mb-4 font-serif"
       >
         About {destination.name}
       </h2>
-      <DiamondDivider className="mb-6 !justify-start" />
+      <NatureDivider className="mb-6 !justify-start" />
       <p className="text-stone-600 dark:text-stone-300 leading-relaxed mb-6">
         {destination.longDescription}
       </p>
 
       {/* Highlights */}
-      <div className="relative bg-amber-50/60 dark:bg-stone-900/60 border border-amber-300/40 dark:border-amber-700/30 p-6">
-        <div
-          className="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-amber-500/40"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-amber-500/40"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-amber-500/40"
-          aria-hidden="true"
-        />
-        <div
-          className="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-amber-500/40"
-          aria-hidden="true"
-        />
-
-        <h3 className="font-semibold text-stone-900 dark:text-amber-100 mb-4 font-serif uppercase tracking-wider text-sm">
+      <div className="bg-emerald-50/60 dark:bg-slate-900/60 border border-emerald-300/40 dark:border-emerald-700/30 rounded-xl p-6">
+        <h3 className="font-semibold text-stone-900 dark:text-emerald-100 mb-4 font-serif uppercase tracking-wide text-sm">
           Highlights
         </h3>
         <ul className="grid md:grid-cols-2 gap-3">
           {destination.highlights.map((highlight, index) => (
             <li key={index} className="flex items-start gap-3">
               <svg
-                className="w-5 h-5 text-amber-500 shrink-0 mt-0.5"
+                className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -388,43 +315,26 @@ function OverviewSection({ destination }: { destination: Destination }) {
 function WeatherSection({ destination }: { destination: Destination }) {
   return (
     <section className="mb-12" aria-labelledby="weather-heading">
-      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+      <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
         When to Visit
       </p>
       <h2
         id="weather-heading"
-        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+        className="text-2xl font-bold text-stone-900 dark:text-emerald-100 mb-4 font-serif"
       >
         Best Time to Visit
       </h2>
-      <DiamondDivider className="mb-6 !justify-start" />
+      <NatureDivider className="mb-6 !justify-start" />
       <p className="text-stone-600 dark:text-stone-300 leading-relaxed mb-6">
         {destination.bestTimeToVisit}
       </p>
 
       <div className="grid md:grid-cols-2 gap-4">
         {/* Summer */}
-        <div className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-5 group hover:border-amber-400 dark:hover:border-amber-600 transition-colors">
-          <div
-            className="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-
+        <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 rounded-xl p-5 group hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors">
           <div className="flex items-center gap-3 mb-2">
             <svg
-              className="w-6 h-6 text-amber-500"
+              className="w-6 h-6 text-emerald-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -437,7 +347,7 @@ function WeatherSection({ destination }: { destination: Destination }) {
                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
               />
             </svg>
-            <h3 className="font-semibold text-stone-900 dark:text-amber-100 font-serif uppercase tracking-wider text-sm">
+            <h3 className="font-semibold text-stone-900 dark:text-emerald-100 font-serif uppercase tracking-wide text-sm">
               Summer
             </h3>
           </div>
@@ -447,24 +357,7 @@ function WeatherSection({ destination }: { destination: Destination }) {
         </div>
 
         {/* Winter */}
-        <div className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-5 group hover:border-amber-400 dark:hover:border-amber-600 transition-colors">
-          <div
-            className="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -bottom-px -left-px w-4 h-4 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -bottom-px -right-px w-4 h-4 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors"
-            aria-hidden="true"
-          />
-
+        <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 rounded-xl p-5 group hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors">
           <div className="flex items-center gap-3 mb-2">
             <svg
               className="w-6 h-6 text-stone-600 dark:text-stone-400"
@@ -480,7 +373,7 @@ function WeatherSection({ destination }: { destination: Destination }) {
                 d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
               />
             </svg>
-            <h3 className="font-semibold text-stone-900 dark:text-amber-100 font-serif uppercase tracking-wider text-sm">
+            <h3 className="font-semibold text-stone-900 dark:text-emerald-100 font-serif uppercase tracking-wide text-sm">
               Winter
             </h3>
           </div>
@@ -499,39 +392,22 @@ function WeatherSection({ destination }: { destination: Destination }) {
 function ThingsToDoSection({ destination }: { destination: Destination }) {
   return (
     <section className="mb-12" aria-labelledby="things-heading">
-      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+      <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
         Experiences
       </p>
       <h2
         id="things-heading"
-        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+        className="text-2xl font-bold text-stone-900 dark:text-emerald-100 mb-4 font-serif"
       >
         Things to Do
       </h2>
-      <DiamondDivider className="mb-6 !justify-start" />
+      <NatureDivider className="mb-6 !justify-start" />
       <div className="grid md:grid-cols-2 gap-6">
         {destination.thingsToDo.map((activity, index) => (
           <article
             key={index}
-            className="relative group bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+            className="group bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
           >
-            <div
-              className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-
             {/* Activity Image */}
             <div className="relative h-48 overflow-hidden">
               <Image
@@ -543,7 +419,7 @@ function ThingsToDoSection({ destination }: { destination: Destination }) {
               />
             </div>
             <div className="p-5">
-              <h3 className="text-lg font-bold text-stone-900 dark:text-amber-100 mb-2 font-serif">
+              <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
                 {activity.title}
               </h3>
               <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
@@ -565,41 +441,24 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
 
   return (
     <section className="mb-12" aria-labelledby="related-heading">
-      <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+      <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
         Curated Journeys
       </p>
       <h2
         id="related-heading"
-        className="text-2xl font-bold text-stone-900 dark:text-amber-100 mb-4 font-serif"
+        className="text-2xl font-bold text-stone-900 dark:text-emerald-100 mb-4 font-serif"
       >
         Tours in This Destination
       </h2>
-      <DiamondDivider className="mb-6 !justify-start" />
+      <NatureDivider className="mb-6 !justify-start" />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tours.slice(0, 3).map((tour, index) => (
+        {tours.slice(0, 3).map((tour) => (
           <Link
             key={tour.id}
             href={`/tours/${tour.slug}`}
             aria-label={`View Tour: ${tour.title}`}
-            className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
+            className="group bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
           >
-            <div
-              className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-            <div
-              className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10"
-              aria-hidden="true"
-            />
-
             <div className="relative h-40 overflow-hidden">
               <Image
                 src={tour.image}
@@ -608,15 +467,15 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
-              <div className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm text-amber-300 text-sm font-bold font-serif px-3 py-1 uppercase tracking-wider">
+              <div className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm text-emerald-300 text-sm font-bold font-serif px-3 py-1 rounded-lg uppercase tracking-wide">
                 ${tour.price.toLocaleString()}
               </div>
             </div>
             <div className="p-4 flex flex-col flex-1">
-              <h3 className="font-bold text-stone-900 dark:text-amber-100 mb-2 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors font-serif">
+              <h3 className="font-bold text-stone-900 dark:text-emerald-100 mb-2 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors font-serif">
                 {tour.title}
               </h3>
-              <div className="flex items-center justify-between text-sm text-stone-600 dark:text-stone-400 mt-auto pt-2 border-t border-stone-200 dark:border-stone-700">
+              <div className="flex items-center justify-between text-sm text-stone-600 dark:text-stone-400 mt-auto pt-2 border-t border-stone-200 dark:border-slate-700">
                 <span>{tour.duration}</span>
                 <div
                   className="flex items-center gap-1"
@@ -629,7 +488,7 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
-                  <span className="font-semibold text-stone-900 dark:text-amber-100">
+                  <span className="font-semibold text-stone-900 dark:text-emerald-100">
                     {tour.rating}
                   </span>
                 </div>
@@ -643,7 +502,7 @@ function RelatedToursSection({ tours }: { tours: Tour[] }) {
         <div className="text-center mt-8">
           <Link
             href="/tours"
-            className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-semibold uppercase tracking-wider text-sm group focus:outline-none focus:underline"
+            className="inline-flex items-center gap-2 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold uppercase tracking-wide text-sm group focus:outline-none focus:underline"
           >
             View All Tours
             <svg
@@ -686,7 +545,7 @@ export default async function DestinationDetailPage({
   const relatedTours = getToursByDestination(destination.country.toLowerCase());
 
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       <DestinationHero destination={destination} />
 
       <section className="py-12 px-4" aria-label="Destination details">

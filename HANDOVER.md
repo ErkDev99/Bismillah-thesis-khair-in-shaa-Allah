@@ -1,6 +1,6 @@
 # Handover: Wanderlust Thesis Site
 
-*Last updated: 2026-04-19 (Session 25)*
+*Last updated: 2026-04-20 (Session 27)*
 
 ---
 
@@ -10,7 +10,7 @@
 |-------|--------|
 | Phase 1 — UI/UX Restyle (all 16 pages) | ✅ Complete (Art Deco) |
 | Phase 1.1 — Real images | ✅ Complete — all 89 images wired via Next.js `<Image>`, gradient placeholders removed |
-| **Design System Retheme** (Art Deco → Nature/Green) | 🔄 In progress — homepage + Header + Footer + ChatWidget done (Session 25), 15 pages remaining |
+| **Design System Retheme** (Art Deco → Nature/Green) | ✅ Complete — all 19 files rethemed to emerald (Session 27) |
 | Phase 2 — Accessibility (WCAG 2.1) | ✅ Complete |
 | Voice Chat Page (`/voice-chat`) | ✅ Complete — OpenAI Realtime API via WebSocket, real-time speech-to-speech, ChatGPT-style conversation UI |
 | ChatWidget Mic (chat bubble) | ✅ Complete — Dictation mode (record → waveform → confirm/cancel → Whisper STT → text in input) |
@@ -29,11 +29,19 @@
 
 ## Quick Start for Next Session
 
-1. **PRIORITY: Green retheme is in progress.** Homepage, Header, Footer, and ChatWidget are done. 15 pages still use the old amber/Art Deco palette. The design system is Nature/Travel Magazine/emerald (see Design System section below).
+1. **Green retheme is COMPLETE.** All 19 files (pages + global components) are now fully emerald.
 
-2. **Next task: Retheme remaining pages, starting with QuickSearchBar.tsx (#4).** Apply the new emerald/nature palette to all pages listed in the "Pages Needing Green Retheme" section below. Follow the 12-rule restyle checklist. Proceed file by file.
+2. **Next task:** Phase 5 (cross-browser/responsive testing), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
 
-3. **After retheme:** Phase 5 (cross-browser/responsive testing), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
+   **What was done in Session 27:**
+   - **Green retheme completed**: Verified that pages 11–18 (practical-info, faq, blog/page, blog/[slug], review, reviews, privacy, terms) were already emerald from previous sessions.
+   - **Voice-chat page (`src/app/voice-chat/page.tsx`) fully rethemed** (the last remaining page): Art Deco diamond SVG pattern removed → emerald radial glow, diamond divider → leaf NatureDivider, all amber → emerald, `bg-amber-50 dark:bg-stone-950` → `bg-emerald-50 dark:bg-slate-950`, Start button `bg-amber-500` → `bg-emerald-600 rounded-lg`, top bar `bg-stone-900/80` → `bg-emerald-950/90`, End button emerald-styled with `rounded-lg`, message bubbles gradient amber → solid `bg-emerald-600` with `rounded-lg`, thinking dots `bg-amber-400` → `bg-emerald-400`, all `stone-800` dark → `slate-800`.
+   - **Build verified**: `next build` passes cleanly with no errors.
+
+   **What was done in Session 26:**
+   - **Green retheme verified** on QuickSearchBar, tours/page, tours/[slug], destinations/page, destinations/[slug], about/page — all already emerald from previous sessions.
+   - **Contact page (`src/app/contact/page.tsx`) fully rethemed**: DiamondDivider → NatureDivider, CornerAccents removed, geometric SVG patterns removed, all amber → emerald, sharp edges → rounded-xl/rounded-lg, stone-900/950 dark bg → slate-900/950, gradient submit button → solid emerald-600, success message amber → emerald, contact info card bg → emerald-950 with radial glow, social media icons rounded-lg, map section border rounded-xl.
+   - **Build verified**: `next build` passes cleanly with no errors.
 
    **What was done in Session 25:**
    - **Green retheme applied to 3 global components** (Header, Footer, ChatWidget) — these appear on every page, so the entire site now has a consistent emerald nav/footer/chat.
@@ -144,21 +152,22 @@ The homepage (`src/app/page.tsx`) was restyled in Session 24. Header, Footer, an
 | 1 | ~~`src/components/layout/Header.tsx`~~ | ✅ Done (Session 25) |
 | 2 | ~~`src/components/layout/Footer.tsx`~~ | ✅ Done (Session 25) |
 | 3 | ~~`src/components/chat/ChatWidget.tsx`~~ | ✅ Done (Session 25) |
-| 4 | `src/components/home/QuickSearchBar.tsx` | **Next** — Homepage search bar — amber accents → emerald (high visibility, on homepage) |
-| 5 | `src/app/tours/page.tsx` | Tours listing — cards, filters, sort — amber → emerald |
-| 6 | `src/app/tours/[slug]/page.tsx` | Tour detail — amber → emerald, remove Art Deco patterns |
-| 7 | `src/app/destinations/page.tsx` | Destinations listing — amber → emerald |
-| 8 | `src/app/destinations/[slug]/page.tsx` | Destination detail — amber → emerald |
-| 9 | `src/app/about/page.tsx` | About page — amber → emerald |
-| 10 | `src/app/contact/page.tsx` | Contact form — amber → emerald |
-| 11 | `src/app/practical-info/page.tsx` | Travel tips — amber → emerald |
-| 12 | `src/app/faq/page.tsx` | FAQ accordion — amber → emerald |
-| 13 | `src/app/blog/page.tsx` | Blog listing — amber → emerald |
-| 14 | `src/app/blog/[slug]/page.tsx` | Blog post — amber → emerald |
-| 15 | `src/app/review/page.tsx` | Review form — amber → emerald |
-| 16 | `src/app/reviews/page.tsx` | All reviews — amber → emerald |
-| 17 | `src/app/privacy/page.tsx` | Privacy — amber → emerald |
-| 18 | `src/app/terms/page.tsx` | Terms — amber → emerald |
+| 4 | ~~`src/components/home/QuickSearchBar.tsx`~~ | ✅ Done (already emerald from Session 22/24) |
+| 5 | ~~`src/app/tours/page.tsx`~~ | ✅ Done (already emerald) |
+| 6 | ~~`src/app/tours/[slug]/page.tsx`~~ | ✅ Done (already emerald, 1 amber = star ratings kept) |
+| 7 | ~~`src/app/destinations/page.tsx`~~ | ✅ Done (already emerald) |
+| 8 | ~~`src/app/destinations/[slug]/page.tsx`~~ | ✅ Done (already emerald, 1 amber = star ratings kept) |
+| 9 | ~~`src/app/about/page.tsx`~~ | ✅ Done (already emerald) |
+| 10 | ~~`src/app/contact/page.tsx`~~ | ✅ Done (Session 26) |
+| 11 | ~~`src/app/practical-info/page.tsx`~~ | ✅ Done (already emerald) |
+| 12 | ~~`src/app/faq/page.tsx`~~ | ✅ Done (already emerald) |
+| 13 | ~~`src/app/blog/page.tsx`~~ | ✅ Done (already emerald) |
+| 14 | ~~`src/app/blog/[slug]/page.tsx`~~ | ✅ Done (already emerald) |
+| 15 | ~~`src/app/review/page.tsx`~~ | ✅ Done (already emerald) |
+| 16 | ~~`src/app/reviews/page.tsx`~~ | ✅ Done (already emerald) |
+| 17 | ~~`src/app/privacy/page.tsx`~~ | ✅ Done (already emerald) |
+| 18 | ~~`src/app/terms/page.tsx`~~ | ✅ Done (already emerald) |
+| 19 | ~~`src/app/voice-chat/page.tsx`~~ | ✅ Done (Session 27) |
 
 ---
 

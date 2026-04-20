@@ -1,8 +1,8 @@
 // src/app/faq/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Server Component — no "use client" needed.
-// Style: Luxury / Art Deco — amber + stone palette, serif headings,
-// geometric diamond ornaments, wide tracking, dark mode throughout.
+// Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
+// leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 import Link from "next/link";
 import Image from "next/image";
@@ -22,28 +22,16 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── Diamond Divider — Art Deco ornament ─────────────────────────────────────
-function DiamondDivider({ className = "" }: { className?: string }) {
+// ─── Nature Divider — leaf ornament ─────────────────────────────────────────
+function NatureDivider({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    <div className={`flex items-center justify-center gap-3 ${className}`} aria-hidden="true">
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+      <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+      </svg>
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
     </div>
-  );
-}
-
-// ─── Corner Accents — 4 corners on a card ────────────────────────────────────
-function CornerAccents() {
-  return (
-    <>
-      <div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-    </>
   );
 }
 
@@ -225,44 +213,34 @@ function HeroSection() {
         sizes="100vw"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
-      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="faq-hero-deco" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="white" strokeWidth="1" />
-            <circle cx="40" cy="40" r="12" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="40" cy="40" r="3" fill="white" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#faq-hero-deco)" />
-        </svg>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-amber-500/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
-          <div className="h-px w-12 md:w-20 bg-amber-500/60" />
-          <span className="text-amber-400/80 text-xs tracking-[0.3em] uppercase">Need Help?</span>
-          <div className="h-px w-12 md:w-20 bg-amber-500/60" />
+          <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+          <span className="text-emerald-300/80 text-xs tracking-[0.3em] uppercase drop-shadow-md">Need Help?</span>
+          <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
         </div>
 
-        <p className="text-amber-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3">
+        <p className="text-emerald-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3 drop-shadow-md">
           Answers
         </p>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-md">
           Frequently Asked{" "}
-          <span className="text-amber-400">Questions</span>
+          <span className="text-emerald-400">Questions</span>
         </h1>
 
-        <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto mb-4 leading-relaxed">
+        <p className="text-base md:text-lg text-stone-200 max-w-2xl mx-auto mb-4 leading-relaxed drop-shadow-md">
           Everything you need to know about traveling with Wanderlust.
           Can&apos;t find your answer? Contact us anytime.
         </p>
 
-        <DiamondDivider />
+        <NatureDivider />
       </div>
     </section>
   );
@@ -275,7 +253,7 @@ function QuickNav() {
   return (
     <nav
       aria-label="FAQ categories"
-      className="bg-stone-900 dark:bg-black border-b border-amber-500/20 sticky top-16 z-40 shadow-sm"
+      className="bg-emerald-950 dark:bg-slate-950 border-b border-emerald-500/20 sticky top-16 z-40 shadow-sm"
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex overflow-x-auto gap-2 py-3 scrollbar-hide">
@@ -283,7 +261,7 @@ function QuickNav() {
             <a
               key={category.id}
               href={`#${category.id}`}
-              className="flex items-center gap-2 px-4 py-2 border border-amber-500/30 hover:border-amber-500 hover:bg-amber-500/10 text-amber-300 hover:text-amber-200 text-xs font-semibold uppercase tracking-[0.15em] transition-all whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="flex items-center gap-2 px-4 py-2 border border-emerald-500/30 hover:border-emerald-500 hover:bg-emerald-500/10 text-emerald-300 hover:text-emerald-200 text-xs font-semibold uppercase tracking-[0.15em] transition-all whitespace-nowrap rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             >
               <svg
                 className="w-4 h-4"
@@ -314,7 +292,7 @@ function FAQCategory({
   return (
     <section id={category.id} aria-labelledby={`${category.id}-heading`} className="scroll-mt-32">
       <div className="flex items-center gap-4 mb-6">
-        <div className="w-12 h-12 border border-amber-500/40 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+        <div className="w-12 h-12 border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center rounded-lg">
           <svg
             className="w-6 h-6"
             fill="none"
@@ -326,12 +304,12 @@ function FAQCategory({
           </svg>
         </div>
         <div>
-          <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-[10px] mb-0.5">
+          <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-[10px] mb-0.5">
             Category
           </p>
           <h2
             id={`${category.id}-heading`}
-            className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-amber-100 font-serif"
+            className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-emerald-100 font-serif"
           >
             {category.title}
           </h2>
@@ -342,15 +320,14 @@ function FAQCategory({
         {category.faqs.map((faq, index) => (
           <details
             key={index}
-            className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors overflow-hidden"
+            className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors overflow-hidden rounded-xl"
           >
-            <CornerAccents />
-            <summary className="flex items-center justify-between p-5 cursor-pointer hover:bg-amber-50/60 dark:hover:bg-stone-800/60 transition-colors list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-inset">
-              <span className="font-semibold text-stone-900 dark:text-amber-100 pr-4 font-serif">
+            <summary className="flex items-center justify-between p-5 cursor-pointer hover:bg-emerald-50/60 dark:hover:bg-slate-800/60 transition-colors list-none focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-inset">
+              <span className="font-semibold text-stone-900 dark:text-emerald-100 pr-4 font-serif">
                 {faq.question}
               </span>
               <svg
-                className="w-5 h-5 text-amber-700 dark:text-amber-400 shrink-0 group-open:rotate-180 transition-transform"
+                className="w-5 h-5 text-emerald-700 dark:text-emerald-400 shrink-0 group-open:rotate-180 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -359,7 +336,7 @@ function FAQCategory({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
             </summary>
-            <div className="px-5 pb-5 pt-4 text-stone-600 dark:text-stone-400 text-sm leading-relaxed border-t border-stone-200 dark:border-stone-800">
+            <div className="px-5 pb-5 pt-4 text-stone-600 dark:text-stone-400 text-sm leading-relaxed border-t border-stone-200 dark:border-slate-800">
               {faq.answer}
             </div>
           </details>
@@ -376,24 +353,15 @@ function ContactCTA() {
   return (
     <section
       aria-labelledby="faq-cta-heading"
-      className="relative bg-stone-900 dark:bg-black text-white p-10 md:p-14 text-center overflow-hidden border border-amber-500/20"
+      className="relative bg-emerald-950 text-white p-10 md:p-14 text-center overflow-hidden rounded-xl"
     >
-      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="faq-cta-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#faq-cta-deco)" />
-        </svg>
-      </div>
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-amber-500/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative">
-        <p className="text-amber-400/70 uppercase tracking-[0.3em] text-xs mb-2">
+        <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-2">
           Still Stuck?
         </p>
         <h2 id="faq-cta-heading" className="text-2xl md:text-3xl font-bold mb-4 font-serif">
@@ -404,19 +372,19 @@ function ContactCTA() {
           you within 24 hours.
         </p>
 
-        <DiamondDivider className="mb-8" />
+        <NatureDivider className="mb-8" />
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/contact"
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-stone-900"
+            className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
             Contact Us
           </Link>
 
           <a
             href="mailto:info@wanderlust.com"
-            className="border-2 border-amber-500/50 hover:bg-amber-500 hover:text-white text-amber-300 px-8 py-4 font-semibold uppercase tracking-wider transition-all focus:outline-none focus:ring-4 focus:ring-amber-400/50 focus:ring-offset-2 focus:ring-offset-stone-900"
+            className="border-2 border-emerald-500 hover:bg-emerald-600 hover:text-white text-emerald-300 px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
             Email Us Directly
           </a>
@@ -425,7 +393,7 @@ function ContactCTA() {
           Or call us at{" "}
           <a
             href="tel:+15551234567"
-            className="text-amber-400 hover:text-amber-300 font-semibold focus:outline-none focus:underline"
+            className="text-emerald-400 hover:text-emerald-300 font-semibold focus:outline-none focus:underline"
           >
             +1 (555) 123-4567
           </a>
@@ -484,12 +452,12 @@ function RelatedLinks() {
   return (
     <section aria-labelledby="resources-heading">
       <div className="mb-6">
-        <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-1">
+        <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
           Explore More
         </p>
         <h2
           id="resources-heading"
-          className="text-2xl font-bold text-stone-900 dark:text-amber-100 font-serif"
+          className="text-2xl font-bold text-stone-900 dark:text-emerald-100 font-serif"
         >
           Helpful Resources
         </h2>
@@ -499,10 +467,9 @@ function RelatedLinks() {
           <Link
             key={link.href}
             href={link.href}
-            className="group relative flex items-center gap-4 p-5 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-stone-950"
+            className="group relative flex items-center gap-4 p-5 bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
           >
-            <CornerAccents />
-            <div className="w-12 h-12 border border-amber-500/40 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 group-hover:bg-amber-500 group-hover:text-white group-hover:border-amber-500 flex items-center justify-center transition-all shrink-0">
+            <div className="w-12 h-12 border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 flex items-center justify-center transition-all shrink-0 rounded-lg">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -514,7 +481,7 @@ function RelatedLinks() {
               </svg>
             </div>
             <div>
-              <h3 className="font-semibold text-stone-900 dark:text-amber-100 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors font-serif">
+              <h3 className="font-semibold text-stone-900 dark:text-emerald-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors font-serif">
                 {link.title}
               </h3>
               <p className="text-sm text-stone-600 dark:text-stone-400 mt-0.5">
@@ -533,7 +500,7 @@ function RelatedLinks() {
 // ═════════════════════════════════════════════════════════════════════════════
 export default function FAQPage() {
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       <HeroSection />
       <QuickNav />
 

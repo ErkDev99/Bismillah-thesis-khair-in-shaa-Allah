@@ -1,8 +1,8 @@
 // src/app/terms/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Server Component — no "use client" needed.
-// Style: Luxury / Art Deco — amber + stone palette, serif headings,
-// geometric diamond ornaments, wide tracking, dark mode throughout.
+// Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
+// leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 import Link from "next/link";
 import Image from "next/image";
@@ -15,28 +15,16 @@ export const metadata: Metadata = {
     "Terms and conditions for using Wanderlust travel services and website.",
 };
 
-// ─── Diamond Divider ─────────────────────────────────────────────────────────
-function DiamondDivider({ className = "" }: { className?: string }) {
+// ─── Nature Divider — leaf ornament ─────────────────────────────────────────
+function NatureDivider({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    <div className={`flex items-center justify-center gap-3 ${className}`} aria-hidden="true">
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+      <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+      </svg>
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
     </div>
-  );
-}
-
-// ─── Corner Accents ──────────────────────────────────────────────────────────
-function CornerAccents() {
-  return (
-    <>
-      <div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors pointer-events-none" aria-hidden="true" />
-    </>
   );
 }
 
@@ -58,33 +46,23 @@ function HeroSection() {
         sizes="100vw"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
-      <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="terms-hero-deco" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path d="M40 0 L80 40 L40 80 L0 40 Z" fill="none" stroke="white" strokeWidth="1" />
-            <circle cx="40" cy="40" r="12" fill="none" stroke="white" strokeWidth="0.5" />
-            <circle cx="40" cy="40" r="3" fill="white" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#terms-hero-deco)" />
-        </svg>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-amber-500/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
-        <p className="text-amber-300 text-xs font-semibold tracking-[0.3em] uppercase mb-2">
+        <p className="text-emerald-300 text-xs font-semibold tracking-[0.3em] uppercase mb-2 drop-shadow-md">
           Legal
         </p>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
-          Terms of <span className="text-amber-400">Service</span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-md">
+          Terms of <span className="text-emerald-400">Service</span>
         </h1>
-        <p className="text-stone-400 text-sm uppercase tracking-[0.2em]">
+        <p className="text-stone-300 text-sm uppercase tracking-[0.2em] drop-shadow-md">
           Last updated: January 29, 2025
         </p>
-        <DiamondDivider className="mt-4" />
+        <NatureDivider className="mt-4" />
       </div>
     </section>
   );
@@ -95,7 +73,7 @@ function HeroSection() {
 // ═════════════════════════════════════════════════════════════════════════════
 function H2({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-amber-100 mt-10 mb-4 font-serif">
+    <h2 className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-emerald-100 mt-10 mb-4 font-serif">
       {children}
     </h2>
   );
@@ -111,7 +89,7 @@ function P({ children, className = "" }: { children: React.ReactNode; className?
 
 function Ul({ children }: { children: React.ReactNode }) {
   return (
-    <ul className="list-disc pl-6 text-stone-600 dark:text-stone-400 mb-6 space-y-2 marker:text-amber-500">
+    <ul className="list-disc pl-6 text-stone-600 dark:text-stone-400 mb-6 space-y-2 marker:text-emerald-500">
       {children}
     </ul>
   );
@@ -122,14 +100,12 @@ function Ul({ children }: { children: React.ReactNode }) {
 // ═════════════════════════════════════════════════════════════════════════════
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       <HeroSection />
 
       <section className="py-12 md:py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="group relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-8 md:p-12 shadow-sm">
-            <CornerAccents />
-
+          <div className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-8 md:p-12 shadow-sm rounded-xl">
             <P className="text-lg">
               Welcome to Wanderlust. By accessing our website and using our
               services, you agree to be bound by these Terms of Service. Please
@@ -166,15 +142,15 @@ export default function TermsOfServicePage() {
             <P>Our cancellation policy is as follows:</P>
             <Ul>
               <li>
-                <strong className="text-stone-900 dark:text-amber-100">60+ days before departure:</strong>{" "}
+                <strong className="text-stone-900 dark:text-emerald-100">60+ days before departure:</strong>{" "}
                 Full refund minus $100 administrative fee
               </li>
               <li>
-                <strong className="text-stone-900 dark:text-amber-100">30-59 days before departure:</strong>{" "}
+                <strong className="text-stone-900 dark:text-emerald-100">30-59 days before departure:</strong>{" "}
                 50% refund
               </li>
               <li>
-                <strong className="text-stone-900 dark:text-amber-100">Less than 30 days before departure:</strong>{" "}
+                <strong className="text-stone-900 dark:text-emerald-100">Less than 30 days before departure:</strong>{" "}
                 No refund
               </li>
               <li>Cancellations must be submitted in writing via email</li>
@@ -268,39 +244,39 @@ export default function TermsOfServicePage() {
             </P>
             <ul className="list-none text-stone-600 dark:text-stone-400 mb-6 space-y-2">
               <li>
-                <strong className="text-stone-900 dark:text-amber-100 uppercase tracking-[0.15em] text-xs">
+                <strong className="text-stone-900 dark:text-emerald-100 uppercase tracking-[0.15em] text-xs">
                   Email:
                 </strong>{" "}
                 <a
                   href="mailto:legal@wanderlust.com"
-                  className="text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 focus:outline-none focus:underline"
+                  className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 focus:outline-none focus:underline"
                 >
                   legal@wanderlust.com
                 </a>
               </li>
               <li>
-                <strong className="text-stone-900 dark:text-amber-100 uppercase tracking-[0.15em] text-xs">
+                <strong className="text-stone-900 dark:text-emerald-100 uppercase tracking-[0.15em] text-xs">
                   Phone:
                 </strong>{" "}
                 <a
                   href="tel:+15551234567"
-                  className="text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 focus:outline-none focus:underline"
+                  className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 focus:outline-none focus:underline"
                 >
                   +1 (555) 123-4567
                 </a>
               </li>
               <li>
-                <strong className="text-stone-900 dark:text-amber-100 uppercase tracking-[0.15em] text-xs">
+                <strong className="text-stone-900 dark:text-emerald-100 uppercase tracking-[0.15em] text-xs">
                   Address:
                 </strong>{" "}
                 123 Travel Street, Adventure City, AC 12345
               </li>
             </ul>
 
-            <div className="mt-12 pt-8 border-t border-stone-200 dark:border-stone-800">
+            <div className="mt-12 pt-8 border-t border-stone-200 dark:border-slate-800">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 text-xs font-semibold uppercase tracking-[0.2em] focus:outline-none focus:underline"
+                className="inline-flex items-center gap-2 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 text-xs font-semibold uppercase tracking-[0.2em] focus:outline-none focus:underline"
               >
                 <svg
                   className="w-4 h-4"

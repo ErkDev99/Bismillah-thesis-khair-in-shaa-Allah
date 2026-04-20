@@ -19,13 +19,7 @@ function DestinationCard({
 }) {
   return (
     <Link href={`/destinations/${destination.slug}`} className="group relative block">
-      {/* Corner Accents */}
-      <div className="absolute -top-px -left-px w-5 h-5 border-t-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10" aria-hidden="true" />
-      <div className="absolute -top-px -right-px w-5 h-5 border-t-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10" aria-hidden="true" />
-      <div className="absolute -bottom-px -left-px w-5 h-5 border-b-2 border-l-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10" aria-hidden="true" />
-      <div className="absolute -bottom-px -right-px w-5 h-5 border-b-2 border-r-2 border-amber-500/40 group-hover:border-amber-500 transition-colors z-10" aria-hidden="true" />
-
-      <div className="relative h-80 md:h-96 overflow-hidden border border-stone-200 dark:border-stone-800 group-hover:border-amber-400 transition-colors">
+      <div className="relative h-80 md:h-96 overflow-hidden rounded-xl border border-stone-200 dark:border-slate-800 group-hover:border-emerald-400 transition-colors">
         {/* Destination Image */}
         <Image
           src={destination.image}
@@ -40,22 +34,22 @@ function DestinationCard({
 
         {/* Featured Badge */}
         {destination.featured && (
-          <div className="absolute top-4 left-4 bg-amber-500 text-white px-3 py-1 text-xs uppercase tracking-wider font-medium">
+          <div className="absolute top-4 left-4 bg-emerald-600 text-white rounded-full px-3 py-1 text-xs uppercase tracking-wide font-medium">
             Featured
           </div>
         )}
 
         {/* Tour Count Badge */}
-        <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-amber-300 border border-amber-500/30 px-3 py-1 text-xs uppercase tracking-wider">
+        <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-emerald-300 border border-emerald-500/30 rounded-full px-3 py-1 text-xs uppercase tracking-wide">
           {destination.tourCount} tours
         </div>
 
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-          <p className="text-amber-400 text-xs uppercase tracking-[0.2em] mb-1">
+          <p className="text-emerald-400 text-xs uppercase tracking-[0.2em] mb-1">
             {destination.country}
           </p>
-          <h3 className="font-serif text-2xl md:text-3xl font-bold mb-2 group-hover:text-amber-300 transition-colors">
+          <h3 className="font-serif text-2xl md:text-3xl font-bold mb-2 group-hover:text-emerald-300 transition-colors">
             {destination.name}
           </h3>
           <p className="text-stone-300 text-sm line-clamp-2 mb-4">
@@ -67,7 +61,7 @@ function DestinationCard({
             {destination.highlights.slice(0, 2).map((highlight, i) => (
               <span
                 key={i}
-                className="bg-white/10 backdrop-blur-sm border border-white/20 px-2 py-1 text-xs text-stone-200"
+                className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-2 py-1 text-xs text-stone-200"
               >
                 {highlight}
               </span>
@@ -93,10 +87,10 @@ function CountryFilter({
     <div className="flex flex-wrap justify-center gap-3 mb-12" role="group" aria-label="Filter by country">
       <button
         onClick={() => setActiveCountry("")}
-        className={`px-5 py-2 text-xs uppercase tracking-wider font-medium transition-colors ${
+        className={`px-5 py-2 rounded-lg text-xs uppercase tracking-wide font-medium transition-colors ${
           activeCountry === ""
-            ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
-            : "border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-400 bg-white dark:bg-stone-900"
+            ? "bg-emerald-600 text-white"
+            : "border border-stone-300 dark:border-slate-700 text-stone-700 dark:text-stone-300 hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 bg-white dark:bg-slate-900"
         }`}
       >
         All Destinations
@@ -105,10 +99,10 @@ function CountryFilter({
         <button
           key={country}
           onClick={() => setActiveCountry(country)}
-          className={`px-5 py-2 text-xs uppercase tracking-wider font-medium transition-colors ${
+          className={`px-5 py-2 rounded-lg text-xs uppercase tracking-wide font-medium transition-colors ${
             activeCountry === country
-              ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
-              : "border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-amber-500 hover:text-amber-700 dark:hover:text-amber-400 bg-white dark:bg-stone-900"
+              ? "bg-emerald-600 text-white"
+              : "border border-stone-300 dark:border-slate-700 text-stone-700 dark:text-stone-300 hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 bg-white dark:bg-slate-900"
           }`}
         >
           {country}
@@ -128,37 +122,27 @@ function StatsSection() {
   ];
 
   return (
-    <div className="relative bg-stone-900 dark:bg-black text-white py-14 px-4 overflow-hidden">
-      {/* Geometric SVG Pattern */}
-      <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
-        <svg width="100%" height="100%">
-          <pattern id="stats-pattern" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5"/>
-            <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5"/>
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#stats-pattern)"/>
-        </svg>
-      </div>
+    <div className="relative bg-emerald-950 dark:bg-black text-white py-14 px-4 overflow-hidden rounded-xl">
       {/* Radial Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-3xl" aria-hidden="true" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
       <div className="relative max-w-5xl mx-auto">
-        {/* Diamond Divider */}
-        <div className="flex items-center justify-center gap-2 mb-10" aria-hidden="true">
-          <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-          <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-          <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-          <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-          <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+        {/* Nature Divider */}
+        <div className="flex items-center justify-center gap-3 mb-10" aria-hidden="true">
+          <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+          <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+          </svg>
+          <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {stats.map((stat, index) => (
             <div key={index}>
-              <div className="font-serif text-4xl md:text-5xl font-bold text-amber-400 mb-2">
+              <div className="font-serif text-4xl md:text-5xl font-bold text-emerald-400 mb-2">
                 {stat.value}
               </div>
-              <div className="text-amber-200/70 text-xs uppercase tracking-[0.2em]">{stat.label}</div>
+              <div className="text-emerald-200/70 text-xs uppercase tracking-[0.2em]">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -181,9 +165,9 @@ export default function DestinationsPage() {
   }, [activeCountry]);
 
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       {/* Hero Section */}
-      <section className="relative bg-stone-900 dark:bg-stone-950 text-white overflow-hidden" aria-labelledby="destinations-heading">
+      <section className="relative bg-emerald-950 dark:bg-slate-950 text-white overflow-hidden" aria-labelledby="destinations-heading">
         {/* Background image */}
         <Image
           src="/images/hero/hero.jpg"
@@ -195,33 +179,23 @@ export default function DestinationsPage() {
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
-        {/* Geometric SVG Pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" aria-hidden="true">
-          <svg width="100%" height="100%">
-            <pattern id="hero-pattern" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5"/>
-              <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5"/>
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#hero-pattern)"/>
-          </svg>
-        </div>
-        {/* Radial Amber Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-3xl" aria-hidden="true" />
+        {/* Radial Emerald Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
         <div className="relative z-10 px-4 max-w-4xl mx-auto text-center py-4 md:py-6">
-          <p className="text-amber-400/70 uppercase tracking-[0.3em] text-xs mb-2" aria-hidden="true">
+          <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-2" aria-hidden="true">
             Central Asia
           </p>
           <h1 id="destinations-heading" className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3">
             Explore Our Destinations
           </h1>
-          {/* Diamond Divider */}
-          <div className="flex items-center justify-center gap-2 mb-4" aria-hidden="true">
-            <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-            <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-            <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-            <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-            <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+          {/* Nature Divider */}
+          <div className="flex items-center justify-center gap-3 mb-4" aria-hidden="true">
+            <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+            <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+            </svg>
+            <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
           </div>
           <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
             From the snow-capped peaks of the Tian Shan to the ancient Silk Road
@@ -241,7 +215,7 @@ export default function DestinationsPage() {
           />
 
           {/* Results Count */}
-          <p className="text-stone-600 dark:text-stone-400 mb-8 text-center text-sm uppercase tracking-wider">
+          <p className="text-stone-600 dark:text-stone-400 mb-8 text-center text-sm uppercase tracking-wide">
             Showing{" "}
             <span className="font-semibold text-stone-900 dark:text-stone-100">
               {filteredDestinations.length}
@@ -289,7 +263,7 @@ export default function DestinationsPage() {
               </p>
               <button
                 onClick={() => setActiveCountry("")}
-                className="text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-medium text-sm uppercase tracking-wider"
+                className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium text-sm uppercase tracking-wide"
               >
                 View all destinations
               </button>
@@ -302,20 +276,20 @@ export default function DestinationsPage() {
           </div>
 
           {/* CTA Section */}
-          <div className="text-center mt-20 py-16 px-4 bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800">
-            <p className="text-amber-700 dark:text-amber-400 uppercase tracking-[0.3em] text-xs mb-4" aria-hidden="true">
+          <div className="text-center mt-20 py-16 px-4 bg-stone-100 dark:bg-slate-900 border border-stone-200 dark:border-slate-800 rounded-xl">
+            <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-4" aria-hidden="true">
               Plan Your Journey
             </p>
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-stone-900 dark:text-stone-100 mb-4">
               Can&apos;t decide where to go?
             </h2>
-            {/* Diamond Divider */}
-            <div className="flex items-center justify-center gap-2 mb-6" aria-hidden="true">
-              <div className="h-px w-12 bg-amber-500/50" />
-              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-              <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-              <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-              <div className="h-px w-12 bg-amber-500/50" />
+            {/* Nature Divider */}
+            <div className="flex items-center justify-center gap-3 mb-6" aria-hidden="true">
+              <div className="h-px w-12 bg-emerald-500/40" />
+              <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+              </svg>
+              <div className="h-px w-12 bg-emerald-500/40" />
             </div>
             <p className="text-stone-600 dark:text-stone-400 mb-8 max-w-2xl mx-auto">
               Our travel experts can help you plan the perfect itinerary based on
@@ -323,7 +297,7 @@ export default function DestinationsPage() {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-4 font-medium uppercase tracking-wider transition-colors"
+              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg px-8 py-4 font-medium uppercase tracking-wide transition-colors"
             >
               Talk to an Expert
               <svg

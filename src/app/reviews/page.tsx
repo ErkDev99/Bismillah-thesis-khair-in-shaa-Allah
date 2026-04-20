@@ -1,22 +1,22 @@
 // src/app/reviews/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
 // Client Component — reads localStorage for submitted reviews and combines
-// with seed reviews. Style: Luxury / Art Deco — amber + stone palette.
+// with seed reviews. Style: Nature / Travel Magazine — emerald + cream palette.
 // ─────────────────────────────────────────────────────────────────────────────
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-// ─── Diamond Divider ──────────────────────────────────────────────────────────
-function DiamondDivider({ className = "" }: { className?: string }) {
+// ─── Nature Divider — leaf ornament ─────────────────────────────────────────
+function NatureDivider({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center justify-center gap-2 ${className}`} aria-hidden="true">
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="w-2.5 h-2.5 rotate-45 border border-amber-500" />
-      <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/60" />
-      <div className="h-px w-12 md:w-20 bg-amber-500/50" />
+    <div className={`flex items-center justify-center gap-3 ${className}`} aria-hidden="true">
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+      <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+      </svg>
+      <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
     </div>
   );
 }
@@ -122,14 +122,14 @@ function Stars({ rating }: { rating: number }) {
       {[1, 2, 3, 4, 5].map((i) => (
         <svg
           key={i}
-          className={`w-4 h-4 fill-current ${i <= rating ? "text-amber-400" : "text-stone-300 dark:text-stone-600"}`}
+          className={`w-4 h-4 fill-current ${i <= rating ? "text-amber-400" : "text-stone-300 dark:text-slate-600"}`}
           viewBox="0 0 20 20"
           aria-hidden="true"
         >
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       ))}
-      <span className="ml-1 text-sm font-semibold text-stone-900 dark:text-amber-100">{rating}.0</span>
+      <span className="ml-1 text-sm font-semibold text-stone-900 dark:text-emerald-100">{rating}.0</span>
     </div>
   );
 }
@@ -171,17 +171,13 @@ function ReviewCard({
   isNew?: boolean;
 }) {
   return (
-    <article className="relative bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-6 flex flex-col hover:border-amber-400 dark:hover:border-amber-600 transition-all duration-300">
-      {/* Art Deco corner accents */}
-      <div className="absolute -top-px -left-px w-4 h-4 border-t-2 border-l-2 border-amber-500/30" aria-hidden="true" />
-      <div className="absolute -top-px -right-px w-4 h-4 border-t-2 border-r-2 border-amber-500/30" aria-hidden="true" />
-
+    <article className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-6 flex flex-col hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-300 rounded-xl">
       {/* Top row: stars + verified badge */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <Stars rating={rating} />
         <div className="flex items-center gap-1.5 shrink-0">
           {isNew && (
-            <span className="text-[10px] uppercase tracking-wider bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700 px-2 py-0.5 font-semibold">
+            <span className="text-[10px] uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 font-semibold rounded-lg">
               New
             </span>
           )}
@@ -195,7 +191,7 @@ function ReviewCard({
       </div>
 
       {/* Title */}
-      <h3 className="font-bold text-stone-900 dark:text-amber-100 font-serif mb-2">{title}</h3>
+      <h3 className="font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">{title}</h3>
 
       {/* Body */}
       <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed font-serif italic flex-1 mb-4">
@@ -203,10 +199,10 @@ function ReviewCard({
       </p>
 
       {/* Footer */}
-      <div className="pt-4 border-t border-stone-100 dark:border-stone-800 flex flex-col gap-1.5">
+      <div className="pt-4 border-t border-stone-100 dark:border-slate-800 flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-stone-900 dark:text-amber-100">{name}</p>
+            <p className="text-sm font-semibold text-stone-900 dark:text-emerald-100">{name}</p>
             {country && (
               <p className="text-xs text-stone-500 dark:text-stone-400">{country} &middot; {tour}</p>
             )}
@@ -254,39 +250,34 @@ export default function ReviewsPage() {
     ) / 10;
 
   return (
-    <main className="min-h-screen bg-stone-50 dark:bg-stone-950">
+    <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       {/* Page Header */}
-      <div className="relative bg-stone-900 dark:bg-black text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]" aria-hidden="true">
-          <svg width="100%" height="100%">
-            <pattern id="reviews-deco" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M30 0 L60 30 L30 60 L0 30 Z" fill="none" stroke="white" strokeWidth="0.5" />
-              <circle cx="30" cy="30" r="8" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#reviews-deco)" />
-          </svg>
-        </div>
+      <div className="relative bg-emerald-950 text-white overflow-hidden">
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"
+          aria-hidden="true"
+        />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 text-center">
-          <p className="text-amber-400 uppercase tracking-[0.3em] text-xs mb-2">
+          <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
             Verified Traveler Reviews
           </p>
           <h1 className="text-3xl md:text-4xl font-bold font-serif mb-3">
-            What Our <span className="text-amber-400">Travelers Say</span>
+            What Our <span className="text-emerald-400">Travelers Say</span>
           </h1>
           <p className="text-stone-400 max-w-xl mx-auto">
             Every review on this page comes from a verified customer who traveled with Wanderlust.
             No filters, no edits — genuine experiences from real adventurers.
           </p>
-          <DiamondDivider className="mt-5" />
+          <NatureDivider className="mt-5" />
         </div>
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+      <div className="bg-white dark:bg-slate-900 border-b border-stone-200 dark:border-slate-800">
         <div className="max-w-4xl mx-auto px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-stone-900 dark:text-amber-100 font-serif">
+              <span className="text-3xl font-bold text-stone-900 dark:text-emerald-100 font-serif">
                 {mounted ? avgRating : "4.9"}
               </span>
               <div className="flex flex-col">
@@ -300,19 +291,19 @@ export default function ReviewsPage() {
                 <span className="text-xs text-stone-500">out of 5</span>
               </div>
             </div>
-            <div className="h-8 w-px bg-stone-300 dark:bg-stone-700 hidden sm:block" aria-hidden="true" />
+            <div className="h-8 w-px bg-stone-300 dark:bg-slate-700 hidden sm:block" aria-hidden="true" />
             <div className="flex items-center gap-1.5 text-sm text-stone-600 dark:text-stone-400">
               <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <span>
-                <strong className="text-stone-900 dark:text-amber-100">{mounted ? totalCount : SEED_REVIEWS.length}</strong> verified reviews
+                <strong className="text-stone-900 dark:text-emerald-100">{mounted ? totalCount : SEED_REVIEWS.length}</strong> verified reviews
               </span>
             </div>
           </div>
           <Link
             href="/review"
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-6 py-2.5 font-semibold uppercase tracking-wider text-sm transition-all focus:outline-none focus:ring-4 focus:ring-amber-300"
+            className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-6 py-2.5 font-semibold uppercase tracking-wide text-sm transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
           >
             Leave a Review
           </Link>
@@ -325,10 +316,10 @@ export default function ReviewsPage() {
         {mounted && lsReviews.length > 0 && (
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-6">
-              <h2 className="text-lg font-bold text-stone-900 dark:text-amber-100 font-serif">
+              <h2 className="text-lg font-bold text-stone-900 dark:text-emerald-100 font-serif">
                 Recently Submitted
               </h2>
-              <span className="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700 px-2 py-0.5 font-semibold uppercase tracking-wider">
+              <span className="text-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 font-semibold uppercase tracking-wider rounded-lg">
                 {lsReviews.length} new
               </span>
             </div>
@@ -347,14 +338,8 @@ export default function ReviewsPage() {
                 />
               ))}
             </div>
-            <div className="mt-8 mb-2 flex items-center gap-4" aria-hidden="true">
-              <div className="flex-1 h-px bg-stone-200 dark:bg-stone-800" />
-              <div className="flex gap-1.5 items-center">
-                <div className="w-1 h-1 rotate-45 bg-amber-500/40" />
-                <div className="w-1.5 h-1.5 rotate-45 bg-amber-500" />
-                <div className="w-1 h-1 rotate-45 bg-amber-500/40" />
-              </div>
-              <div className="flex-1 h-px bg-stone-200 dark:bg-stone-800" />
+            <div className="mt-8 mb-2">
+              <NatureDivider />
             </div>
           </div>
         )}
@@ -362,7 +347,7 @@ export default function ReviewsPage() {
         {/* All seed reviews */}
         <div>
           {mounted && lsReviews.length > 0 && (
-            <h2 className="text-lg font-bold text-stone-900 dark:text-amber-100 font-serif mb-6">
+            <h2 className="text-lg font-bold text-stone-900 dark:text-emerald-100 font-serif mb-6">
               All Verified Reviews
             </h2>
           )}
@@ -385,10 +370,10 @@ export default function ReviewsPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="border-t border-stone-200 dark:border-stone-800 bg-amber-50 dark:bg-stone-900">
+      <div className="border-t border-stone-200 dark:border-slate-800 bg-emerald-50 dark:bg-slate-900">
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
-          <DiamondDivider className="mb-6" />
-          <h2 className="text-2xl font-bold text-stone-900 dark:text-amber-100 font-serif mb-2">
+          <NatureDivider className="mb-6" />
+          <h2 className="text-2xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
             Traveled with Wanderlust?
           </h2>
           <p className="text-stone-600 dark:text-stone-400 mb-6 text-sm">
@@ -398,19 +383,19 @@ export default function ReviewsPage() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/review"
-              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-8 py-3 font-semibold uppercase tracking-wider text-sm transition-all focus:outline-none focus:ring-4 focus:ring-amber-300"
+              className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-3 font-semibold uppercase tracking-wide text-sm transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
             >
               Write a Review
             </Link>
             <Link
               href="/"
-              className="border-2 border-stone-300 dark:border-stone-600 hover:border-amber-500 text-stone-700 dark:text-stone-300 px-8 py-3 font-semibold uppercase tracking-wider text-sm transition-all focus:outline-none focus:ring-4 focus:ring-amber-300"
+              className="border-2 border-stone-300 dark:border-slate-600 hover:border-emerald-500 text-stone-700 dark:text-stone-300 px-8 py-3 font-semibold uppercase tracking-wide text-sm transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
             >
               Back to Home
             </Link>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
