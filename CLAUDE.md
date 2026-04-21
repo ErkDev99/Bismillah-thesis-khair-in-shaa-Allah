@@ -1,6 +1,6 @@
 # Wanderlust – Bachelor's Thesis Website
 
-*Last updated: 2026-04-21 (Session 31 — tours listing + detail pages translated; long-field `*Ru` siblings filled for all 6 tours)*
+*Last updated: 2026-04-22 (Session 32 — destinations listing + detail pages translated; long-field `*Ru` siblings filled for all 6 destinations)*
 
 Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Next.js 16, React 19, Tailwind CSS v4. Evaluated as a bachelor's thesis.
 
@@ -23,18 +23,18 @@ Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Ne
 | Review & Rating System (`/review`, `/reviews`, social proof strip) | ✅ Complete |
 | QuickSearchBar with instant results (country → tours w/ prices) | ✅ Complete |
 | Contact page Google Map (Bishkek embed) | ✅ Complete |
-| **i18n (EN/RU)** | 🔄 Infra + Header + Footer + ChatWidget + Homepage + Tours (listing + `[slug]`) done; 12 pages + destination long fields remaining |
+| **i18n (EN/RU)** | 🔄 Infra + Header + Footer + ChatWidget + Homepage + Tours + Destinations (listings + `[slug]`) done; 11 pages remaining |
 
 ---
 
 ## Quick Start for Next Session
 
-**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, ChatWidget, Homepage, and **Tours pages** (`tours/page.tsx` + `tours/[slug]/page.tsx`) are translated. Tours `[slug]` converted to client component — uses React 19 `use(params)` to unwrap `Promise<{slug}>` — and drops `generateStaticParams` / `generateMetadata` (Phase 4 SEO skipped). Tour long-field `*Ru` siblings (`longDescriptionRu`/`highlightsRu`/`includedRu`/`notIncludedRu`/`itineraryRu`) filled inline on the Tour interface for all 6 tours.
+**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, ChatWidget, Homepage, **Tours pages** (`tours/page.tsx` + `tours/[slug]/page.tsx`), and **Destinations pages** (`destinations/page.tsx` + `destinations/[slug]/page.tsx`) are translated. Both `[slug]` pages converted to client components — use React 19 `use(params)` to unwrap `Promise<{slug}>` — and drop `generateStaticParams` / `generateMetadata` (Phase 4 SEO skipped). Tour and Destination long-field `*Ru` siblings filled inline on the TS interfaces for all 6 tours and all 6 destinations.
 
 **Next up:** Content pages in this order:
 1. ~~tours (listing + `[slug]`)~~ ✅ Session 31
-2. destinations (listing + `[slug]`) — **next**. Same pattern as tours: add long-field `*Ru` siblings on the Destination interface (`highlightsRu`/`attractionsRu`/`bestTimeRu`, etc.), convert `[slug]/page.tsx` to a client component with `use(params)`, drop metadata export. Short-field siblings (`nameRu`/`countryRu`/`descriptionRu`) are already filled.
-3. about, contact, practical-info, faq
+2. ~~destinations (listing + `[slug]`)~~ ✅ Session 32
+3. about, contact, practical-info, faq — **next**. Static content pages; add an `about`/`contact`/`practicalInfo`/`faq` namespace per page. No dynamic routes, so no `use(params)` conversion needed — just add `"use client"` + `useLocale()` and swap hardcoded copy.
 4. blog (listing + `[slug]`) — split `blog.en.ts`/`blog.ru.ts` since post bodies are long
 5. review, reviews, privacy, terms, voice-chat
 
@@ -198,7 +198,7 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 | # | File | Status |
 |---|------|--------|
 | 1 | `src/components/LocaleProvider.tsx` | ✅ |
-| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` + `home` + `tourCategory` + `tours` ns) | ✅ |
+| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` + `home` + `tourCategory` + `tours` + `destinations` ns) | ✅ |
 | 3 | `src/app/layout.tsx` (wraps `<LocaleProvider>`) | ✅ |
 | 4 | `src/components/layout/Header.tsx` (EN\|RU toggle + nav) | ✅ |
 | 5 | `src/components/layout/Footer.tsx` | ✅ |
@@ -207,10 +207,10 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 | 8 | `src/lib/data/tours.ts` — short fields (`titleRu`/`descriptionRu`/`locationRu`/`durationRu`/`groupSizeRu`) | ✅ |
 | 8b | `src/lib/data/tours.ts` — long fields (`longDescriptionRu`/`highlightsRu`/`itineraryRu`/`includedRu`/`notIncludedRu`) | ✅ |
 | 9 | `src/lib/data/destinations.ts` — short fields (`nameRu`/`countryRu`/`descriptionRu`) | ✅ |
-| 9b | `src/lib/data/destinations.ts` — long fields (`highlightsRu`/`attractionsRu`/`bestTimeRu`, etc) | ⬜ (do with destinations pages) |
+| 9b | `src/lib/data/destinations.ts` — long fields (`longDescriptionRu`/`highlightsRu`/`bestTimeToVisitRu`/`weatherRu`/`languagesRu`/`currencyRu`/`quickFactsRu`/`thingsToDoRu`) | ✅ |
 | 10 | `src/app/tours/page.tsx` + `[slug]/page.tsx` | ✅ |
-| 11 | `src/app/destinations/page.tsx` + `[slug]/page.tsx` | ⬜ **Next** |
-| 12 | `src/app/about/page.tsx` | ⬜ |
+| 11 | `src/app/destinations/page.tsx` + `[slug]/page.tsx` | ✅ |
+| 12 | `src/app/about/page.tsx` | ⬜ **Next** |
 | 13 | `src/app/contact/page.tsx` | ⬜ |
 | 14 | `src/app/practical-info/page.tsx` | ⬜ |
 | 15 | `src/app/faq/page.tsx` | ⬜ |
@@ -371,3 +371,4 @@ Missing (out of thesis scope): real booking/payment flow, user accounts
 
 *Session 29 consolidation: `HANDOVER.md` merged into this file. Single source of truth going forward.*
 *Session 31: tours listing + `[slug]` pages translated; `tours` namespace added to `en.ts`/`ru.ts`; Tour interface gained long-field RU siblings; `[slug]/page.tsx` converted to client via React 19 `use(params)`.*
+*Session 32: destinations listing + `[slug]` pages translated; `destinations` namespace added to `en.ts`/`ru.ts`; Destination interface gained long-field RU siblings (`longDescriptionRu`/`highlightsRu`/`bestTimeToVisitRu`/`weatherRu`/`languagesRu`/`currencyRu`/`quickFactsRu`/`thingsToDoRu`); `[slug]/page.tsx` converted to client via React 19 `use(params)`.*

@@ -322,6 +322,90 @@ const en = {
       },
     },
   },
+  destinations: {
+    hero: {
+      eyebrow: "Central Asia",
+      title: "Explore Our Destinations",
+      subtitle:
+        "From the snow-capped peaks of the Tian Shan to the ancient Silk Road cities, discover the wonders of Central Asia.",
+      ariaLabel: "Destinations hero",
+    },
+    filters: {
+      ariaLabel: "Filter by country",
+      all: "All Destinations",
+    },
+    countries: {
+      Kazakhstan: "Kazakhstan",
+      Kyrgyzstan: "Kyrgyzstan",
+      Uzbekistan: "Uzbekistan",
+    } as Record<string, string>,
+    card: {
+      featured: "Featured",
+      toursSuffix: "tours",
+    },
+    results: {
+      showingPrefix: "Showing",
+      destinationSingular: "destination",
+      destinationPlural: "destinations",
+      in: "in",
+    },
+    empty: {
+      title: "No destinations found",
+      subtitle: "We don't have destinations in this country yet.",
+      viewAll: "View all destinations",
+    },
+    stats: {
+      destinations: "Destinations",
+      tours: "Tours",
+      countries: "Countries",
+      travelers: "Happy Travelers",
+    },
+    cta: {
+      eyebrow: "Plan Your Journey",
+      title: "Can't decide where to go?",
+      subtitle:
+        "Our travel experts can help you plan the perfect itinerary based on your interests, budget, and time frame.",
+      button: "Talk to an Expert",
+    },
+    listingsAriaLabel: "Destinations listing",
+    detail: {
+      back: "Back to Destinations",
+      heroAriaSuffix: "hero",
+      toursAvailableSuffix: "tours available",
+      detailsAriaLabel: "Destination details",
+      quickFacts: {
+        eyebrow: "Know Before You Go",
+        title: "Quick Facts",
+        languages: "Languages:",
+        currency: "Currency:",
+        timezone: "Timezone:",
+        planVisit: "Plan Your Visit",
+      },
+      overview: {
+        eyebrow: "About This Place",
+        titlePrefix: "About",
+        highlightsTitle: "Highlights",
+      },
+      weather: {
+        eyebrow: "When to Visit",
+        title: "Best Time to Visit",
+        summer: "Summer",
+        winter: "Winter",
+      },
+      thingsToDo: {
+        eyebrow: "Experiences",
+        title: "Things to Do",
+      },
+      relatedTours: {
+        eyebrow: "Curated Journeys",
+        title: "Tours in This Destination",
+        viewAll: "View All Tours",
+        viewTourAriaPrefix: "View Tour",
+        ratingAriaPrefix: "Rated",
+        ratingAriaSuffix: "out of 5",
+      },
+    },
+  },
 };
 
 export type Translations = typeof en;

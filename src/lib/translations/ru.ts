@@ -312,6 +312,90 @@ const ru: Translations = {
       },
     },
   },
+  destinations: {
+    hero: {
+      eyebrow: "Центральная Азия",
+      title: "Откройте наши направления",
+      subtitle:
+        "От заснеженных вершин Тянь-Шаня до древних городов Шёлкового пути — откройте чудеса Центральной Азии.",
+      ariaLabel: "Обложка раздела направлений",
+    },
+    filters: {
+      ariaLabel: "Фильтр по стране",
+      all: "Все направления",
+    },
+    countries: {
+      Kazakhstan: "Казахстан",
+      Kyrgyzstan: "Кыргызстан",
+      Uzbekistan: "Узбекистан",
+    },
+    card: {
+      featured: "Избранное",
+      toursSuffix: "туров",
+    },
+    results: {
+      showingPrefix: "Показано",
+      destinationSingular: "направление",
+      destinationPlural: "направлений",
+      in: "в",
+    },
+    empty: {
+      title: "Направления не найдены",
+      subtitle: "Пока что у нас нет направлений в этой стране.",
+      viewAll: "Все направления",
+    },
+    stats: {
+      destinations: "Направлений",
+      tours: "Туров",
+      countries: "Стран",
+      travelers: "Довольных путешественников",
+    },
+    cta: {
+      eyebrow: "Планируйте поездку",
+      title: "Не знаете, куда поехать?",
+      subtitle:
+        "Наши эксперты по путешествиям помогут составить идеальный маршрут по вашим интересам, бюджету и срокам.",
+      button: "Связаться с экспертом",
+    },
+    listingsAriaLabel: "Список направлений",
+    detail: {
+      back: "Ко всем направлениям",
+      heroAriaSuffix: "— обложка",
+      toursAvailableSuffix: "туров доступно",
+      detailsAriaLabel: "Детали направления",
+      quickFacts: {
+        eyebrow: "Полезно знать",
+        title: "Кратко",
+        languages: "Языки:",
+        currency: "Валюта:",
+        timezone: "Часовой пояс:",
+        planVisit: "Спланировать поездку",
+      },
+      overview: {
+        eyebrow: "Об этом месте",
+        titlePrefix: "О городе",
+        highlightsTitle: "Изюминки",
+      },
+      weather: {
+        eyebrow: "Когда ехать",
+        title: "Лучшее время для визита",
+        summer: "Лето",
+        winter: "Зима",
+      },
+      thingsToDo: {
+        eyebrow: "Впечатления",
+        title: "Чем заняться",
+      },
+      relatedTours: {
+        eyebrow: "Избранные маршруты",
+        title: "Туры в этом направлении",
+        viewAll: "Все туры",
+        viewTourAriaPrefix: "Подробнее о туре",
+        ratingAriaPrefix: "Оценка",
+        ratingAriaSuffix: "из 5",
+      },
+    },
+  },
 };
 
 export default ru;

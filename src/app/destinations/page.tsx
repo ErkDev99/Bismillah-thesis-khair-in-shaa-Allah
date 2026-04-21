@@ -8,22 +8,40 @@ import {
   getUniqueCountries,
   type Destination,
 } from "@/lib/data/destinations";
+import { useLocale } from "@/components/LocaleProvider";
+import type { Translations } from "@/lib/translations/en";
+
+type TDestinations = Translations["destinations"];
 
 // Destination Card Component
 function DestinationCard({
   destination,
-  index,
+  locale,
+  t,
 }: {
   destination: Destination;
-  index: number;
+  locale: string;
+  t: TDestinations;
 }) {
+  const name = locale === "ru" && destination.nameRu ? destination.nameRu : destination.name;
+  const country =
+    locale === "ru" && destination.countryRu ? destination.countryRu : destination.country;
+  const description =
+    locale === "ru" && destination.descriptionRu
+      ? destination.descriptionRu
+      : destination.description;
+  const highlights =
+    locale === "ru" && destination.highlightsRu
+      ? destination.highlightsRu
+      : destination.highlights;
+
   return (
     <Link href={`/destinations/${destination.slug}`} className="group relative block">
       <div className="relative h-80 md:h-96 overflow-hidden rounded-xl border border-stone-200 dark:border-slate-800 group-hover:border-emerald-400 transition-colors">
         {/* Destination Image */}
         <Image
           src={destination.image}
-          alt={destination.name}
+          alt={name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -35,30 +53,30 @@ function DestinationCard({
         {/* Featured Badge */}
         {destination.featured && (
           <div className="absolute top-4 left-4 bg-emerald-600 text-white rounded-full px-3 py-1 text-xs uppercase tracking-wide font-medium">
-            Featured
+            {t.card.featured}
           </div>
         )}
 
         {/* Tour Count Badge */}
         <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-emerald-300 border border-emerald-500/30 rounded-full px-3 py-1 text-xs uppercase tracking-wide">
-          {destination.tourCount} tours
+          {destination.tourCount} {t.card.toursSuffix}
         </div>
 
         {/* Content */}
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <p className="text-emerald-400 text-xs uppercase tracking-[0.2em] mb-1">
-            {destination.country}
+            {country}
           </p>
           <h3 className="font-serif text-2xl md:text-3xl font-bold mb-2 group-hover:text-emerald-300 transition-colors">
-            {destination.name}
+            {name}
           </h3>
           <p className="text-stone-300 text-sm line-clamp-2 mb-4">
-            {destination.description}
+            {description}
           </p>
 
           {/* Highlights Preview */}
           <div className="flex flex-wrap gap-2">
-            {destination.highlights.slice(0, 2).map((highlight, i) => (
+            {highlights.slice(0, 2).map((highlight, i) => (
               <span
                 key={i}
                 className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-2 py-1 text-xs text-stone-200"
@@ -78,13 +96,15 @@ function CountryFilter({
   countries,
   activeCountry,
   setActiveCountry,
+  t,
 }: {
   countries: string[];
   activeCountry: string;
   setActiveCountry: (country: string) => void;
+  t: TDestinations;
 }) {
   return (
-    <div className="flex flex-wrap justify-center gap-3 mb-12" role="group" aria-label="Filter by country">
+    <div className="flex flex-wrap justify-center gap-3 mb-12" role="group" aria-label={t.filters.ariaLabel}>
       <button
         onClick={() => setActiveCountry("")}
         className={`px-5 py-2 rounded-lg text-xs uppercase tracking-wide font-medium transition-colors ${
@@ -93,7 +113,7 @@ function CountryFilter({
             : "border border-stone-300 dark:border-slate-700 text-stone-700 dark:text-stone-300 hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 bg-white dark:bg-slate-900"
         }`}
       >
-        All Destinations
+        {t.filters.all}
       </button>
       {countries.map((country) => (
         <button
@@ -105,7 +125,7 @@ function CountryFilter({
               : "border border-stone-300 dark:border-slate-700 text-stone-700 dark:text-stone-300 hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 bg-white dark:bg-slate-900"
           }`}
         >
-          {country}
+          {t.countries[country] ?? country}
         </button>
       ))}
     </div>
@@ -113,12 +133,12 @@ function CountryFilter({
 }
 
 // Stats Section
-function StatsSection() {
+function StatsSection({ t }: { t: TDestinations }) {
   const stats = [
-    { value: "6+", label: "Destinations" },
-    { value: "50+", label: "Tours" },
-    { value: "3", label: "Countries" },
-    { value: "1000+", label: "Happy Travelers" },
+    { value: "6+", label: t.stats.destinations },
+    { value: "50+", label: t.stats.tours },
+    { value: "3", label: t.stats.countries },
+    { value: "1000+", label: t.stats.travelers },
   ];
 
   return (
@@ -153,6 +173,9 @@ function StatsSection() {
 
 // Main Destinations Page
 export default function DestinationsPage() {
+  const { locale, t } = useLocale();
+  const tDest = t.destinations;
+
   const [activeCountry, setActiveCountry] = useState("");
 
   const countries = getUniqueCountries();
@@ -163,6 +186,10 @@ export default function DestinationsPage() {
       (dest) => dest.country.toLowerCase() === activeCountry.toLowerCase()
     );
   }, [activeCountry]);
+
+  const activeCountryLabel = activeCountry
+    ? tDest.countries[activeCountry] ?? activeCountry
+    : "";
 
   return (
     <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
@@ -184,10 +211,10 @@ export default function DestinationsPage() {
 
         <div className="relative z-10 px-4 max-w-4xl mx-auto text-center py-4 md:py-6">
           <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-2" aria-hidden="true">
-            Central Asia
+            {tDest.hero.eyebrow}
           </p>
           <h1 id="destinations-heading" className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3">
-            Explore Our Destinations
+            {tDest.hero.title}
           </h1>
           {/* Nature Divider */}
           <div className="flex items-center justify-center gap-3 mb-4" aria-hidden="true">
@@ -198,35 +225,37 @@ export default function DestinationsPage() {
             <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
           </div>
           <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
-            From the snow-capped peaks of the Tian Shan to the ancient Silk Road
-            cities, discover the wonders of Central Asia.
+            {tDest.hero.subtitle}
           </p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-16 px-4" aria-label="Destinations listing">
+      <section className="py-16 px-4" aria-label={tDest.listingsAriaLabel}>
         <div className="max-w-7xl mx-auto">
           {/* Country Filter */}
           <CountryFilter
             countries={countries}
             activeCountry={activeCountry}
             setActiveCountry={setActiveCountry}
+            t={tDest}
           />
 
           {/* Results Count */}
           <p className="text-stone-600 dark:text-stone-400 mb-8 text-center text-sm uppercase tracking-wide">
-            Showing{" "}
+            {tDest.results.showingPrefix}{" "}
             <span className="font-semibold text-stone-900 dark:text-stone-100">
               {filteredDestinations.length}
             </span>{" "}
-            destination{filteredDestinations.length !== 1 ? "s" : ""}
+            {filteredDestinations.length === 1
+              ? tDest.results.destinationSingular
+              : tDest.results.destinationPlural}
             {activeCountry && (
               <>
                 {" "}
-                in{" "}
+                {tDest.results.in}{" "}
                 <span className="font-semibold text-stone-900 dark:text-stone-100">
-                  {activeCountry}
+                  {activeCountryLabel}
                 </span>
               </>
             )}
@@ -235,8 +264,13 @@ export default function DestinationsPage() {
           {/* Destinations Grid */}
           {filteredDestinations.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredDestinations.map((destination, index) => (
-                <DestinationCard key={destination.id} destination={destination} index={index} />
+              {filteredDestinations.map((destination) => (
+                <DestinationCard
+                  key={destination.id}
+                  destination={destination}
+                  locale={locale}
+                  t={tDest}
+                />
               ))}
             </div>
           ) : (
@@ -256,32 +290,32 @@ export default function DestinationsPage() {
                 />
               </svg>
               <h3 className="font-serif text-xl font-semibold text-stone-900 dark:text-stone-100 mb-2">
-                No destinations found
+                {tDest.empty.title}
               </h3>
               <p className="text-stone-600 dark:text-stone-400 mb-4">
-                We don&apos;t have destinations in this country yet.
+                {tDest.empty.subtitle}
               </p>
               <button
                 onClick={() => setActiveCountry("")}
                 className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium text-sm uppercase tracking-wide"
               >
-                View all destinations
+                {tDest.empty.viewAll}
               </button>
             </div>
           )}
 
           {/* Stats Section */}
           <div className="mt-20">
-            <StatsSection />
+            <StatsSection t={tDest} />
           </div>
 
           {/* CTA Section */}
           <div className="text-center mt-20 py-16 px-4 bg-stone-100 dark:bg-slate-900 border border-stone-200 dark:border-slate-800 rounded-xl">
             <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-4" aria-hidden="true">
-              Plan Your Journey
+              {tDest.cta.eyebrow}
             </p>
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-stone-900 dark:text-stone-100 mb-4">
-              Can&apos;t decide where to go?
+              {tDest.cta.title}
             </h2>
             {/* Nature Divider */}
             <div className="flex items-center justify-center gap-3 mb-6" aria-hidden="true">
@@ -292,14 +326,13 @@ export default function DestinationsPage() {
               <div className="h-px w-12 bg-emerald-500/40" />
             </div>
             <p className="text-stone-600 dark:text-stone-400 mb-8 max-w-2xl mx-auto">
-              Our travel experts can help you plan the perfect itinerary based on
-              your interests, budget, and time frame.
+              {tDest.cta.subtitle}
             </p>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg px-8 py-4 font-medium uppercase tracking-wide transition-colors"
             >
-              Talk to an Expert
+              {tDest.cta.button}
               <svg
                 className="w-5 h-5"
                 fill="none"
