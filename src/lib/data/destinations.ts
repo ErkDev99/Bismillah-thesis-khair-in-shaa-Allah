@@ -5,27 +5,48 @@ export interface Destination {
   id: number;
   slug: string;
   name: string;
+  nameRu?: string;
   country: string;
+  countryRu?: string;
   region: string;
   description: string;
+  descriptionRu?: string;
   longDescription: string;
+  longDescriptionRu?: string;
   image: string;
   gallery: string[];
   tourCount: number;
   highlights: string[];
+  highlightsRu?: string[];
   bestTimeToVisit: string;
+  bestTimeToVisitRu?: string;
   weather: {
     summer: string;
     winter: string;
   };
+  weatherRu?: {
+    summer: string;
+    winter: string;
+  };
   languages: string[];
+  languagesRu?: string[];
   currency: string;
+  currencyRu?: string;
   timezone: string;
   quickFacts: {
     label: string;
     value: string;
   }[];
+  quickFactsRu?: {
+    label: string;
+    value: string;
+  }[];
   thingsToDo: {
+    title: string;
+    description: string;
+    image: string;
+  }[];
+  thingsToDoRu?: {
     title: string;
     description: string;
     image: string;
@@ -38,10 +59,14 @@ export const destinations: Destination[] = [
     id: 1,
     slug: "almaty",
     name: "Almaty",
+    nameRu: "Алматы",
     country: "Kazakhstan",
+    countryRu: "Казахстан",
     region: "Central Asia",
     description:
       "Kazakhstan's largest city, nestled at the foot of the majestic Tian Shan mountains.",
+    descriptionRu:
+      "Крупнейший город Казахстана, у подножия величественных гор Тянь-Шаня.",
     longDescription:
       "Almaty, the former capital of Kazakhstan, is a vibrant metropolis that perfectly blends Soviet-era architecture with modern skyscrapers, all set against the stunning backdrop of the snow-capped Tian Shan mountains. Known as the 'City of Apples' (the name literally means 'Father of Apples'), Almaty is believed to be the ancestral home of all apples. Today, it serves as the cultural and economic heart of Kazakhstan, offering world-class museums, bustling bazaars, excellent cuisine, and easy access to incredible mountain adventures.",
     image: "/images/destinations/almaty.jpg",
@@ -105,10 +130,14 @@ export const destinations: Destination[] = [
     id: 2,
     slug: "samarkand",
     name: "Samarkand",
+    nameRu: "Самарканд",
     country: "Uzbekistan",
+    countryRu: "Узбекистан",
     region: "Central Asia",
     description:
       "One of the oldest cities in the world, featuring stunning Islamic architecture and Silk Road history.",
+    descriptionRu:
+      "Один из древнейших городов мира с потрясающей исламской архитектурой и историей Шёлкового пути.",
     longDescription:
       "Samarkand is a city that seems to have sprung from the pages of One Thousand and One Nights. As one of the oldest continuously inhabited cities in Central Asia, it has witnessed the passage of Alexander the Great, Genghis Khan, and Tamerlane, who made it his magnificent capital. The city's UNESCO-listed historic center showcases some of the finest examples of Islamic architecture in the world, with azure-tiled mosques, madrasas, and mausoleums that have captivated travelers for centuries.",
     image: "/images/destinations/samarkand.jpg",
@@ -172,10 +201,14 @@ export const destinations: Destination[] = [
     id: 3,
     slug: "bishkek",
     name: "Bishkek",
+    nameRu: "Бишкек",
     country: "Kyrgyzstan",
+    countryRu: "Кыргызстан",
     region: "Central Asia",
     description:
       "A leafy, laid-back capital city serving as the perfect gateway to Kyrgyzstan's mountain wilderness.",
+    descriptionRu:
+      "Зелёная, неспешная столица — идеальные ворота в горные просторы Кыргызстана.",
     longDescription:
       "Bishkek surprises visitors with its tree-lined boulevards, vibrant café culture, and relaxed atmosphere. While it may lack the ancient monuments of its neighbors, this young capital offers a unique blend of Soviet heritage, nomadic traditions, and modern Central Asian life. More importantly, Bishkek serves as the launching point for adventures into Kyrgyzstan's spectacular mountain landscapes, from the celestial peaks of the Tian Shan to the shores of pristine alpine lakes.",
     image: "/images/destinations/bishkek.jpg",
@@ -239,10 +272,14 @@ export const destinations: Destination[] = [
     id: 4,
     slug: "astana",
     name: "Astana",
+    nameRu: "Астана",
     country: "Kazakhstan",
+    countryRu: "Казахстан",
     region: "Central Asia",
     description:
       "Kazakhstan's futuristic capital city, rising from the steppe with bold modern architecture.",
+    descriptionRu:
+      "Футуристическая столица Казахстана, вырастающая из степи смелой современной архитектурой.",
     longDescription:
       "Astana (also known as Nur-Sultan) is one of the world's most ambitious urban projects. Since becoming Kazakhstan's capital in 1997, this once-sleepy provincial town has transformed into a showcase of futuristic architecture designed by world-renowned architects. The city's skyline features bold structures like the Bayterek Tower, the Palace of Peace and Reconciliation, and the Khan Shatyr entertainment center, creating a surreal cityscape that rises dramatically from the endless Kazakh steppe.",
     image: "/images/destinations/astana.jpg",
@@ -306,10 +343,14 @@ export const destinations: Destination[] = [
     id: 5,
     slug: "bukhara",
     name: "Bukhara",
+    nameRu: "Бухара",
     country: "Uzbekistan",
+    countryRu: "Узбекистан",
     region: "Central Asia",
     description:
       "A living museum of medieval Islamic architecture and one of the holiest cities in Central Asia.",
+    descriptionRu:
+      "Живой музей средневековой исламской архитектуры и один из святейших городов Центральной Азии.",
     longDescription:
       "Bukhara is the most complete example of a medieval city in Central Asia, with an urban fabric that has remained largely intact for centuries. Once a major center of Islamic learning and culture, the city was home to hundreds of mosques, madrasas, and caravanserais. Walking through its narrow streets and covered bazaars, past ancient hammams and towering minarets, is like stepping back in time to the golden age of the Silk Road.",
     image: "/images/destinations/bukhara.jpg",
@@ -373,10 +414,14 @@ export const destinations: Destination[] = [
     id: 6,
     slug: "issyk-kul",
     name: "Issyk-Kul",
+    nameRu: "Иссык-Куль",
     country: "Kyrgyzstan",
+    countryRu: "Кыргызстан",
     region: "Central Asia",
     description:
       "The world's second-largest alpine lake, a stunning natural wonder surrounded by snow-capped peaks.",
+    descriptionRu:
+      "Второе по величине высокогорное озеро в мире — природное чудо в кольце заснеженных пиков.",
     longDescription:
       "Issyk-Kul, meaning 'Warm Lake' in Kyrgyz, is one of Central Asia's most precious natural treasures. Despite being surrounded by snow-capped mountains at an elevation of 1,607 meters, the lake never freezes, thanks to its slight salinity and thermal activity. The lake's shores offer a diverse array of experiences, from beach resorts and Soviet-era sanatoriums to remote yurt camps and ancient petroglyphs. It's a place where you can swim in crystal-clear waters while gazing at 5,000-meter peaks.",
     image: "/images/destinations/issyk-kul.jpg",

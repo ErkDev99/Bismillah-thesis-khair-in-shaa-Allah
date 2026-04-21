@@ -1,6 +1,6 @@
 # Wanderlust – Bachelor's Thesis Website
 
-*Last updated: 2026-04-21 (Session 29)*
+*Last updated: 2026-04-21 (Session 31 — tours listing + detail pages translated; long-field `*Ru` siblings filled for all 6 tours)*
 
 Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Next.js 16, React 19, Tailwind CSS v4. Evaluated as a bachelor's thesis.
 
@@ -23,28 +23,27 @@ Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Ne
 | Review & Rating System (`/review`, `/reviews`, social proof strip) | ✅ Complete |
 | QuickSearchBar with instant results (country → tours w/ prices) | ✅ Complete |
 | Contact page Google Map (Bishkek embed) | ✅ Complete |
-| **i18n (EN/RU)** | 🔄 Infrastructure + Header + Footer + ChatWidget done; 14 pages + data files remaining |
+| **i18n (EN/RU)** | 🔄 Infra + Header + Footer + ChatWidget + Homepage + Tours (listing + `[slug]`) done; 12 pages + destination long fields remaining |
 
 ---
 
 ## Quick Start for Next Session
 
-**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, and ChatWidget are translated.
+**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, ChatWidget, Homepage, and **Tours pages** (`tours/page.tsx` + `tours/[slug]/page.tsx`) are translated. Tours `[slug]` converted to client component — uses React 19 `use(params)` to unwrap `Promise<{slug}>` — and drops `generateStaticParams` / `generateMetadata` (Phase 4 SEO skipped). Tour long-field `*Ru` siblings (`longDescriptionRu`/`highlightsRu`/`includedRu`/`notIncludedRu`/`itineraryRu`) filled inline on the Tour interface for all 6 tours.
 
 **Next up:** Content pages in this order:
-1. Homepage (`page.tsx` + `QuickSearchBar` + `AnimatedHeadline`)
-2. tours (listing + `[slug]`)
-3. destinations (listing + `[slug]`)
-4. about, contact, practical-info, faq
-5. blog (listing + `[slug]`)
-6. review, reviews, privacy, terms, voice-chat
-7. Data files — recommended: `nameRu`/`descriptionRu` siblings for tours/destinations (short fields); split `blog.en.ts`/`blog.ru.ts` for blog (long bodies).
+1. ~~tours (listing + `[slug]`)~~ ✅ Session 31
+2. destinations (listing + `[slug]`) — **next**. Same pattern as tours: add long-field `*Ru` siblings on the Destination interface (`highlightsRu`/`attractionsRu`/`bestTimeRu`, etc.), convert `[slug]/page.tsx` to a client component with `use(params)`, drop metadata export. Short-field siblings (`nameRu`/`countryRu`/`descriptionRu`) are already filled.
+3. about, contact, practical-info, faq
+4. blog (listing + `[slug]`) — split `blog.en.ts`/`blog.ru.ts` since post bodies are long
+5. review, reviews, privacy, terms, voice-chat
 
 **Pattern per page:**
 1. Add `"use client"` if missing (needed for `useLocale()`).
-2. `import { useLocale } from "@/components/LocaleProvider"` and `const { t } = useLocale();`.
+2. `import { useLocale } from "@/components/LocaleProvider"` and `const { locale, t } = useLocale();`.
 3. Add a namespace to `en.ts` (e.g., `tours: {...}`) and matching RU in `ru.ts` — TypeScript fails the build if keys are missing.
 4. Replace hardcoded English with `t.<namespace>.<key>`.
+5. For data-bound text, pick by locale: `locale === "ru" && item.fieldRu ? item.fieldRu : item.field` — EN is the fallback so missing RU gracefully degrades.
 
 **After i18n:** Phase 5 (cross-browser/responsive), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
 
@@ -102,6 +101,9 @@ Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Ne
 - **Typed translation dictionaries** — `en.ts` exports `export type Translations = typeof en`; `ru.ts` is typed `const ru: Translations`. Missing/misspelt keys become build errors, not runtime `undefined`.
 - **Long RU nav labels can silently break the header** — "Практическая информация" (21 chars) vs "Practical Info" (14) overflowed `whitespace-nowrap` flex nav and pushed theme/locale toggles off-screen. Rule: in tight horizontal layouts (nav, button rows), pick the shortest idiomatic RU equivalent. Longer forms are fine in grid footers that wrap. Header uses `Советы`; footer keeps `Практическая информация`.
 - **Don't translate concrete contact data** — phone, email, physical address are data, not UI copy. If one is hardcoded in the component, all three should be.
+- **Data-layer localization — `*Ru` sibling pattern** — for short data fields (`title`, `description`, `name`, `country`, `location`, etc.), add optional `titleRu?: string` siblings on the TS interface. Components pick with `locale === "ru" && item.fieldRu ? item.fieldRu : item.field` — EN is the fallback so a missing RU gracefully degrades instead of rendering `undefined`. Keep the field optional so you can roll out RU data incrementally per page. For **long** fields (itinerary steps, blog bodies, multi-paragraph descriptions), a separate `*.ru.ts` file is cleaner than inlined siblings.
+- **Tighten loose string types for i18n indexing** — if a data field is `category: string` but the translation dict is keyed by literal values (`t.tourCategory.cultural`), narrow the field to a union (`"cultural" | "adventure"`) so TS can index the dict without an `as` cast. Catches typos and enforces that every data value has a matching translation key.
+- **React 19 `use(params)` for client-page conversion** — Next.js 15+ passes dynamic route params as `Promise<{...}>`. When converting a server page with `async function Page({ params })` + `await params` to a client component (needed for `useLocale()`), switch to `import { use } from "react"` and `const { slug } = use(params)`. Drop `generateStaticParams` and `generateMetadata` (they're server-only; acceptable here since Phase 4 SEO is skipped). Keeps the dynamic route working without resorting to route wrappers.
 
 ---
 
@@ -196,27 +198,29 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 | # | File | Status |
 |---|------|--------|
 | 1 | `src/components/LocaleProvider.tsx` | ✅ |
-| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` ns) | ✅ |
+| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` + `home` + `tourCategory` + `tours` ns) | ✅ |
 | 3 | `src/app/layout.tsx` (wraps `<LocaleProvider>`) | ✅ |
 | 4 | `src/components/layout/Header.tsx` (EN\|RU toggle + nav) | ✅ |
 | 5 | `src/components/layout/Footer.tsx` | ✅ |
 | 6 | `src/components/chat/ChatWidget.tsx` | ✅ |
-| 7 | `src/app/page.tsx` (+ QuickSearchBar, AnimatedHeadline) | ⬜ **Next** |
-| 8 | `src/app/tours/page.tsx` + `[slug]/page.tsx` | ⬜ (+ decide data strategy) |
-| 9 | `src/app/destinations/page.tsx` + `[slug]/page.tsx` | ⬜ |
-| 10 | `src/app/about/page.tsx` | ⬜ |
-| 11 | `src/app/contact/page.tsx` | ⬜ |
-| 12 | `src/app/practical-info/page.tsx` | ⬜ |
-| 13 | `src/app/faq/page.tsx` | ⬜ |
-| 14 | `src/app/blog/page.tsx` + `[slug]/page.tsx` | ⬜ (split `blog.en.ts`/`blog.ru.ts`) |
-| 15 | `src/app/review/page.tsx` | ⬜ |
-| 16 | `src/app/reviews/page.tsx` | ⬜ |
-| 17 | `src/app/privacy/page.tsx` | ⬜ |
-| 18 | `src/app/terms/page.tsx` | ⬜ |
-| 19 | `src/app/voice-chat/page.tsx` | ⬜ |
-| 20 | `src/data/tours.ts` | ⬜ (recommend `nameRu`/`descriptionRu` siblings) |
-| 21 | `src/data/destinations.ts` | ⬜ (same pattern) |
-| 22 | `src/data/blog.ts` | ⬜ (split file per locale) |
+| 7 | `src/app/page.tsx` (+ QuickSearchBar, AnimatedHeadline, TourCard, DestinationCard) | ✅ |
+| 8 | `src/lib/data/tours.ts` — short fields (`titleRu`/`descriptionRu`/`locationRu`/`durationRu`/`groupSizeRu`) | ✅ |
+| 8b | `src/lib/data/tours.ts` — long fields (`longDescriptionRu`/`highlightsRu`/`itineraryRu`/`includedRu`/`notIncludedRu`) | ✅ |
+| 9 | `src/lib/data/destinations.ts` — short fields (`nameRu`/`countryRu`/`descriptionRu`) | ✅ |
+| 9b | `src/lib/data/destinations.ts` — long fields (`highlightsRu`/`attractionsRu`/`bestTimeRu`, etc) | ⬜ (do with destinations pages) |
+| 10 | `src/app/tours/page.tsx` + `[slug]/page.tsx` | ✅ |
+| 11 | `src/app/destinations/page.tsx` + `[slug]/page.tsx` | ⬜ **Next** |
+| 12 | `src/app/about/page.tsx` | ⬜ |
+| 13 | `src/app/contact/page.tsx` | ⬜ |
+| 14 | `src/app/practical-info/page.tsx` | ⬜ |
+| 15 | `src/app/faq/page.tsx` | ⬜ |
+| 16 | `src/app/blog/page.tsx` + `[slug]/page.tsx` | ⬜ (split `blog.en.ts`/`blog.ru.ts`) |
+| 17 | `src/app/review/page.tsx` | ⬜ |
+| 18 | `src/app/reviews/page.tsx` | ⬜ |
+| 19 | `src/app/privacy/page.tsx` | ⬜ |
+| 20 | `src/app/terms/page.tsx` | ⬜ |
+| 21 | `src/app/voice-chat/page.tsx` | ⬜ |
+| 22 | `src/lib/data/blog.ts` | ⬜ (split file per locale) |
 
 **Known limitations (acceptable for thesis):**
 - Server-rendered initial paint shows EN until `LocaleProvider` hydrates (no FOUC script — low priority).
@@ -366,3 +370,4 @@ Missing (out of thesis scope): real booking/payment flow, user accounts
 ---
 
 *Session 29 consolidation: `HANDOVER.md` merged into this file. Single source of truth going forward.*
+*Session 31: tours listing + `[slug]` pages translated; `tours` namespace added to `en.ts`/`ru.ts`; Tour interface gained long-field RU siblings; `[slug]/page.tsx` converted to client via React 19 `use(params)`.*

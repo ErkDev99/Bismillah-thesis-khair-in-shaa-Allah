@@ -1,13 +1,14 @@
+"use client";
+
 // src/app/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Server Component — no "use client" needed.
 // Style: Nature / Travel Magazine — emerald + cream palette, serif headings,
 // leaf ornaments, bright hero photography, fresh green accents.
+// Client component to consume useLocale() — metadata lives in layout.tsx.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
 import Image from "next/image";
-import type { Metadata } from "next";
 import {
   getFeaturedTours,
   getAllTours,
@@ -20,29 +21,8 @@ import {
 } from "@/lib/data/destinations";
 import QuickSearchBar from "@/components/home/QuickSearchBar";
 import { AnimatedHeadline } from "@/components/home/AnimatedHeadline";
-
-// ─── SEO Metadata ─────────────────────────────────────────────────────────────
-export const metadata: Metadata = {
-  title:
-    "Wanderlust — Discover Central Asia | Tours in Kazakhstan, Kyrgyzstan & Uzbekistan",
-  description:
-    "Expertly guided small-group tours through Kazakhstan, Kyrgyzstan, and Uzbekistan. Ancient Silk Road cities, mountain expeditions, and authentic nomadic experiences from $1,299.",
-  openGraph: {
-    title: "Wanderlust — Discover Central Asia",
-    description:
-      "Small-group tours through Kazakhstan, Kyrgyzstan & Uzbekistan. Silk Road cities, mountain treks, and nomadic stays from $1,299.",
-    type: "website",
-    siteName: "Wanderlust",
-  },
-  keywords: [
-    "Central Asia tours",
-    "Kazakhstan travel",
-    "Kyrgyzstan tours",
-    "Uzbekistan tours",
-    "Silk Road",
-    "guided tours Central Asia",
-  ],
-};
+import { useLocale } from "@/components/LocaleProvider";
+import type { Translations } from "@/lib/translations/en";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -58,11 +38,19 @@ function NatureDivider({ className = "" }: { className?: string }) {
 }
 
 // ─── Star Rating ─────────────────────────────────────────────────────────────
-function StarRating({ rating, count }: { rating: number; count?: number }) {
+function StarRating({
+  rating,
+  count,
+  t,
+}: {
+  rating: number;
+  count?: number;
+  t: Translations["home"]["featuredTours"];
+}) {
   return (
     <div
       className="flex items-center gap-1"
-      aria-label={`Rating: ${rating} out of 5 stars${count ? `, ${count} reviews` : ""}`}
+      aria-label={`${t.ratingAriaPrefix} ${rating} ${t.ratingSuffix}${count ? `, ${count} ${t.reviewsSuffix}` : ""}`}
     >
       {Array.from({ length: 5 }).map((_, i) => (
         <svg
@@ -85,7 +73,13 @@ function StarRating({ rating, count }: { rating: number; count?: number }) {
 }
 
 // ─── Difficulty Badge ────────────────────────────────────────────────────────
-function DifficultyBadge({ difficulty }: { difficulty: Tour["difficulty"] }) {
+function DifficultyBadge({
+  difficulty,
+  label,
+}: {
+  difficulty: Tour["difficulty"];
+  label: string;
+}) {
   const styles: Record<Tour["difficulty"], string> = {
     Easy: "bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-700",
     Moderate: "bg-orange-100 text-orange-800 border border-orange-300 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-700",
@@ -93,7 +87,7 @@ function DifficultyBadge({ difficulty }: { difficulty: Tour["difficulty"] }) {
   };
   return (
     <span className={`px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full ${styles[difficulty]}`}>
-      {difficulty}
+      {label}
     </span>
   );
 }
@@ -102,9 +96,10 @@ function DifficultyBadge({ difficulty }: { difficulty: Tour["difficulty"] }) {
 // SECTION 1 — HERO
 // ═════════════════════════════════════════════════════════════════════════════
 function HeroSection() {
+  const { t } = useLocale();
   return (
     <section
-      aria-label="Welcome to Wanderlust Central Asia Tours"
+      aria-label={t.home.hero.ariaLabel}
       className="relative text-center text-white overflow-hidden min-h-[70vh] flex items-center"
     >
       <Image
@@ -122,14 +117,13 @@ function HeroSection() {
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-12 md:py-20 w-full">
         <p className="text-emerald-300 text-sm font-semibold tracking-[0.25em] uppercase mb-4 drop-shadow-md">
-          Kazakhstan &middot; Kyrgyzstan &middot; Uzbekistan
+          {t.home.hero.eyebrow}
         </p>
 
         <AnimatedHeadline />
 
         <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-6 leading-relaxed drop-shadow-md">
-          Expert-led small-group tours through ancient Silk Road cities, soaring
-          mountain ranges, and nomadic landscapes unlike anywhere else on Earth.
+          {t.home.hero.subtitle}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -137,13 +131,13 @@ function HeroSection() {
             href="/tours"
             className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-3 rounded-lg font-semibold text-base tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
           >
-            Browse All Tours
+            {t.home.hero.browseTours}
           </Link>
           <Link
             href="/destinations"
             className="border-2 border-white/60 hover:bg-white hover:text-emerald-800 text-white px-8 py-3 rounded-lg font-semibold text-base tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent backdrop-blur-sm"
           >
-            Explore Destinations
+            {t.home.hero.exploreDestinations}
           </Link>
         </div>
       </div>
@@ -154,49 +148,38 @@ function HeroSection() {
 // ═════════════════════════════════════════════════════════════════════════════
 // SECTION 2 — WHY CHOOSE US
 // ═════════════════════════════════════════════════════════════════════════════
-const WHY_US = [
-  {
-    title: "Expert Local Guides",
-    description:
-      "Every tour is led by certified guides born and raised in the region — giving you authentic insider access that no app or map can replicate.",
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-      />
-    ),
-  },
-  {
-    title: "Small Groups (Max 12)",
-    description:
-      "Smaller groups mean personal attention, deeper connections with locals, and access to places that large tours simply cannot reach.",
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-      />
-    ),
-  },
-  {
-    title: "Authentic Experiences",
-    description:
-      "Sleep in yurts, share meals with nomadic families, and discover places that standard tourism never reaches — genuine cultural immersion.",
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    ),
-  },
+const WHY_US_ICONS = [
+  (
+    <path
+      key="guides"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+    />
+  ),
+  (
+    <path
+      key="groups"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+    />
+  ),
+  (
+    <path
+      key="authentic"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  ),
 ];
 
 function WhyChooseUsSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="why-us-heading"
@@ -205,23 +188,22 @@ function WhyChooseUsSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Why Choose Us
+            {t.home.whyUs.eyebrow}
           </p>
           <h2
             id="why-us-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Why Travel with Wanderlust?
+            {t.home.whyUs.title}
           </h2>
           <p className="text-stone-600 dark:text-stone-400 max-w-xl mx-auto">
-            We&apos;ve spent years crafting journeys that go beyond the tourist
-            trail — here&apos;s what makes us different.
+            {t.home.whyUs.subtitle}
           </p>
           <NatureDivider className="mt-5" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {WHY_US.map((item) => (
+          {t.home.whyUs.items.map((item, i) => (
             <div
               key={item.title}
               className="relative flex flex-col items-center text-center p-7 bg-white dark:bg-slate-900 rounded-xl border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-lg transition-all duration-300 group"
@@ -234,7 +216,7 @@ function WhyChooseUsSection() {
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
-                  {item.icon}
+                  {WHY_US_ICONS[i]}
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
@@ -254,28 +236,11 @@ function WhyChooseUsSection() {
 // ═════════════════════════════════════════════════════════════════════════════
 // SECTION 2.5 — SOCIAL PROOF STRIP (Compact trust signal)
 // ═════════════════════════════════════════════════════════════════════════════
-const MINI_REVIEWS = [
-  {
-    quote: "Best travel decision I ever made — our guide knew every hidden spot.",
-    name: "Emma B.",
-    country: "United Kingdom",
-  },
-  {
-    quote: "Sleeping in a yurt under the stars is something I'll never forget.",
-    name: "Lars M.",
-    country: "Germany",
-  },
-  {
-    quote: "Perfectly balanced — adventurous but never rushed. Absolutely perfect.",
-    name: "Hana K.",
-    country: "Japan",
-  },
-];
-
 function SocialProofStrip() {
+  const { t } = useLocale();
   return (
     <section
-      aria-label="Traveler ratings"
+      aria-label={t.home.socialProof.ariaLabel}
       className="py-10 px-4 bg-white dark:bg-slate-900 border-y border-stone-200 dark:border-slate-800"
     >
       <div className="max-w-5xl mx-auto">
@@ -291,7 +256,7 @@ function SocialProofStrip() {
                   </svg>
                 ))}
               </div>
-              <span className="text-xs text-stone-500 dark:text-stone-400">out of 5</span>
+              <span className="text-xs text-stone-500 dark:text-stone-400">{t.home.socialProof.outOf}</span>
             </div>
           </div>
           <div className="h-8 w-px bg-stone-300 dark:bg-slate-700 hidden sm:block" aria-hidden="true" />
@@ -300,7 +265,8 @@ function SocialProofStrip() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             <span>
-              Rated by <strong className="text-stone-900 dark:text-emerald-100">524 verified travelers</strong>
+              {t.home.socialProof.ratedByPrefix}{" "}
+              <strong className="text-stone-900 dark:text-emerald-100">{t.home.socialProof.verifiedTravelers}</strong>
             </span>
           </div>
           <div className="h-8 w-px bg-stone-300 dark:bg-slate-700 hidden sm:block" aria-hidden="true" />
@@ -308,20 +274,20 @@ function SocialProofStrip() {
             href="/review"
             className="text-sm text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 underline underline-offset-2 transition-colors"
           >
-            Leave a review
+            {t.home.socialProof.leaveReview}
           </Link>
           <div className="h-8 w-px bg-stone-300 dark:bg-slate-700 hidden sm:block" aria-hidden="true" />
           <Link
             href="/reviews"
             className="text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-1.5 rounded-lg tracking-wide transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400"
           >
-            View All Reviews
+            {t.home.socialProof.viewAllReviews}
           </Link>
         </div>
 
         {/* Mini review cards */}
         <div className="grid md:grid-cols-3 gap-4">
-          {MINI_REVIEWS.map((r) => (
+          {t.home.socialProof.reviews.map((r) => (
             <div
               key={r.name}
               className="flex items-start gap-3 p-4 bg-emerald-50 dark:bg-slate-800/50 rounded-lg border border-emerald-100 dark:border-slate-700"
@@ -349,18 +315,26 @@ function SocialProofStrip() {
 // SECTION 3 — FEATURED TOURS
 // ═════════════════════════════════════════════════════════════════════════════
 function TourCard({ tour }: { tour: Tour }) {
+  const { locale, t } = useLocale();
+  const title = locale === "ru" && tour.titleRu ? tour.titleRu : tour.title;
+  const description = locale === "ru" && tour.descriptionRu ? tour.descriptionRu : tour.description;
+  const location = locale === "ru" && tour.locationRu ? tour.locationRu : tour.location;
+  const duration = locale === "ru" && tour.durationRu ? tour.durationRu : tour.duration;
+  const groupSize = locale === "ru" && tour.groupSizeRu ? tour.groupSizeRu : tour.groupSize;
+  const categoryLabel = t.tourCategory[tour.category];
+
   return (
     <article className="group bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600">
       <div className="relative h-52 shrink-0 overflow-hidden">
         <Image
           src={tour.image}
-          alt={tour.title}
+          alt={title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
         <div className="absolute top-3 left-3 z-10">
-          <DifficultyBadge difficulty={tour.difficulty} />
+          <DifficultyBadge difficulty={tour.difficulty} label={t.home.difficulty[tour.difficulty]} />
         </div>
         <div className="absolute top-3 right-3 z-10 bg-black/50 backdrop-blur-sm rounded-lg text-white text-xs px-2.5 py-1 flex items-center gap-1">
           <svg
@@ -370,13 +344,13 @@ function TourCard({ tour }: { tour: Tour }) {
           >
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
-          <span aria-label={`Rated ${tour.rating} out of 5`}>{tour.rating}</span>
+          <span aria-label={`${t.home.featuredTours.ratingPrefix} ${tour.rating} ${t.home.featuredTours.ratingSuffix}`}>{tour.rating}</span>
           {tour.reviewCount && (
             <span className="text-white/60">({tour.reviewCount})</span>
           )}
         </div>
         <div className="absolute bottom-3 left-3 z-10 text-white/80 text-xs uppercase tracking-[0.2em] font-medium drop-shadow-md bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded">
-          {tour.category}
+          {categoryLabel}
         </div>
       </div>
 
@@ -392,38 +366,38 @@ function TourCard({ tour }: { tour: Tour }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
-          <span>{tour.location}</span>
+          <span>{location}</span>
         </div>
 
         <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors font-serif">
           <Link href={`/tours/${tour.slug}`} className="focus:outline-none focus:underline">
-            {tour.title}
+            {title}
           </Link>
         </h3>
 
         <p className="text-stone-600 dark:text-stone-400 text-sm line-clamp-2 mb-4 leading-relaxed flex-1">
-          {tour.description}
+          {description}
         </p>
 
         <div className="flex items-end justify-between pt-4 border-t border-stone-200 dark:border-slate-700 mb-4">
           <div>
-            <p className="text-[11px] text-stone-400 uppercase tracking-[0.15em]">From</p>
+            <p className="text-[11px] text-stone-400 uppercase tracking-[0.15em]">{t.home.featuredTours.from}</p>
             <p className="text-2xl font-bold text-stone-900 dark:text-emerald-100 font-serif">
               ${tour.price.toLocaleString()}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm font-medium text-stone-700 dark:text-stone-300">{tour.duration}</p>
-            <p className="text-xs text-stone-600 dark:text-stone-400">{tour.groupSize}</p>
+            <p className="text-sm font-medium text-stone-700 dark:text-stone-300">{duration}</p>
+            <p className="text-xs text-stone-600 dark:text-stone-400">{groupSize}</p>
           </div>
         </div>
 
         <Link
           href={`/tours/${tour.slug}`}
-          aria-label={`View Tour: ${tour.title}`}
+          aria-label={`${t.home.featuredTours.viewTourAriaPrefix}: ${title}`}
           className="block w-full text-center bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white py-2.5 rounded-lg font-semibold tracking-wide text-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
         >
-          View Tour
+          {t.home.featuredTours.viewTour}
         </Link>
       </div>
     </article>
@@ -431,6 +405,7 @@ function TourCard({ tour }: { tour: Tour }) {
 }
 
 function FeaturedToursSection({ tours }: { tours: Tour[] }) {
+  const { t } = useLocale();
   if (tours.length === 0) return null;
   return (
     <section
@@ -441,23 +416,23 @@ function FeaturedToursSection({ tours }: { tours: Tour[] }) {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
           <div>
             <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
-              Curated Journeys
+              {t.home.featuredTours.eyebrow}
             </p>
             <h2
               id="tours-heading"
               className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif"
             >
-              Featured Tours
+              {t.home.featuredTours.title}
             </h2>
             <p className="text-stone-600 dark:text-stone-400">
-              Handpicked journeys that showcase the best of Central Asia.
+              {t.home.featuredTours.subtitle}
             </p>
           </div>
           <Link
             href="/tours"
             className="shrink-0 inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold tracking-wide text-sm group focus:outline-none focus:underline"
           >
-            View all tours
+            {t.home.featuredTours.viewAll}
             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -478,6 +453,12 @@ function FeaturedToursSection({ tours }: { tours: Tour[] }) {
 // SECTION 4 — FEATURED DESTINATIONS
 // ═════════════════════════════════════════════════════════════════════════════
 function DestinationCard({ destination }: { destination: Destination }) {
+  const { locale, t } = useLocale();
+  const name = locale === "ru" && destination.nameRu ? destination.nameRu : destination.name;
+  const country = locale === "ru" && destination.countryRu ? destination.countryRu : destination.country;
+  const description =
+    locale === "ru" && destination.descriptionRu ? destination.descriptionRu : destination.description;
+
   return (
     <Link
       href={`/destinations/${destination.slug}`}
@@ -485,7 +466,7 @@ function DestinationCard({ destination }: { destination: Destination }) {
     >
       <Image
         src={destination.image}
-        alt={destination.name}
+        alt={name}
         fill
         className="object-cover group-hover:scale-105 transition-transform duration-500"
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -493,18 +474,18 @@ function DestinationCard({ destination }: { destination: Destination }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" aria-hidden="true" />
 
       <div className="absolute top-4 right-4 bg-emerald-600/80 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-lg z-10">
-        {destination.tourCount} tours
+        {destination.tourCount} {t.home.featuredDestinations.toursSuffix}
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 p-5 text-white z-10">
         <p className="text-emerald-300 text-xs font-bold uppercase tracking-[0.2em] mb-1">
-          {destination.country}
+          {country}
         </p>
         <h3 className="text-2xl font-bold mb-1 group-hover:text-emerald-300 transition-colors font-serif">
-          {destination.name}
+          {name}
         </h3>
         <p className="text-stone-300 text-sm line-clamp-2 leading-relaxed">
-          {destination.description}
+          {description}
         </p>
       </div>
     </Link>
@@ -512,6 +493,7 @@ function DestinationCard({ destination }: { destination: Destination }) {
 }
 
 function FeaturedDestinationsSection({ destinations }: { destinations: Destination[] }) {
+  const { t } = useLocale();
   if (destinations.length === 0) return null;
   return (
     <section
@@ -522,23 +504,23 @@ function FeaturedDestinationsSection({ destinations }: { destinations: Destinati
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
           <div>
             <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
-              Iconic Places
+              {t.home.featuredDestinations.eyebrow}
             </p>
             <h2
               id="destinations-heading"
               className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif"
             >
-              Top Destinations
+              {t.home.featuredDestinations.title}
             </h2>
             <p className="text-stone-600 dark:text-stone-400">
-              Iconic places where ancient legend meets breathtaking landscape.
+              {t.home.featuredDestinations.subtitle}
             </p>
           </div>
           <Link
             href="/destinations"
             className="shrink-0 inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold tracking-wide text-sm group focus:outline-none focus:underline"
           >
-            All destinations
+            {t.home.featuredDestinations.viewAll}
             <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -558,34 +540,8 @@ function FeaturedDestinationsSection({ destinations }: { destinations: Destinati
 // ═════════════════════════════════════════════════════════════════════════════
 // SECTION 5 — TESTIMONIALS
 // ═════════════════════════════════════════════════════════════════════════════
-const TESTIMONIALS = [
-  {
-    name: "Emma B.",
-    country: "United Kingdom",
-    tour: "Silk Road Adventure",
-    rating: 5,
-    quote:
-      "The Silk Road tour was the trip of a lifetime. Our guide's knowledge of local history was extraordinary — I learned more in 10 days than in years of reading.",
-  },
-  {
-    name: "Lars M.",
-    country: "Germany",
-    tour: "Nomadic Life Experience",
-    rating: 5,
-    quote:
-      "Sleeping in a traditional yurt under a sky full of stars in Kyrgyzstan is something I will carry with me forever. Wanderlust made it feel effortless.",
-  },
-  {
-    name: "Hana K.",
-    country: "Japan",
-    tour: "Mountain Expedition",
-    rating: 5,
-    quote:
-      "The small group meant we got to know everyone deeply. The itinerary was perfectly balanced — adventurous but never rushed. Absolutely perfect.",
-  },
-];
-
 function TestimonialsSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="testimonials-heading"
@@ -594,35 +550,35 @@ function TestimonialsSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Testimonials
+            {t.home.testimonials.eyebrow}
           </p>
           <h2
             id="testimonials-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            What Our Travelers Say
+            {t.home.testimonials.title}
           </h2>
           <p className="text-stone-600 dark:text-stone-400">
-            Real reviews from real adventurers. No filters, no edits.
+            {t.home.testimonials.subtitle}
           </p>
           <NatureDivider className="mt-5" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map((t) => (
+          {t.home.testimonials.items.map((item) => (
             <blockquote
-              key={t.name}
+              key={item.name}
               className="relative bg-stone-50 dark:bg-slate-800 p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex flex-col border border-stone-200 dark:border-slate-700"
             >
-              <StarRating rating={t.rating} />
+              <StarRating rating={5} t={t.home.featuredTours} />
               <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed flex-1 mt-4 mb-5 font-serif italic">
-                &ldquo;{t.quote}&rdquo;
+                &ldquo;{item.quote}&rdquo;
               </p>
               <footer>
                 <cite className="not-italic">
-                  <p className="font-semibold text-stone-900 dark:text-emerald-100 text-sm">{t.name}</p>
+                  <p className="font-semibold text-stone-900 dark:text-emerald-100 text-sm">{item.name}</p>
                   <p className="text-stone-600 dark:text-stone-400 text-xs mt-0.5">
-                    {t.country} &middot; {t.tour}
+                    {item.country} &middot; {item.tour}
                   </p>
                 </cite>
               </footer>
@@ -636,7 +592,7 @@ function TestimonialsSection() {
             href="/reviews"
             className="inline-flex items-center gap-2 border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 px-8 py-3 rounded-lg font-semibold tracking-wide text-sm transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300"
           >
-            Read All Reviews
+            {t.home.testimonials.readAll}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -648,7 +604,7 @@ function TestimonialsSection() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
-            Leave a Review
+            {t.home.testimonials.leaveReview}
           </Link>
         </div>
       </div>
@@ -660,6 +616,7 @@ function TestimonialsSection() {
 // SECTION 6 — NEWSLETTER
 // ═════════════════════════════════════════════════════════════════════════════
 function NewsletterSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="newsletter-heading"
@@ -668,26 +625,25 @@ function NewsletterSection() {
       <div className="relative max-w-2xl mx-auto text-center">
         <NatureDivider className="mb-6" />
         <h2 id="newsletter-heading" className="text-3xl md:text-4xl font-bold mb-3 font-serif">
-          Get Inspired Weekly
+          {t.home.newsletter.title}
         </h2>
         <p className="text-emerald-200/70 mb-8 leading-relaxed">
-          Travel tips, exclusive deals, and hidden gems from Central Asia —
-          delivered straight to your inbox. No spam, ever.
+          {t.home.newsletter.subtitle}
         </p>
 
         <form
           action="/api/newsletter"
           method="POST"
           className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-          aria-label="Newsletter signup form"
+          aria-label={t.home.newsletter.formAriaLabel}
           noValidate
         >
-          <label htmlFor="newsletter-email" className="sr-only">Your email address</label>
+          <label htmlFor="newsletter-email" className="sr-only">{t.home.newsletter.emailLabel}</label>
           <input
             id="newsletter-email"
             type="email"
             name="email"
-            placeholder="your@email.com"
+            placeholder={t.home.newsletter.emailPlaceholder}
             required
             aria-required="true"
             autoComplete="email"
@@ -697,11 +653,11 @@ function NewsletterSection() {
             type="submit"
             className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-lg font-semibold tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-emerald-950 whitespace-nowrap"
           >
-            Subscribe
+            {t.home.newsletter.subscribe}
           </button>
         </form>
 
-        <p className="text-emerald-300/50 text-xs mt-4">No spam. Unsubscribe at any time.</p>
+        <p className="text-emerald-300/50 text-xs mt-4">{t.home.newsletter.disclaimer}</p>
       </div>
     </section>
   );
@@ -711,6 +667,7 @@ function NewsletterSection() {
 // SECTION 7 — FINAL CTA BANNER
 // ═════════════════════════════════════════════════════════════════════════════
 function CTABannerSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="cta-heading"
@@ -733,11 +690,10 @@ function CTABannerSection() {
         </div>
 
         <h2 id="cta-heading" className="text-3xl md:text-5xl font-bold text-white mb-4 font-serif">
-          Ready to Start Your Adventure?
+          {t.home.cta.title}
         </h2>
         <p className="text-emerald-200/70 mb-8 max-w-xl mx-auto leading-relaxed">
-          Our travel experts are available to craft a custom itinerary just for
-          you. No two trips are alike — and yours shouldn&apos;t be either.
+          {t.home.cta.subtitle}
         </p>
 
         <NatureDivider className="mb-10" />
@@ -747,7 +703,7 @@ function CTABannerSection() {
             href="/tours"
             className="group bg-emerald-500 hover:bg-emerald-400 text-emerald-950 px-10 py-4 rounded-lg font-semibold tracking-wide transition-all flex items-center justify-center gap-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Browse Tours
+            {t.home.cta.browseTours}
             <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -756,7 +712,7 @@ function CTABannerSection() {
             href="/contact"
             className="group border-2 border-emerald-500/50 text-emerald-300 hover:bg-emerald-500 hover:text-emerald-950 px-10 py-4 rounded-lg font-semibold tracking-wide transition-all flex items-center justify-center gap-3 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Contact Us
+            {t.home.cta.contactUs}
             <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -764,6 +720,34 @@ function CTABannerSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// STATS STRIP
+// ═════════════════════════════════════════════════════════════════════════════
+function StatsStrip() {
+  const { t } = useLocale();
+  const stats = [
+    { value: "6+", label: t.home.stats.destinations },
+    { value: "500+", label: t.home.stats.travelers },
+    { value: "4.9★", label: t.home.stats.rating },
+  ];
+  return (
+    <div className="bg-emerald-950 border-t border-emerald-500/20" aria-label={t.home.stats.ariaLabel}>
+      <div className="max-w-3xl mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-emerald-500/20 text-center">
+        {stats.map((stat) => (
+          <div key={stat.label} className="px-2 sm:px-4">
+            <p className="text-xl sm:text-2xl font-bold text-emerald-400 font-serif">
+              {stat.value}
+            </p>
+            <p className="text-[11px] sm:text-xs text-emerald-200/60 uppercase tracking-[0.15em] mt-0.5">
+              {stat.label}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -799,24 +783,7 @@ export default function Home() {
     <>
       <HeroSection />
       <QuickSearchBar tours={searchTours} />
-      <div className="bg-emerald-950 border-t border-emerald-500/20" aria-label="Key stats">
-        <div className="max-w-3xl mx-auto px-4 py-4 grid grid-cols-3 divide-x divide-emerald-500/20 text-center">
-          {([
-            { value: "6+", label: "Destinations" },
-            { value: "500+", label: "Happy Travelers" },
-            { value: "4.9\u2605", label: "Avg. Rating" },
-          ] as const).map((stat) => (
-            <div key={stat.label} className="px-2 sm:px-4">
-              <p className="text-xl sm:text-2xl font-bold text-emerald-400 font-serif">
-                {stat.value}
-              </p>
-              <p className="text-[11px] sm:text-xs text-emerald-200/60 uppercase tracking-[0.15em] mt-0.5">
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <StatsStrip />
       <WhyChooseUsSection />
       <SocialProofStrip />
       <FeaturedToursSection tours={featuredTours} />

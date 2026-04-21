@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { useLocale } from "@/components/LocaleProvider";
 
 export type SearchTour = {
   id: number;
@@ -24,6 +25,7 @@ type Props = {
 
 export default function QuickSearchBar({ tours }: Props) {
   const router = useRouter();
+  const { t } = useLocale();
   const [destination, setDestination] = useState("");
   const [duration, setDuration] = useState("");
 
@@ -67,11 +69,11 @@ export default function QuickSearchBar({ tours }: Props) {
     const hasLong = relevantTours.some((t) => t.durationDays >= 11);
 
     const options: { value: string; label: string }[] = [];
-    if (hasShort) options.push({ value: "short", label: "1–5 Days" });
-    if (hasMedium) options.push({ value: "medium", label: "6–10 Days" });
-    if (hasLong) options.push({ value: "long", label: "11+ Days" });
+    if (hasShort) options.push({ value: "short", label: t.home.search.short });
+    if (hasMedium) options.push({ value: "medium", label: t.home.search.medium });
+    if (hasLong) options.push({ value: "long", label: t.home.search.long });
     return options;
-  }, [tours, destination]);
+  }, [tours, destination, t]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,12 +88,12 @@ export default function QuickSearchBar({ tours }: Props) {
 
   return (
     <section
-      aria-label="Find a tour"
+      aria-label={t.home.search.ariaLabel}
       className="bg-emerald-950 dark:bg-black border-t border-b border-emerald-500/20 py-6 px-4"
     >
       <div className="max-w-5xl mx-auto">
         <p className="text-center text-emerald-400/80 text-xs uppercase tracking-[0.3em] mb-4">
-          Find Your Journey
+          {t.home.search.eyebrow}
         </p>
         <form
           onSubmit={handleSubmit}
@@ -103,7 +105,7 @@ export default function QuickSearchBar({ tours }: Props) {
               htmlFor="qs-destination"
               className="block text-xs font-semibold text-stone-400 mb-1.5 uppercase tracking-[0.2em]"
             >
-              Destination
+              {t.home.search.destinationLabel}
             </label>
             <select
               id="qs-destination"
@@ -114,7 +116,7 @@ export default function QuickSearchBar({ tours }: Props) {
               }}
               className="w-full px-3 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             >
-              <option value="">Any destination</option>
+              <option value="">{t.home.search.anyDestination}</option>
               {countries.map((c) => (
                 <option key={c.value} value={c.value}>
                   {c.label}
@@ -129,7 +131,7 @@ export default function QuickSearchBar({ tours }: Props) {
               htmlFor="qs-duration"
               className="block text-xs font-semibold text-stone-400 mb-1.5 uppercase tracking-[0.2em]"
             >
-              Duration
+              {t.home.search.durationLabel}
             </label>
             <select
               id="qs-duration"
@@ -137,7 +139,7 @@ export default function QuickSearchBar({ tours }: Props) {
               onChange={(e) => setDuration(e.target.value)}
               className="w-full px-3 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             >
-              <option value="">Any duration</option>
+              <option value="">{t.home.search.anyDuration}</option>
               {availableDurations.map((d) => (
                 <option key={d.value} value={d.value}>
                   {d.label}
@@ -151,7 +153,7 @@ export default function QuickSearchBar({ tours }: Props) {
             type="submit"
             className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg px-6 py-2.5 font-semibold text-sm uppercase tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300/50 whitespace-nowrap"
           >
-            {showResults ? "See All Tours" : "Find Tours"}
+            {showResults ? t.home.search.seeAllTours : t.home.search.findTours}
           </button>
         </form>
 
@@ -163,7 +165,9 @@ export default function QuickSearchBar({ tours }: Props) {
           >
             <p className="text-xs text-stone-400 uppercase tracking-[0.2em] mb-3">
               {filteredTours.length}{" "}
-              {filteredTours.length === 1 ? "tour" : "tours"} available
+              {filteredTours.length === 1
+                ? t.home.search.tourSingular
+                : t.home.search.tourPlural}
             </p>
 
             {filteredTours.length > 0 ? (
@@ -198,7 +202,7 @@ export default function QuickSearchBar({ tours }: Props) {
                     {/* Price */}
                     <div className="text-right shrink-0">
                       <p className="text-[10px] text-stone-500 uppercase tracking-wider leading-none mb-0.5">
-                        From
+                        {t.home.search.from}
                       </p>
                       <p className="text-lg font-bold text-emerald-400 font-serif">
                         ${tour.price.toLocaleString()}
@@ -225,7 +229,7 @@ export default function QuickSearchBar({ tours }: Props) {
               </div>
             ) : (
               <p className="text-stone-500 text-sm text-center py-4">
-                No tours match your selection. Try a different duration.
+                {t.home.search.noMatch}
               </p>
             )}
           </div>

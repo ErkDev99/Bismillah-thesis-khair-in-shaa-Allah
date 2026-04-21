@@ -18,6 +18,8 @@ import {
   getUniqueDifficulties,
   type Tour,
 } from "@/lib/data/tours";
+import { useLocale } from "@/components/LocaleProvider";
+import type { Translations } from "@/lib/translations/en";
 
 // ─── Nature Divider — leaf ornament ──────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -50,12 +52,18 @@ function FilterSidebar({
   destinations,
   categories,
   difficulties,
+  t,
+  tTourCategory,
+  tDifficulty,
 }: {
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
   destinations: string[];
   categories: string[];
   difficulties: string[];
+  t: Translations["tours"];
+  tTourCategory: Translations["tourCategory"];
+  tDifficulty: Translations["home"]["difficulty"];
 }) {
   const clearFilters = () => {
     setFilters({
@@ -68,22 +76,22 @@ function FilterSidebar({
   };
 
   return (
-    <aside className="w-full lg:w-64 shrink-0" aria-label="Tour filters">
+    <aside className="w-full lg:w-64 shrink-0" aria-label={t.filters.sidebarAriaLabel}>
       <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 rounded-xl shadow-sm p-6 sticky top-24">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-stone-900 dark:text-emerald-100 font-serif">Filters</h2>
+          <h2 className="text-lg font-bold text-stone-900 dark:text-emerald-100 font-serif">{t.filters.heading}</h2>
           <button
             onClick={clearFilters}
             className="text-sm text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 uppercase tracking-wide font-medium"
           >
-            Clear all
+            {t.filters.clearAll}
           </button>
         </div>
 
         {/* Destination Filter */}
         <div className="mb-6">
           <label htmlFor="filter-destination" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
-            Destination
+            {t.filters.destinationLabel}
           </label>
           <select
             id="filter-destination"
@@ -93,7 +101,7 @@ function FilterSidebar({
             }
             className="w-full px-3 py-2 rounded-lg border border-stone-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
-            <option value="">All Destinations</option>
+            <option value="">{t.filters.allDestinations}</option>
             {destinations.map((dest) => (
               <option key={dest} value={dest}>
                 {dest.charAt(0).toUpperCase() + dest.slice(1)}
@@ -105,7 +113,7 @@ function FilterSidebar({
         {/* Category Filter */}
         <div className="mb-6">
           <label htmlFor="filter-category" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
-            Category
+            {t.filters.categoryLabel}
           </label>
           <select
             id="filter-category"
@@ -115,19 +123,22 @@ function FilterSidebar({
             }
             className="w-full px-3 py-2 rounded-lg border border-stone-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
+            <option value="">{t.filters.allCategories}</option>
+            {categories.map((cat) => {
+              const key = cat as keyof Translations["tourCategory"];
+              return (
+                <option key={cat} value={cat}>
+                  {tTourCategory[key] ?? cat}
+                </option>
+              );
+            })}
           </select>
         </div>
 
         {/* Difficulty Filter */}
         <div className="mb-6">
           <label htmlFor="filter-difficulty" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
-            Difficulty
+            {t.filters.difficultyLabel}
           </label>
           <select
             id="filter-difficulty"
@@ -137,19 +148,22 @@ function FilterSidebar({
             }
             className="w-full px-3 py-2 rounded-lg border border-stone-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
-            <option value="">Any Difficulty</option>
-            {difficulties.map((diff) => (
-              <option key={diff} value={diff}>
-                {diff}
-              </option>
-            ))}
+            <option value="">{t.filters.anyDifficulty}</option>
+            {difficulties.map((diff) => {
+              const key = diff as keyof Translations["home"]["difficulty"];
+              return (
+                <option key={diff} value={diff}>
+                  {tDifficulty[key] ?? diff}
+                </option>
+              );
+            })}
           </select>
         </div>
 
         {/* Duration Filter */}
         <div className="mb-6">
           <label htmlFor="filter-duration" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
-            Duration
+            {t.filters.durationLabel}
           </label>
           <select
             id="filter-duration"
@@ -159,17 +173,17 @@ function FilterSidebar({
             }
             className="w-full px-3 py-2 rounded-lg border border-stone-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           >
-            <option value="">Any Duration</option>
-            <option value="short">1-5 Days</option>
-            <option value="medium">6-10 Days</option>
-            <option value="long">11+ Days</option>
+            <option value="">{t.filters.anyDuration}</option>
+            <option value="short">{t.filters.short}</option>
+            <option value="medium">{t.filters.medium}</option>
+            <option value="long">{t.filters.long}</option>
           </select>
         </div>
 
         {/* Price Range */}
         <div>
           <label htmlFor="filter-price" className="block text-xs font-semibold text-stone-600 dark:text-stone-400 mb-2 uppercase tracking-[0.2em]">
-            Max Price: <span className="text-emerald-700 dark:text-emerald-400 font-serif">${filters.priceRange[1]}</span>
+            {t.filters.maxPrice}: <span className="text-emerald-700 dark:text-emerald-400 font-serif">${filters.priceRange[1]}</span>
           </label>
           <input
             id="filter-price"
@@ -199,12 +213,29 @@ function FilterSidebar({
 // ═════════════════════════════════════════════════════════════════════════════
 // TOUR CARD
 // ═════════════════════════════════════════════════════════════════════════════
-function TourCard({ tour, index }: { tour: Tour; index: number }) {
+function TourCard({
+  tour,
+  index,
+  locale,
+  t,
+  tDifficulty,
+}: {
+  tour: Tour;
+  index: number;
+  locale: string;
+  t: Translations["tours"];
+  tDifficulty: Translations["home"]["difficulty"];
+}) {
   const difficultyStyles: Record<Tour["difficulty"], string> = {
     Easy: "bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-700",
     Moderate: "bg-orange-100 text-orange-800 border border-orange-300 dark:bg-orange-900/50 dark:text-orange-300 dark:border-orange-700",
     Challenging: "bg-red-100 text-red-800 border border-red-300 dark:bg-red-900/50 dark:text-red-300 dark:border-red-700",
   };
+
+  const title = locale === "ru" && tour.titleRu ? tour.titleRu : tour.title;
+  const description = locale === "ru" && tour.descriptionRu ? tour.descriptionRu : tour.description;
+  const duration = locale === "ru" && tour.durationRu ? tour.durationRu : tour.duration;
+  const groupSize = locale === "ru" && tour.groupSizeRu ? tour.groupSizeRu : tour.groupSize;
 
   return (
     <article className="group bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full">
@@ -212,7 +243,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
       <div className="relative h-52 overflow-hidden">
         <Image
           src={tour.image}
-          alt={tour.title}
+          alt={title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -221,7 +252,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
         {/* Difficulty badge */}
         <div className="absolute top-3 left-3 z-10">
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide ${difficultyStyles[tour.difficulty]}`}>
-            {tour.difficulty}
+            {tDifficulty[tour.difficulty]}
           </span>
         </div>
 
@@ -229,7 +260,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
         {tour.featured && (
           <div className="absolute top-3 right-3 z-10">
             <span className="bg-emerald-600 text-white px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide">
-              Featured
+              {t.card.featured}
             </span>
           </div>
         )}
@@ -246,14 +277,14 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
           {tour.destination}
         </p>
         <h3 className="text-lg font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-          {tour.title}
+          {title}
         </h3>
         <p className="text-sm text-stone-600 dark:text-stone-400 mb-4 line-clamp-2 flex-1">
-          {tour.description}
+          {description}
         </p>
 
         {/* Rating */}
-        <div className="flex items-center gap-1 mb-3" aria-label={`Rating: ${tour.rating} out of 5 stars, ${tour.reviewCount} reviews`}>
+        <div className="flex items-center gap-1 mb-3" aria-label={`${t.detail.ratingAriaPrefix} ${tour.rating} ${t.detail.ratingMid} ${tour.reviewCount} ${t.detail.reviewsSuffix}`}>
           {Array.from({ length: 5 }).map((_, i) => (
             <svg
               key={i}
@@ -272,17 +303,17 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
 
         {/* Meta info */}
         <div className="flex items-center justify-between text-sm text-stone-600 dark:text-stone-400 mb-4 border-t border-stone-100 dark:border-slate-800 pt-3">
-          <span>{tour.duration}</span>
-          <span>{tour.groupSize}</span>
+          <span>{duration}</span>
+          <span>{groupSize}</span>
         </div>
 
         {/* CTA */}
         <Link
           href={`/tours/${tour.slug}`}
-          aria-label={`View Tour: ${tour.title}`}
+          aria-label={`${t.card.viewTourAriaPrefix}: ${title}`}
           className="block w-full text-center bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg py-2.5 font-semibold uppercase tracking-wide text-sm transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
         >
-          View Tour
+          {t.card.viewTour}
         </Link>
       </div>
     </article>
@@ -296,30 +327,31 @@ function SortOptions({
   sortBy,
   setSortBy,
   resultCount,
+  t,
 }: {
   sortBy: string;
   setSortBy: (value: string) => void;
   resultCount: number;
+  t: Translations["tours"];
 }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <p className="text-stone-600 dark:text-stone-400">
-        <span className="font-semibold text-stone-900 dark:text-emerald-100">{resultCount}</span> tours
-        found
+        <span className="font-semibold text-stone-900 dark:text-emerald-100">{resultCount}</span> {t.sort.toursFound}
       </p>
       <div className="flex items-center gap-2">
-        <label htmlFor="sort-select" className="text-sm text-stone-600 dark:text-stone-400 uppercase tracking-wide">Sort by:</label>
+        <label htmlFor="sort-select" className="text-sm text-stone-600 dark:text-stone-400 uppercase tracking-wide">{t.sort.label}</label>
         <select
           id="sort-select"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
           className="px-3 py-2 rounded-lg border border-stone-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
         >
-          <option value="featured">Featured</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-          <option value="rating">Highest Rated</option>
-          <option value="duration">Duration</option>
+          <option value="featured">{t.sort.featured}</option>
+          <option value="price-low">{t.sort.priceLow}</option>
+          <option value="price-high">{t.sort.priceHigh}</option>
+          <option value="rating">{t.sort.rating}</option>
+          <option value="duration">{t.sort.duration}</option>
         </select>
       </div>
     </div>
@@ -330,6 +362,11 @@ function SortOptions({
 // MAIN PAGE
 // ═════════════════════════════════════════════════════════════════════════════
 function ToursPageInner() {
+  const { locale, t } = useLocale();
+  const tTours = t.tours;
+  const tDifficulty = t.home.difficulty;
+  const tTourCategory = t.tourCategory;
+
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState<FilterState>({
     destination: searchParams.get("destination") ?? "",
@@ -401,7 +438,7 @@ function ToursPageInner() {
   return (
     <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       {/* Page Header */}
-      <section className="relative bg-emerald-950 dark:bg-black text-white py-4 md:py-6 px-4 overflow-hidden">
+      <section className="relative bg-emerald-950 dark:bg-black text-white py-4 md:py-6 px-4 overflow-hidden" aria-label={tTours.hero.ariaLabel}>
         {/* Background image */}
         <Image
           src="/images/hero/hero.jpg"
@@ -417,21 +454,20 @@ function ToursPageInner() {
 
         <div className="relative max-w-7xl mx-auto text-center">
           <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Curated Journeys
+            {tTours.hero.eyebrow}
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 font-serif leading-tight">
-            Explore Our <span className="text-emerald-400">Tours</span>
+            {tTours.hero.titlePrefix} <span className="text-emerald-400">{tTours.hero.titleAccent}</span>
           </h1>
           <NatureDivider className="mb-4" />
           <p className="text-stone-300 max-w-2xl mx-auto text-base md:text-lg">
-            From cultural immersions to mountain expeditions, find the perfect
-            adventure for your travel style.
+            {tTours.hero.subtitle}
           </p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-12 px-4" aria-label="Tour listings">
+      <section className="py-12 px-4" aria-label={tTours.listingsAriaLabel}>
         <div className="max-w-7xl mx-auto">
           {/* Mobile Filter Button */}
           <button
@@ -454,7 +490,7 @@ function ToursPageInner() {
                 d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
               />
             </svg>
-            {mobileFiltersOpen ? "Hide Filters" : "Show Filters"}
+            {mobileFiltersOpen ? tTours.filters.hideFilters : tTours.filters.showFilters}
           </button>
 
           <div className="flex flex-col lg:flex-row gap-8">
@@ -466,6 +502,9 @@ function ToursPageInner() {
                 destinations={destinations}
                 categories={categories}
                 difficulties={difficulties}
+                t={tTours}
+                tTourCategory={tTourCategory}
+                tDifficulty={tDifficulty}
               />
             </div>
 
@@ -478,6 +517,9 @@ function ToursPageInner() {
                   destinations={destinations}
                   categories={categories}
                   difficulties={difficulties}
+                  t={tTours}
+                  tTourCategory={tTourCategory}
+                  tDifficulty={tDifficulty}
                 />
               </div>
             )}
@@ -488,12 +530,20 @@ function ToursPageInner() {
                 sortBy={sortBy}
                 setSortBy={setSortBy}
                 resultCount={filteredTours.length}
+                t={tTours}
               />
 
               {filteredTours.length > 0 ? (
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {filteredTours.map((tour, i) => (
-                    <TourCard key={tour.id} tour={tour} index={i} />
+                    <TourCard
+                      key={tour.id}
+                      tour={tour}
+                      index={i}
+                      locale={locale}
+                      t={tTours}
+                      tDifficulty={tDifficulty}
+                    />
                   ))}
                 </div>
               ) : (
@@ -513,11 +563,10 @@ function ToursPageInner() {
                     />
                   </svg>
                   <h3 className="text-xl font-semibold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
-                    No tours found
+                    {tTours.empty.title}
                   </h3>
                   <p className="text-stone-600 dark:text-stone-400 mb-4">
-                    Try adjusting your filters to find what you&apos;re looking
-                    for.
+                    {tTours.empty.subtitle}
                   </p>
                   <button
                     onClick={() =>
@@ -531,7 +580,7 @@ function ToursPageInner() {
                     }
                     className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium uppercase tracking-wide text-sm"
                   >
-                    Clear all filters
+                    {tTours.empty.clear}
                   </button>
                 </div>
               )}
