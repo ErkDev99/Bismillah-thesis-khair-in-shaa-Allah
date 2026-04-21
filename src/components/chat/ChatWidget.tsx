@@ -4,6 +4,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { voiceApi } from "@/lib/voiceApi";
+import { useLocale } from "@/components/LocaleProvider";
 
 interface Message {
   id: number;
@@ -12,18 +13,20 @@ interface Message {
 }
 
 export default function ChatWidget() {
+  const { t } = useLocale();
   const [isOpen, setIsOpen] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const [promptDismissed, setPromptDismissed] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      role: "assistant",
-      content:
-        "Hello! I'm your Wanderlust travel assistant. How can I help you plan your Central Asian adventure today?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    setMessages((prev) => {
+      const hasUserMessage = prev.some((m) => m.role === "user");
+      if (hasUserMessage) return prev;
+      return [{ id: 1, role: "assistant", content: t.chat.welcomeMessage }];
+    });
+  }, [t]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -157,8 +160,7 @@ export default function ChatWidget() {
         {
           id: Date.now() + 1,
           role: "assistant",
-          content:
-            "Sorry, I'm having trouble connecting right now. Please try again or contact us directly at info@wanderlust.com",
+          content: t.chat.errorConnection,
         },
       ]);
     } finally {
@@ -245,7 +247,7 @@ export default function ChatWidget() {
       mediaRecRef.current = mr;
       setIsDictating(true);
     } catch {
-      setVoiceError("Microphone access denied.");
+      setVoiceError(t.chat.errorMicDenied);
       cleanupRecording();
     }
   };
@@ -291,11 +293,11 @@ export default function ChatWidget() {
           return prev + separator + text.trim();
         });
       } else {
-        setVoiceError("No speech detected. Try again.");
+        setVoiceError(t.chat.errorNoSpeech);
       }
     } catch (err) {
       console.error("Transcription error:", err);
-      setVoiceError("Could not transcribe. Is the voice service running?");
+      setVoiceError(t.chat.errorTranscribe);
     } finally {
       setIsTranscribing(false);
       chunksRef.current = [];
@@ -333,7 +335,7 @@ export default function ChatWidget() {
             type="button"
             onClick={handlePromptClick}
             className="relative block w-full text-left bg-emerald-950 rounded-xl p-4 border border-emerald-500/30 shadow-2xl cursor-pointer hover:border-emerald-500/60 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            aria-label="Open chat with travel assistant"
+            aria-label={t.chat.promptOpenAriaLabel}
           >
             {/* Avatar and message */}
             <div className="flex items-start gap-3">
@@ -343,8 +345,8 @@ export default function ChatWidget() {
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-medium text-emerald-100 mb-1">Need help planning your trip?</p>
-                <p className="text-xs text-stone-400">Click to chat with our travel assistant!</p>
+                <p className="text-sm font-medium text-emerald-100 mb-1">{t.chat.promptTitle}</p>
+                <p className="text-xs text-stone-400">{t.chat.promptSubtitle}</p>
               </div>
             </div>
 
@@ -360,7 +362,7 @@ export default function ChatWidget() {
             type="button"
             onClick={handleDismissPrompt}
             className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-stone-800 hover:bg-stone-700 flex items-center justify-center text-stone-400 hover:text-emerald-400 transition-colors border border-emerald-500/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-            aria-label="Dismiss chat prompt"
+            aria-label={t.chat.promptDismissAriaLabel}
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -375,7 +377,7 @@ export default function ChatWidget() {
         onClick={() => setIsOpen(!isOpen)}
         style={{ position: 'fixed', bottom: '24px', right: '24px' }}
         className="z-50 w-14 h-14 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-950"
-        aria-label={isOpen ? "Close chat" : "Open chat"}
+        aria-label={isOpen ? t.chat.closeChat : t.chat.openChat}
         aria-expanded={isOpen}
         aria-controls="chat-dialog"
       >
@@ -447,17 +449,17 @@ export default function ChatWidget() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 id="chat-dialog-title" className="font-semibold font-serif">Wanderlust Assistant</h3>
+              <h3 id="chat-dialog-title" className="font-semibold font-serif">{t.chat.assistantName}</h3>
               <p className="text-emerald-400/70 text-xs uppercase tracking-wider" aria-live="polite">
-                {isLoading ? "Typing..." : "Online"}
+                {isLoading ? t.chat.typing : t.chat.online}
               </p>
             </div>
             <Link
               href="/voice-chat"
               onClick={() => setIsOpen(false)}
               className="w-8 h-8 hover:bg-emerald-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
-              aria-label="Open immersive voice mode"
-              title="Voice mode"
+              aria-label={t.chat.voiceModeAriaLabel}
+              title={t.chat.voiceModeTitle}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-14 0m7 7v4m-4 0h8M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
@@ -467,7 +469,7 @@ export default function ChatWidget() {
               type="button"
               onClick={() => setIsOpen(false)}
               className="w-8 h-8 hover:bg-emerald-500/20 flex items-center justify-center transition-colors text-stone-400 hover:text-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-900 dark:focus-visible:ring-offset-black"
-              aria-label="Close chat"
+              aria-label={t.chat.closeChat}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -481,7 +483,7 @@ export default function ChatWidget() {
             className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 bg-stone-100 dark:bg-stone-950"
             role="log"
             aria-live="polite"
-            aria-label="Chat messages"
+            aria-label={t.chat.messagesAriaLabel}
           >
             {messages.map((message) => (
               <div
@@ -499,7 +501,7 @@ export default function ChatWidget() {
                 >
                   <p className="text-sm whitespace-pre-wrap">
                     <span className="sr-only">
-                      {message.role === "user" ? "You said: " : "Assistant said: "}
+                      {message.role === "user" ? t.chat.userSaidPrefix : t.chat.assistantSaidPrefix}
                     </span>
                     {message.content}
                   </p>
@@ -507,7 +509,7 @@ export default function ChatWidget() {
               </div>
             ))}
             {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-              <div className="flex justify-start" aria-label="Assistant is typing">
+              <div className="flex justify-start" aria-label={t.chat.assistantTyping}>
                 <div className="bg-white dark:bg-stone-800 text-stone-800 shadow-sm border border-stone-200 dark:border-stone-700 px-4 py-2">
                   <div className="flex gap-1" aria-hidden="true">
                     <span className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" />
@@ -540,7 +542,7 @@ export default function ChatWidget() {
           <div className="flex-shrink-0 p-3 bg-white dark:bg-stone-900 border-t border-stone-200 dark:border-stone-700">
             {isDictating ? (
               /* ── Dictation mode: waveform + cancel/confirm ── */
-              <div className="flex items-center gap-2" role="status" aria-label="Recording audio">
+              <div className="flex items-center gap-2" role="status" aria-label={t.chat.recordingAriaLabel}>
                 {/* Waveform visualization */}
                 <div className="flex-1 flex items-center justify-center gap-[2px] h-10 px-2" aria-hidden="true">
                   {audioLevels.map((level, i) => (
@@ -560,7 +562,7 @@ export default function ChatWidget() {
                   type="button"
                   onClick={cancelDictation}
                   className="w-10 h-10 flex items-center justify-center text-stone-500 dark:text-stone-400 hover:text-red-500 dark:hover:text-red-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
-                  aria-label="Cancel recording"
+                  aria-label={t.chat.cancelRecordingAriaLabel}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -572,7 +574,7 @@ export default function ChatWidget() {
                   type="button"
                   onClick={confirmDictation}
                   className="w-10 h-10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-stone-900"
-                  aria-label="Confirm and transcribe recording"
+                  aria-label={t.chat.confirmRecordingAriaLabel}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -581,27 +583,27 @@ export default function ChatWidget() {
               </div>
             ) : isTranscribing ? (
               /* ── Transcribing state ── */
-              <div className="flex items-center justify-center h-10 gap-2" role="status" aria-label="Transcribing audio">
+              <div className="flex items-center justify-center h-10 gap-2" role="status" aria-label={t.chat.transcribingAriaLabel}>
                 <div className="flex gap-1" aria-hidden="true">
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
                   <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
                 </div>
-                <span className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wider">Transcribing...</span>
+                <span className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wider">{t.chat.transcribing}</span>
               </div>
             ) : (
               /* ── Normal mode: text input + mic + send ── */
               <form onSubmit={handleSubmit}>
                 <div className="flex gap-2">
                   <label htmlFor="chat-input" className="sr-only">
-                    Message
+                    {t.chat.inputLabel}
                   </label>
                   <input
                     id="chat-input"
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask about tours, destinations..."
+                    placeholder={t.chat.inputPlaceholder}
                     className="flex-1 px-4 py-2 rounded-lg border border-stone-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-stone-900 dark:text-stone-200 placeholder-stone-500 dark:placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 dark:focus:ring-emerald-400 focus:border-transparent text-sm"
                     disabled={isLoading}
                   />
@@ -609,8 +611,8 @@ export default function ChatWidget() {
                     type="button"
                     onClick={startDictation}
                     disabled={isLoading}
-                    aria-label="Dictate — click to record voice"
-                    title="Dictate"
+                    aria-label={t.chat.dictateAriaLabel}
+                    title={t.chat.dictateTitle}
                     className="w-10 h-10 rounded-lg flex items-center justify-center bg-white dark:bg-slate-800 border border-emerald-500/60 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <svg
@@ -634,7 +636,7 @@ export default function ChatWidget() {
                     type="submit"
                     disabled={isLoading || !input.trim()}
                     className="w-10 h-10 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-stone-300 dark:disabled:bg-slate-600 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 dark:focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-slate-900"
-                    aria-label="Send message"
+                    aria-label={t.chat.sendAriaLabel}
                   >
                     <svg
                       className="w-5 h-5"

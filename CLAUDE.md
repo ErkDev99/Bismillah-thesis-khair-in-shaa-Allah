@@ -1,363 +1,368 @@
 # Wanderlust – Bachelor's Thesis Website
-## Master Plan: Professional-Grade Website for Academic Evaluation
 
-> **Note:** For active session context (what's been restyled, what's next, current design system, user preferences, lessons learned), see **`HANDOVER.md`**. This file holds the long-term master plan — site structure, quality tests, execution phases, and design principles that don't change session to session.
+*Last updated: 2026-04-21 (Session 29)*
 
----
-
-## Project Context
-
-This is a Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan) built with Next.js 16, React 19, and Tailwind CSS v4. It is being evaluated as a bachelor's thesis project. The site needs to pass a variety of standard website quality tests and must look and feel professionally designed — not amateurish.
-
-**Teacher's feedback (starting point):**
-- The site does not pass basic visibility/usability tests
-- Users have to scroll too much to find what they need
-- Everything important should be perceivable without excessive scrolling
-- The UI/UX does not feel comfortable for a normal user
-- Search bar should show prices — user should see pricing within 1-2 clicks, not be forced to navigate to the tours page (Session 22 — resolved via instant results panel)
+Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Next.js 16, React 19, Tailwind CSS v4. Evaluated as a bachelor's thesis.
 
 ---
 
-## Current Site Structure (What We Have)
+## Current Status
 
-```
-Pages:
-  /                  → Home (hero + featured tours + destinations + testimonials + newsletter)
-  /tours             → All tours with filters/sorting sidebar
-  /tours/[slug]      → Individual tour detail
-  /destinations      → All destinations
-  /destinations/[slug] → Individual destination detail
-  /about             → About the company + team
-  /blog              → Blog listing
-  /blog/[slug]       → Individual blog post
-  /contact           → Contact form
-  /practical-info    → Travel tips (visas, currency, health, packing)
-  /faq               → FAQ accordion
-  /privacy           → Privacy policy
-  /terms             → Terms of service
-  /review            → Multi-step verified review form (booking ref + email verification)
-  /reviews           → All reviews page (6 seed reviews + localStorage submitted reviews)
-
-Components:
-  Header.tsx         → Sticky top nav with 7 links + mobile hamburger
-  Footer.tsx         → 4-column footer (links, contact, support)
-  ChatWidget.tsx     → Floating AI chat assistant
-
-Data:
-  tours.ts           → 6 tours with full 10-day itineraries
-  destinations.ts    → 6 destinations with detailed info
-  blog.ts            → Blog posts
-
-Missing:
-  - Real booking/payment flow
-  - User accounts
-```
+| Area | Status |
+|------|--------|
+| Phase 1 — UI/UX Restyle (16 pages + 89 real images) | ✅ Complete |
+| Design System Retheme (Art Deco → Nature/Emerald, all 19 files) | ✅ Complete |
+| Phase 2 — Accessibility (WCAG 2.1, Lighthouse 100) | ✅ Complete |
+| Phase 3 — Performance (Desktop 96/100/100/100, Mobile ~82/100/100/100) | ✅ Complete |
+| Phase 4 — SEO | ⏭️ Skipped (thesis, not commercial) |
+| Phase 5 — Cross-browser & Responsive | ⬜ Not started |
+| Phase 6 — Polish & Content | 🔄 6.5 trust signals done; 6.1–6.4 pending |
+| Voice Chat (`/voice-chat`, OpenAI Realtime WebSocket) | ✅ Complete |
+| ChatWidget dictation mic (Whisper STT) | ✅ Complete |
+| Dark mode (class-based Tailwind v4, ThemeProvider, FOUC-safe) | ✅ Complete |
+| Review & Rating System (`/review`, `/reviews`, social proof strip) | ✅ Complete |
+| QuickSearchBar with instant results (country → tours w/ prices) | ✅ Complete |
+| Contact page Google Map (Bishkek embed) | ✅ Complete |
+| **i18n (EN/RU)** | 🔄 Infrastructure + Header + Footer + ChatWidget done; 14 pages + data files remaining |
 
 ---
 
-## Website Quality Tests — Complete List
+## Quick Start for Next Session
 
-These are the standard tests applied to professional websites. We will go through them one by one, in this order of priority.
+**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, and ChatWidget are translated.
 
-### TIER 1 — Critical (Must Pass for Any Thesis)
+**Next up:** Content pages in this order:
+1. Homepage (`page.tsx` + `QuickSearchBar` + `AnimatedHeadline`)
+2. tours (listing + `[slug]`)
+3. destinations (listing + `[slug]`)
+4. about, contact, practical-info, faq
+5. blog (listing + `[slug]`)
+6. review, reviews, privacy, terms, voice-chat
+7. Data files — recommended: `nameRu`/`descriptionRu` siblings for tours/destinations (short fields); split `blog.en.ts`/`blog.ru.ts` for blog (long bodies).
 
-| # | Test Category | What It Checks | Status |
-|---|---|---|---|
-| 1 | **UI/UX & Visual Design** | Professional look, consistent design system, visual hierarchy, color usage | ✅ Phase 1 complete |
-| 2 | **Above-the-Fold / First Impression** | What does the user see in the first 3 seconds? Is it clear what the site does? | ✅ Hero + search bar with instant results & prices |
-| 3 | **Navigation & Information Architecture** | Can users find what they need? Is the menu logical? | ✅ 7 links + Contact CTA |
-| 4 | **Responsiveness** | Does the site work on mobile, tablet, and desktop? | ⚠️ Needs testing |
-| 5 | **Accessibility (WCAG 2.1)** | Color contrast, keyboard nav, ARIA labels, screen reader support | ✅ Lighthouse 100 |
-| 6 | **Performance (Core Web Vitals)** | Page load speed, Lighthouse score (target: 90+) | ✅ Desktop 96, Mobile ~82 |
+**Pattern per page:**
+1. Add `"use client"` if missing (needed for `useLocale()`).
+2. `import { useLocale } from "@/components/LocaleProvider"` and `const { t } = useLocale();`.
+3. Add a namespace to `en.ts` (e.g., `tours: {...}`) and matching RU in `ru.ts` — TypeScript fails the build if keys are missing.
+4. Replace hardcoded English with `t.<namespace>.<key>`.
 
-### TIER 2 — Important (Expected in a Professional Site)
-
-| # | Test Category | What It Checks | Status |
-|---|---|---|---|
-| 7 | **Content Quality** | Clear, readable, professional writing. No placeholder text. | ✅ Images wired, text solid |
-| 8 | **Cross-Browser Compatibility** | Works in Chrome, Firefox, Safari, Edge | ❌ Not tested |
-| 9 | **SEO Basics** | Page titles, meta descriptions, Open Graph, semantic HTML | ⏭️ Skipped (thesis, not commercial) |
-| 10 | **Form Usability & Validation** | Contact form works, validates input, gives feedback | ❌ Not tested |
-| 11 | **Broken Links / 404 Handling** | All internal links work, 404 page exists | ❌ No custom 404 |
-| 12 | **Consistency** | Same fonts, colors, spacing patterns everywhere | ✅ Design system enforced |
-
-### TIER 3 — Polish (Distinguishes Good from Excellent)
-
-| # | Test Category | What It Checks | Status |
-|---|---|---|---|
-| 13 | **Micro-interactions & Animation** | Smooth transitions, hover effects, feedback on actions | ⚠️ Minimal |
-| 14 | **Empty/Loading States** | What shows while data loads? What if no results? | ❌ Missing |
-| 15 | **Typography Scale** | Proper heading hierarchy (H1→H2→H3), readable line lengths | ⚠️ Needs review |
-| 16 | **Cognitive Load** | Is any page overwhelming? Too much at once? | ❌ Homepage too dense |
-| 17 | **Trust Signals** | Testimonials, ratings, certifications, contact info visible | ⚠️ Some present |
-| 18 | **Print Friendliness** | Does the page print cleanly (for tours/info)? | ❌ Not done |
+**After i18n:** Phase 5 (cross-browser/responsive), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
 
 ---
 
-## Root Cause of Teacher's Feedback — All Resolved
+## Open Issues
 
-All original complaints plus Session 24 feedback have been addressed:
-1. ✅ **Nav priority** — Contact styled as CTA button; all 7 links kept per user preference
-2. ✅ **No images** — All 89 real images wired via Next.js `<Image>`
-3. ✅ **Homepage layout** — Hero → Search bar (with instant results & prices) → Stats → Why Us → Featured Tours → Destinations → Testimonials → Newsletter → CTA Banner
-4. ✅ **Card hierarchy** — Redesigned with clear prices/ratings/CTAs
-5. ✅ **Dark photos** (Session 24) — Hero overlay removed entirely; bright photography
-6. 🔄 **Green palette** (Session 24–26) — Teacher said "Kyrgyzstan is green, use green." Homepage + Header + Footer + ChatWidget + QuickSearchBar + tours + destinations + about + contact done; 9 pages remaining
-
----
-
-## The Execution Plan (Step by Step)
-
-We do this in order. Do NOT skip steps. Each step has a clear goal.
-
-### PHASE 1 — Fix UI/UX (Most Important)
-*Goal: Make the site look professional and comfortable to use.*
-
-**Step 1.1 — Add Real Images**
-- Source free images from Unsplash (Central Asia: Kazakhstan steppe, Kyrgyz mountains, Uzbekistan architecture, Silk Road, yurts, bazaars)
-- Replace all gradient placeholders with real images
-- Optimize images for web (use Next.js `<Image>` component properly)
-
-**Step 1.2 — Redesign the Hero Section**
-- Reduce hero height from 100vh to ~65vh on desktop
-- Add a real background image (mountain/steppe/Silk Road)
-- Keep headline + 2 CTA buttons
-- Add a visual cue at the bottom (scroll arrow or partial next-section peek)
-
-**Step 1.3 — Improve the Header/Navigation**
-- Keep sticky header (this is correct)
-- Add a visually distinct CTA button in header (e.g., "Explore Tours" in emerald, styled as a button not a link)
-- On desktop: group "About | Blog | Practical Info" together more subtly
-- Ensure active page is highlighted
-
-**Step 1.4 — Redesign the Homepage Layout**
-- Hero (shorter) → Search/filter bar (quick: destination + dates) → Featured Tours (3 cards) → Why Choose Us (3 icons + text) → Destinations teaser (4 cards) → Testimonials (2-3) → CTA banner
-- Each section should be shorter and tighter (less py-20, use py-12 or py-16)
-
-**Step 1.5 — Improve Tour & Destination Cards**
-- Larger image area (55-60% of card height)
-- Clear price (prominent, top-right badge)
-- Star rating visible
-- Strong "View Tour" button at bottom
-- Hover: slight scale + shadow effect
-
-**Step 1.6 — Improve Typography & Spacing**
-- Check all headings follow H1 > H2 > H3 hierarchy
-- Ensure body text is 16px minimum, line-height 1.6+
-- Consistent section padding
-- Remove orphaned words (lines ending with one word)
-
-**Step 1.7 — Footer Cleanup**
-- Footer is currently 4 columns — this is fine
-- Ensure it has the company name, tagline, social links (even if placeholder), copyright
-- Add a "Back to top" button
+- **Focus ring contrast (WCAG 1.4.11)** — homepage uses `focus:ring-emerald-*`. Any remaining `focus:ring-amber-500` on white bg fails 3:1. Fix as encountered.
+- **Kyrgyz TTS quality** — gTTS fallback mediocre. Low priority.
+- **WebSocket URL** — voice-chat uses `NEXT_PUBLIC_VOICE_WS_URL` (Render backend in prod), falls back to `ws://localhost:8001` for dev.
+- **Chat widget on Vercel needs `OPENAI_API_KEY`** — without it, returns mock JSON; streaming displays raw JSON.
+- **Hydration error from browser extension** — ad-blocker rewrites `<head>` in dev only. Not a code bug — ignore in dev, verify in incognito/production.
+- **Mobile Lighthouse ~82** — `public/images/hero/hero.jpg` is 1.7 MB. Compressing to ~300–400 KB would push mobile LCP 4.2s → ~2.5s.
+- **Team photo cropping** — `/about` uses `h-72 object-cover object-[center_20%]`. Switch to per-member `objectPosition` if any face looks wrong.
 
 ---
 
-### PHASE 2 — Accessibility (WCAG 2.1)
-*Goal: The site works for people with disabilities and passes automated checks.*
+## DO NOT TOUCH
 
-**Step 2.1 — Color Contrast**
-- All text must have a contrast ratio of at least 4.5:1 (normal text) or 3:1 (large text)
-- Tool: Check with browser DevTools or axe extension
-
-**Step 2.2 — Keyboard Navigation**
-- Tab through the entire site — every link, button, input must be reachable
-- Focus rings must be visible (not hidden)
-- Skip-to-content link at top
-
-**Step 2.3 — ARIA & Semantic HTML**
-- All images must have descriptive `alt` text
-- Forms must have `<label>` elements linked to inputs
-- Buttons must have meaningful text (not just "Click here")
-- Use `<nav>`, `<main>`, `<header>`, `<footer>`, `<section>` properly
-
-**Step 2.4 — Screen Reader Compatibility**
-- Headings must be in logical order
-- Dynamic content (chat widget, filters) must announce changes
+- **`src/app/globals.css`** — any layout-affecting edit caused horizontal overflow bug twice (required `git reset --hard`). All design via component-level Tailwind only. *Exception:* `@custom-variant dark (&:where(.dark, .dark *));` is a Tailwind config directive and is safe.
+- **`voice-actor/main.py`** — backend with REST + WebSocket proxy endpoints. Working. **Never `print()` raw user text, emojis, or non-ASCII** — Windows cp1252 console throws `UnicodeEncodeError` → 500 to browser. Use `print(f"[ASR] Transcript ({len(text)} chars)")` style.
+- **`src/app/layout.tsx`** — fonts are Geist; `font-serif` falls back to system serif and works. Do NOT add Cormorant Garamond (broke the site once). Wraps in `<ThemeProvider>` → `<LocaleProvider>`. Has `suppressHydrationWarning` on `<html>` + FOUC inline script for dark mode. Also wraps everything in `<main id="main-content">` — so every page uses `<div>` as its root, not `<main>`.
 
 ---
 
-### PHASE 3 — Performance
-*Goal: Lighthouse score 90+ on all four metrics.*
+## User Preferences
 
-**Step 3.1 — Image Optimization**
-- Use Next.js `<Image>` with proper `width`, `height`, and `priority` on above-the-fold images
-- Use WebP format
-- Lazy-load below-fold images
-
-**Step 3.2 — Code Splitting & Loading**
-- Next.js handles this mostly automatically
-- Check for large client-side components that could be server components
-
-**Step 3.3 — Core Web Vitals**
-- LCP (Largest Contentful Paint): < 2.5s — hero image must load fast
-- CLS (Cumulative Layout Shift): < 0.1 — reserve space for images
-- INP (Interaction to Next Paint): < 200ms — interactive elements respond fast
-
-**Step 3.4 — Run Lighthouse**
-- `npm run build && npm run start` then run Lighthouse in Chrome
-- Target: 90+ Performance, 95+ Accessibility, 90+ Best Practices, 90+ SEO
+- Prefers one file at a time.
+- Proceed autonomously on restyle/implementation — don't ask permission for each step (saves tokens).
+- When a change is risky (`layout.tsx`, `globals.css`), **ask first**.
+- If site breaks, believe the user and revert immediately.
+- User is Muslim — responds well to Islamic greetings.
+- **Don't remove things from the site.** User is not a web-dev expert and trusts me to lead, but worries the site will "lack something." Only additive changes; if something seems redundant, offer to merge or enhance, not delete.
+- When presenting design tradeoffs, give 2–3 labeled options (A/B/C) with pros/cons + my recommendation.
 
 ---
 
-### PHASE 4 — SEO
-*Goal: The site is discoverable and has proper metadata.*
+## Lessons Learned
 
-**Step 4.1 — Page Metadata**
-- Every page needs a unique `<title>` and `<meta description>`
-- Use Next.js `export const metadata` in each page
-- Add Open Graph tags (og:title, og:description, og:image) for social sharing
-
-**Step 4.2 — Semantic Structure**
-- One `<h1>` per page
-- Meaningful URL slugs (already done via Next.js dynamic routes)
-
-**Step 4.3 — Robots & Sitemap**
-- Add `robots.txt`
-- Generate `sitemap.xml` (can use next-sitemap package)
-
----
-
-### PHASE 5 — Cross-Browser & Responsiveness
-*Goal: The site works on all major browsers and screen sizes.*
-
-**Step 5.1 — Test on Breakpoints**
-- Mobile: 375px (iPhone SE), 390px (iPhone 14)
-- Tablet: 768px (iPad)
-- Desktop: 1280px, 1440px, 1920px
-- Check: Navigation, hero, cards, footer, forms
-
-**Step 5.2 — Cross-Browser**
-- Chrome, Firefox, Edge (Safari if possible)
-- Check: CSS gradients, sticky header, chat widget, filter sidebar
+- **`globals.css` is off-limits for layout** — layout-affecting edits caused horizontal overflow bug twice. Only Tailwind variant config directives are safe there.
+- **Nested `<main>` bug** — `layout.tsx` wraps everything in `<main id="main-content">`. Every page must use `<div>` as its root.
+- **SVG pattern IDs must be unique per file** — duplicate IDs across pages cause pattern rendering bugs.
+- **`blog/page.tsx` is a client component** — cannot use `export const metadata`.
+- **`flex-1` inside `overflow-y-auto`** — pair with `min-h-0` on the flex child; use `el.scrollTop = el.scrollHeight` (not `scrollIntoView`) to confine scrolling.
+- **Windows cp1252 kills non-ASCII `print()`** — `voice-actor/main.py` runs on Windows where the console defaults to cp1252. Any `print()` with emojis/Cyrillic/non-ASCII throws `UnicodeEncodeError` → 500.
+- **SSE streaming needs line buffering** — OpenAI SSE `data: {...}\n\n` lines split across TCP chunks. Buffer incomplete lines across `transform()` calls; process in `flush()`.
+- **Dark mode FOUC prevention** — inline `<script>` in `<head>` reads `localStorage` and adds `dark` class before paint. `suppressHydrationWarning` on `<html>` prevents the React class-mismatch warning.
+- **OpenAI Realtime transcription arrives late** — `conversation.item.input_audio_transcription.completed` arrives *after* `response.audio_transcript.delta`. Insert a placeholder user message on `speech_stopped` and fill it when transcription arrives.
+- **`useSearchParams` requires Suspense in Next.js 15+** — wrap in `<Suspense>` or build fails. Pattern: rename the original to `*Inner`, export a thin wrapper `<Suspense fallback={...}><*Inner /></Suspense>`.
+- **Next.js `priority` doesn't always emit `fetchpriority`** — add explicit `fetchPriority="high"` on hero `<Image>`. Dropped desktop LCP 2.4s → 1.4s. Verify rendered HTML with `curl`.
+- **aria-label must contain visible text** — if a link has visible "View Tour" but `aria-label="View details for X"`, voice-control users can't activate it by saying the visible text. Either remove aria-label (let visible text be the accessible name) or ensure it starts with the visible text ("View Tour: X").
+- **Lighthouse mobile scores are highly variable** — simulated 4× CPU throttling + slow 4G causes 10–15 point swings. Chase desktop scores for thesis defense.
+- **Google Maps embed needs no API key** — `https://www.google.com/maps?q=LOCATION&output=embed` in an `<iframe>` works without billing.
+- **i18n without URL routing** — client-side `LocaleProvider` + `localStorage`, mirrors `ThemeProvider`. Trade-offs: (1) server-rendered markup starts in EN until hydration (acceptable FOUC); (2) SEO sees only EN (acceptable, Phase 4 skipped); (3) no `/ru/*` deep-links. Gains: zero routing churn, TS-enforced key parity, no duplicate page files.
+- **Typed translation dictionaries** — `en.ts` exports `export type Translations = typeof en`; `ru.ts` is typed `const ru: Translations`. Missing/misspelt keys become build errors, not runtime `undefined`.
+- **Long RU nav labels can silently break the header** — "Практическая информация" (21 chars) vs "Practical Info" (14) overflowed `whitespace-nowrap` flex nav and pushed theme/locale toggles off-screen. Rule: in tight horizontal layouts (nav, button rows), pick the shortest idiomatic RU equivalent. Longer forms are fine in grid footers that wrap. Header uses `Советы`; footer keeps `Практическая информация`.
+- **Don't translate concrete contact data** — phone, email, physical address are data, not UI copy. If one is hardcoded in the component, all three should be.
 
 ---
 
-### PHASE 6 — Content & Polish
-*Goal: Every page feels complete and professional.*
+## Design System — Nature / Travel Magazine (emerald)
 
-**Step 6.1 — Add Custom 404 Page**
-- `src/app/not-found.tsx` with friendly message + link back to home
+Changed from Art Deco/amber in Session 24. Teacher: "Kyrgyzstan is green — use green, pleasant to the eyes."
 
-**Step 6.2 — Loading States**
-- Add loading skeletons for tour/destination cards
-- `src/app/loading.tsx` files
+### Color Palette
+| Role | Light | Dark |
+|------|-------|------|
+| Primary accent | `emerald-600` / `700` | `emerald-400` / `500` |
+| Text accent (labels, links) | `text-emerald-700` | `text-emerald-400` |
+| Text heading highlight | `text-emerald-100` (on dark bg) | `text-emerald-100` |
+| Section bg (tinted) | `bg-emerald-50` | `bg-slate-950` |
+| Section bg (neutral) | `bg-stone-50` / `bg-white` | `bg-slate-900` |
+| Dark sections (newsletter, CTA) | `bg-emerald-950` | `bg-emerald-950` |
+| Card bg | `bg-white` | `bg-slate-900` |
+| Card border | `border-stone-200 hover:border-emerald-400` | `border-slate-800 hover:border-emerald-600` |
+| Body text | `text-stone-600` | `text-stone-400` |
+| Stars (ratings) | `text-amber-400` (keep amber — universal) | `text-amber-400` |
 
-**Step 6.3 — Form Validation**
-- Contact form: validate email format, required fields
-- Show success/error messages after submission
+### Typography
+- Headings: `font-serif` on all `h1`, `h2`, `h3`
+- Labels/eyebrows: `uppercase tracking-[0.3em] text-xs text-emerald-700 dark:text-emerald-400`
+- Buttons/CTAs: `tracking-wide`
+- Body min: `text-stone-600 dark:text-stone-400` (stone-500 fails contrast)
 
-**Step 6.4 — Micro-interactions**
-- Smooth scroll behavior
-- Button press feedback
-- Card hover animations (already partially done — ensure consistent)
+### Shape
+- `rounded-xl` on cards, `rounded-lg` on buttons/inputs/badges, `rounded-full` for difficulty pills/avatars
+- Cards: `border border-stone-200 dark:border-slate-800 hover:border-emerald-400 rounded-xl`
 
-**Step 6.5 — Trust Signals**
-- Add a "Why Choose Us" or "Our Guarantees" section
-- Display star ratings and review counts prominently
-- Add partner logos or certifications (even as UI placeholders)
-
----
-
-## Execution Order Summary
-
-```
-Phase 1: UI/UX Redesign     ← START HERE
-  1.1 Add real images
-  1.2 Redesign hero
-  1.3 Improve header/nav
-  1.4 Redesign homepage layout
-  1.5 Improve cards
-  1.6 Fix typography
-  1.7 Fix footer
-
-Phase 2: Accessibility
-  2.1 Color contrast
-  2.2 Keyboard navigation
-  2.3 ARIA + semantic HTML
-  2.4 Screen reader check
-
-Phase 3: Performance
-  3.1 Image optimization
-  3.2 Code splitting review
-  3.3 Core Web Vitals
-  3.4 Lighthouse audit
-
-Phase 4: SEO
-  4.1 Page metadata
-  4.2 Semantic structure
-  4.3 Robots + sitemap
-
-Phase 5: Cross-browser & Responsive
-  5.1 Breakpoint testing
-  5.2 Browser testing
-
-Phase 6: Polish & Content
-  6.1 Custom 404 page
-  6.2 Loading states
-  6.3 Form validation
-  6.4 Micro-interactions
-  6.5 Trust signals
+### Nature Divider (replaces Diamond Divider)
+```jsx
+<div className="flex items-center justify-center gap-3" aria-hidden="true">
+  <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+  <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
+  </svg>
+  <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+</div>
 ```
 
----
+### Radial Emerald Glow (dark sections)
+```jsx
+<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl" aria-hidden="true" />
+```
 
-## Design Principles to Follow Throughout
+### Section Eyebrow
+```jsx
+<p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
+  Section Label
+</p>
+```
 
-1. **Clarity over cleverness** — The user should never wonder what to click next
-2. **Progressive disclosure** — Show the most important thing first; details on demand
-3. **Consistency** — Same button styles, same card styles, same spacing everywhere
-4. **Whitespace is not wasted space** — Give elements room to breathe
-5. **Mobile first** — Design for mobile, scale up to desktop
-6. **Real content** — Use real images and real-feeling text (no "Lorem ipsum")
-7. **Speed** — A slow site feels broken. Every optimization matters.
+### Buttons
+- Primary: `bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg tracking-wide`
+- Secondary/Ghost: `border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white rounded-lg tracking-wide`
+- On dark bg: `bg-emerald-500 hover:bg-emerald-400 text-emerald-950 rounded-lg`
 
----
+### Hero Images
+- **NO dark overlay** — teacher: "remove that darkness."
+- Subtle bottom gradient only: `bg-gradient-to-t from-black/40 via-transparent to-transparent`
+- Add `drop-shadow-md` to text over bright photos.
 
-## Progress Tracker
+### DifficultyBadge
+- Easy: emerald (green = easy, semantic)
+- Moderate: orange
+- Challenging: red
+- All `rounded-full` pill shape.
 
-> **Phase 1 (UI/UX Redesign) is tracked per-file in `HANDOVER.md`.** The design system was changed in Session 24 from **Luxury / Art Deco** (amber) to **Nature / Travel Magazine** (emerald green + cream, rounded corners, leaf dividers, bright photography). Homepage is done; remaining pages need the green retheme. See "Pages Needing Green Retheme" and "Design System" sections in HANDOVER.
+### No Art Deco Elements
+Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric SVG overlays. Sharp edges → `rounded-*`.
 
-### Phase 2 — Accessibility
-| Step | Task | Status |
-|------|------|--------|
-| 2.1 | Color contrast | ✅ Lighthouse 100 |
-| 2.2 | Keyboard navigation | ✅ Done |
-| 2.3 | ARIA + semantic HTML | ✅ Done (label-content-name mismatches fixed Session 21) |
-| 2.4 | Screen reader check | ✅ Done |
-
-### Phase 3 — Performance
-| Step | Task | Status |
-|------|------|--------|
-| 3.1 | Image optimization | ✅ All images via Next.js `<Image>`, hero has `fetchPriority="high"` |
-| 3.2 | Code splitting review | ✅ Audited — 26KB legacy polyfills remain (browserslist default), acceptable |
-| 3.3 | Core Web Vitals | ✅ Desktop: LCP 1.4s, TBT 80ms, CLS 0.001 |
-| 3.4 | Lighthouse audit | ✅ Desktop 96/100/100/100, Mobile ~82/100/100/100 |
-
-### Phase 4 — SEO
-| Step | Task | Status |
-|------|------|--------|
-| 4.1–4.3 | All SEO tasks | ⏭️ Skipped — thesis site, not commercial |
-
-### Phase 5 — Cross-Browser & Responsiveness
-| Step | Task | Status |
-|------|------|--------|
-| 5.1 | Breakpoint testing | ⬜ Not started |
-| 5.2 | Browser testing | ⬜ Not started |
-
-### Phase 6 — Polish & Content
-| Step | Task | Status |
-|------|------|--------|
-| 6.1 | Custom 404 page | ⬜ Not started |
-| 6.2 | Loading states | ⬜ Not started |
-| 6.3 | Form validation | ⬜ Not started |
-| 6.4 | Micro-interactions | ⬜ Not started |
-| 6.5 | Trust signals | ✅ Review/rating system: social proof strip, verified review form (/review), all-reviews page (/reviews) |
-
-> **Lessons learned and safe patterns** (horizontal overflow bug, `globals.css` rule, confirmed safe editing patterns) are documented in `HANDOVER.md`. Read that file before making any changes.
+### 12-rule restyle checklist (for any amber file)
+1. `amber-*` → `emerald-*` (except star ratings — keep `text-amber-400`)
+2. `stone-900`/`stone-950` dark bg → `slate-900`/`slate-950`; `bg-amber-50` → `bg-emerald-50`
+3. `rounded-xl` on cards, `rounded-lg` on buttons/inputs/badges
+4. `DiamondDivider` → `NatureDivider`
+5. Remove Art Deco corner accents
+6. Remove geometric SVG pattern overlays
+7. Keep `font-serif` on all `h1`, `h2`, `h3`
+8. Eyebrow color → `text-emerald-700 dark:text-emerald-400`
+9. Full `dark:` variants on every element
+10. `aria-hidden="true"` on decorative elements
+11. Solid emerald buttons (not gradient)
+12. Page root: `<div>` (NOT `<main>`) with `min-h-screen bg-emerald-50 dark:bg-slate-950`
 
 ---
 
-*Last updated: 2026-04-20 (Session 26)*
-*Working together step by step — quality over speed.*
+## i18n (EN/RU) Progress
+
+| # | File | Status |
+|---|------|--------|
+| 1 | `src/components/LocaleProvider.tsx` | ✅ |
+| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` ns) | ✅ |
+| 3 | `src/app/layout.tsx` (wraps `<LocaleProvider>`) | ✅ |
+| 4 | `src/components/layout/Header.tsx` (EN\|RU toggle + nav) | ✅ |
+| 5 | `src/components/layout/Footer.tsx` | ✅ |
+| 6 | `src/components/chat/ChatWidget.tsx` | ✅ |
+| 7 | `src/app/page.tsx` (+ QuickSearchBar, AnimatedHeadline) | ⬜ **Next** |
+| 8 | `src/app/tours/page.tsx` + `[slug]/page.tsx` | ⬜ (+ decide data strategy) |
+| 9 | `src/app/destinations/page.tsx` + `[slug]/page.tsx` | ⬜ |
+| 10 | `src/app/about/page.tsx` | ⬜ |
+| 11 | `src/app/contact/page.tsx` | ⬜ |
+| 12 | `src/app/practical-info/page.tsx` | ⬜ |
+| 13 | `src/app/faq/page.tsx` | ⬜ |
+| 14 | `src/app/blog/page.tsx` + `[slug]/page.tsx` | ⬜ (split `blog.en.ts`/`blog.ru.ts`) |
+| 15 | `src/app/review/page.tsx` | ⬜ |
+| 16 | `src/app/reviews/page.tsx` | ⬜ |
+| 17 | `src/app/privacy/page.tsx` | ⬜ |
+| 18 | `src/app/terms/page.tsx` | ⬜ |
+| 19 | `src/app/voice-chat/page.tsx` | ⬜ |
+| 20 | `src/data/tours.ts` | ⬜ (recommend `nameRu`/`descriptionRu` siblings) |
+| 21 | `src/data/destinations.ts` | ⬜ (same pattern) |
+| 22 | `src/data/blog.ts` | ⬜ (split file per locale) |
+
+**Known limitations (acceptable for thesis):**
+- Server-rendered initial paint shows EN until `LocaleProvider` hydrates (no FOUC script — low priority).
+- `/api/chat` + WebSocket error messages remain in English (backend strings).
+- Locale doesn't affect chat assistant's reply language — OpenAI picks based on user's message. Could add system prompt hint tied to `locale` if needed.
+
+---
+
+## Voice Integration
+
+**Backend:** `voice-actor/main.py` (FastAPI, port 8001) — one service, three endpoints:
+- `POST /transcribe-voice` — Whisper-1 STT (used by ChatWidget dictation mic)
+- `POST /generate-voice` — OpenAI TTS tts-1 + gTTS Kyrgyz fallback (not currently used)
+- `WS /ws/realtime` — WebSocket proxy to OpenAI Realtime API (used by Voice Chat page)
+
+**Run:** `cd voice-actor && python main.py` → `http://127.0.0.1:8001`
+- Requires `OPENAI_API_KEY` in `voice-actor/.env`
+- Next.js rewrites `/voice/:path*` → `http://localhost:8001/:path*` (see `next.config.ts`)
+- WebSocket connects directly to `ws://localhost:8001/ws/realtime` (bypasses rewrites)
+
+**Voice Chat page (`/voice-chat`):** real-time speech-to-speech via WebSocket, PCM16 24kHz, server-side VAD, ~0.5–1s latency.
+
+**ChatWidget mic (bubble):** dictation mode — record → waveform (AnalyserNode) → confirm/cancel → Whisper STT → text in input. ~2–3s latency. No auto-send.
+
+**Language routing:** `src/lib/voiceApi.ts:detectLang()` — Kyrgyz-specific Unicode → `ky`, Cyrillic → `ru`, else → `en`.
+
+**Chat API:** `POST /api/chat` — `{ messages: [{role, content}], voice?: boolean }` → text: streaming plain text; voice: full JSON `{ message }`.
+
+**No auth** — source project had JWT Bearer tokens; all removed. Do not reintroduce.
+
+---
+
+## Files Reference
+
+**Pages (all complete, emerald themed):**
+- `src/app/page.tsx` — Homepage
+- `src/app/tours/page.tsx` + `[slug]/page.tsx`
+- `src/app/destinations/page.tsx` + `[slug]/page.tsx`
+- `src/app/about/page.tsx`
+- `src/app/contact/page.tsx` (Google Map iframe embed)
+- `src/app/practical-info/page.tsx`, `src/app/faq/page.tsx`
+- `src/app/blog/page.tsx` + `[slug]/page.tsx`
+- `src/app/privacy/page.tsx`, `src/app/terms/page.tsx`
+- `src/app/review/page.tsx` — multi-step verified review form (booking ref + email)
+- `src/app/reviews/page.tsx` — all reviews (6 seed + localStorage submissions)
+- `src/app/voice-chat/page.tsx`
+
+**Components:**
+- `src/components/layout/Header.tsx` — sticky nav, 7 links, Contact CTA, dark toggle, EN\|RU toggle
+- `src/components/layout/Footer.tsx` — 4-column
+- `src/components/chat/ChatWidget.tsx` — floating chat + dictation mic
+- `src/components/ThemeProvider.tsx` — dark mode context
+- `src/components/LocaleProvider.tsx` — EN/RU context, persists to `localStorage("locale")`, sets `<html lang>`, exposes `useLocale()` → `{ locale, t, setLocale }`
+- `src/components/home/QuickSearchBar.tsx` — country picker with instant tour results + prices
+- `src/components/home/AnimatedHeadline.tsx` — rotating country names (framer-motion spring)
+
+**Translations:**
+- `src/lib/translations/en.ts` — source of truth, exports `Translations` type
+- `src/lib/translations/ru.ts` — typed `Translations`, TS enforces key parity
+
+**Data:**
+- `src/data/tours.ts` — 6 tours with 10-day itineraries
+- `src/data/destinations.ts` — 6 destinations
+- `src/data/blog.ts` — blog posts
+
+**Mock booking credentials (for `/review` demo):**
+- `WL-2025-001 / sarah@example.com`
+- `WL-2025-002 / david@example.com`
+- `WL-2025-003 / aiko@example.com`
+- `WL-2024-004 / maria@example.com`
+- `WL-2024-005 / john@example.com`
+- `WL-2025-006 / elena@example.com`
+
+---
+
+## Site Structure
+
+```
+Pages: / · /tours · /tours/[slug] · /destinations · /destinations/[slug]
+       /about · /blog · /blog/[slug] · /contact · /practical-info · /faq
+       /privacy · /terms · /review · /reviews · /voice-chat
+
+Missing (out of thesis scope): real booking/payment flow, user accounts
+```
+
+---
+
+## Quality Tests — Reference
+
+### TIER 1 — Critical
+| # | Test | Status |
+|---|------|--------|
+| 1 | UI/UX & Visual Design | ✅ |
+| 2 | Above-the-Fold / First Impression | ✅ |
+| 3 | Navigation & IA | ✅ |
+| 4 | Responsiveness | ⚠️ Phase 5 |
+| 5 | Accessibility (WCAG 2.1) | ✅ Lighthouse 100 |
+| 6 | Performance (Core Web Vitals) | ✅ Desktop 96, Mobile ~82 |
+
+### TIER 2 — Important
+| # | Test | Status |
+|---|------|--------|
+| 7 | Content Quality | ✅ |
+| 8 | Cross-Browser Compatibility | ❌ Phase 5 |
+| 9 | SEO Basics | ⏭️ Skipped |
+| 10 | Form Usability & Validation | ❌ Phase 6.3 |
+| 11 | Broken Links / 404 | ❌ Phase 6.1 |
+| 12 | Consistency | ✅ |
+
+### TIER 3 — Polish
+| # | Test | Status |
+|---|------|--------|
+| 13 | Micro-interactions & Animation | ⚠️ Phase 6.4 |
+| 14 | Empty/Loading States | ❌ Phase 6.2 |
+| 15 | Typography Scale | ⚠️ |
+| 16 | Cognitive Load | ⚠️ |
+| 17 | Trust Signals | ✅ Review system |
+| 18 | Print Friendliness | ❌ |
+
+---
+
+## Remaining Work
+
+**Phase 5 — Cross-Browser & Responsive**
+- 5.1 Breakpoint testing: 375, 390, 768, 1280, 1440, 1920
+- 5.2 Browser testing: Chrome, Firefox, Edge, Safari
+
+**Phase 6 — Polish & Content**
+- 6.1 Custom 404: `src/app/not-found.tsx`
+- 6.2 Loading states: `src/app/loading.tsx` + skeletons for tour/destination cards
+- 6.3 Form validation: contact form email + required fields, success/error messages
+- 6.4 Micro-interactions: smooth scroll, button press feedback, consistent hover
+- 6.5 Trust signals ✅
+
+---
+
+## Design Principles
+
+1. **Clarity over cleverness** — user should never wonder what to click.
+2. **Progressive disclosure** — important first, details on demand.
+3. **Consistency** — same button/card/spacing patterns everywhere.
+4. **Whitespace is not wasted space.**
+5. **Mobile first** — design for mobile, scale up.
+6. **Real content** (no Lorem ipsum).
+7. **Speed** — a slow site feels broken.
+
+---
+
+*Session 29 consolidation: `HANDOVER.md` merged into this file. Single source of truth going forward.*

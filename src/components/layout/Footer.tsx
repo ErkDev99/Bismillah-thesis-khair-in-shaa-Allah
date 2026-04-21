@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useLocale } from "@/components/LocaleProvider";
 
 export default function Footer() {
+  const { t } = useLocale();
+
   return (
     <footer className="relative bg-emerald-950 dark:bg-black text-white overflow-hidden">
       {/* Radial emerald glow */}
@@ -12,7 +17,7 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl font-bold text-emerald-400 font-serif tracking-wide">Wanderlust</h3>
             <p className="mt-4 text-stone-400 leading-relaxed">
-              Discover amazing destinations and create unforgettable memories with our expertly crafted tours.
+              {t.footer.tagline}
             </p>
             {/* Leaf ornament */}
             <div className="flex items-center gap-2 mt-5" aria-hidden="true">
@@ -26,29 +31,29 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-emerald-300/80">Quick Links</h4>
+            <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-emerald-300/80">{t.footer.quickLinks}</h4>
             <ul className="space-y-2.5 text-stone-400">
-              <li><Link href="/tours" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">Tours</Link></li>
-              <li><Link href="/destinations" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">Destinations</Link></li>
-              <li><Link href="/about" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">About Us</Link></li>
-              <li><Link href="/contact" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">Contact</Link></li>
+              <li><Link href="/tours" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.tours}</Link></li>
+              <li><Link href="/destinations" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.destinations}</Link></li>
+              <li><Link href="/about" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.aboutUs}</Link></li>
+              <li><Link href="/contact" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.contact}</Link></li>
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-emerald-300/80">Support</h4>
+            <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-emerald-300/80">{t.footer.support}</h4>
             <ul className="space-y-2.5 text-stone-400">
-              <li><Link href="/practical-info" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">Practical Info</Link></li>
-              <li><Link href="/faq" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">FAQ</Link></li>
-              <li><Link href="/privacy" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">Terms of Service</Link></li>
+              <li><Link href="/practical-info" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.practicalInfo}</Link></li>
+              <li><Link href="/faq" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.faq}</Link></li>
+              <li><Link href="/privacy" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.privacy}</Link></li>
+              <li><Link href="/terms" className="hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950">{t.footer.terms}</Link></li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-emerald-300/80">Contact Us</h4>
+            <h4 className="font-semibold mb-4 uppercase tracking-[0.2em] text-sm text-emerald-300/80">{t.footer.contactUs}</h4>
             <ul className="space-y-2.5 text-stone-400">
               <li>info@wanderlust.com</li>
               <li>+1 (555) 123-4567</li>
@@ -69,7 +74,7 @@ export default function Footer() {
             <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
           </div>
           <p className="text-stone-400 text-sm">
-            &copy; {new Date().getFullYear()} Wanderlust. All rights reserved.
+            &copy; {new Date().getFullYear()} Wanderlust. {t.footer.rights}
           </p>
         </div>
       </div>

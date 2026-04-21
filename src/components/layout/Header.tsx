@@ -4,27 +4,64 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/components/ThemeProvider";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/tours", label: "Tours" },
-  { href: "/destinations", label: "Destinations" },
-  { href: "/about", label: "About" },
-  { href: "/practical-info", label: "Practical Info" },
-  { href: "/blog", label: "Blog" },
-  { href: "/contact", label: "Contact" },
-];
+import { useLocale } from "@/components/LocaleProvider";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { resolvedTheme, setTheme } = useTheme();
+  const { locale, setLocale, t } = useLocale();
 
   useEffect(() => setMounted(true), []);
 
+  const navLinks = [
+    { href: "/", label: t.header.home },
+    { href: "/tours", label: t.header.tours },
+    { href: "/destinations", label: t.header.destinations },
+    { href: "/about", label: t.header.about },
+    { href: "/practical-info", label: t.header.practicalInfo },
+    { href: "/blog", label: t.header.blog },
+    { href: "/contact", label: t.header.contact },
+  ];
+
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+  const LocaleToggle = ({ className = "" }: { className?: string }) => (
+    <div
+      className={`flex items-center rounded-md overflow-hidden border border-emerald-500/30 ${className}`}
+      role="group"
+      aria-label="Language"
+    >
+      <button
+        type="button"
+        onClick={() => setLocale("en")}
+        aria-pressed={locale === "en"}
+        aria-label={t.header.switchToEnglish}
+        className={`px-2 py-1 text-[11px] font-semibold tracking-wide transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1 focus-visible:ring-offset-emerald-950 ${
+          locale === "en"
+            ? "bg-emerald-600 text-white"
+            : "text-stone-300 hover:text-emerald-400"
+        }`}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        onClick={() => setLocale("ru")}
+        aria-pressed={locale === "ru"}
+        aria-label={t.header.switchToRussian}
+        className={`px-2 py-1 text-[11px] font-semibold tracking-wide transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-1 focus-visible:ring-offset-emerald-950 ${
+          locale === "ru"
+            ? "bg-emerald-600 text-white"
+            : "text-stone-300 hover:text-emerald-400"
+        }`}
+      >
+        RU
+      </button>
+    </div>
+  );
 
   return (
     <header className="bg-emerald-950 dark:bg-black shadow-lg sticky top-0 z-50 border-b border-emerald-500/20">
@@ -38,7 +75,7 @@ export default function Header() {
             Wanderlust
           </Link>
 
-          {/* Desktop Navigation + Theme Toggle */}
+          {/* Desktop Navigation + Theme Toggle + Locale Toggle */}
           <div className="hidden md:flex items-center gap-0.5 lg:gap-1">
             {navLinks.map((link) => {
               const active = isActive(link.href);
@@ -70,7 +107,7 @@ export default function Header() {
                 type="button"
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
                 className="ml-1 p-2 text-stone-300 hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black"
-                aria-label={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={resolvedTheme === "dark" ? t.header.lightMode : t.header.darkMode}
               >
                 {resolvedTheme === "dark" ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -83,16 +120,18 @@ export default function Header() {
                 )}
               </button>
             )}
+            {mounted && <LocaleToggle className="ml-1" />}
           </div>
 
-          {/* Mobile: Theme Toggle + Hamburger */}
+          {/* Mobile: Locale + Theme Toggle + Hamburger */}
           <div className="flex md:hidden items-center gap-1">
+            {mounted && <LocaleToggle />}
             {mounted && (
               <button
                 type="button"
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
                 className="p-2 text-stone-300 hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black"
-                aria-label={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={resolvedTheme === "dark" ? t.header.lightMode : t.header.darkMode}
               >
                 {resolvedTheme === "dark" ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -109,7 +148,7 @@ export default function Header() {
               type="button"
               className="p-2 text-stone-300 hover:text-emerald-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-emerald-950 dark:focus-visible:ring-offset-black"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-label={isMenuOpen ? t.header.closeMenu : t.header.openMenu}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
             >
