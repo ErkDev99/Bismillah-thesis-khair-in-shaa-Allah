@@ -95,24 +95,24 @@ function HeroSection() {
         sizes="100vw"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
       />
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
-        <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-2" aria-hidden="true">
+        <p className="text-emerald-300 uppercase tracking-[0.3em] text-xs mb-2 drop-shadow-md" aria-hidden="true">
           We&apos;re Listening
         </p>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
-          Get in <span className="text-emerald-400">Touch</span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-lg">
+          Get in <span className="text-emerald-300">Touch</span>
         </h1>
 
         <NatureDivider className="mb-4" />
 
-        <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
           Have questions about a tour? Ready to start planning? We would love
           to hear from you.
         </p>

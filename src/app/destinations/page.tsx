@@ -205,26 +205,26 @@ export default function DestinationsPage() {
           sizes="100vw"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
         {/* Radial Emerald Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
         <div className="relative z-10 px-4 max-w-4xl mx-auto text-center py-4 md:py-6">
-          <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-2" aria-hidden="true">
+          <p className="text-emerald-300 uppercase tracking-[0.3em] text-xs mb-2 drop-shadow-md" aria-hidden="true">
             {tDest.hero.eyebrow}
           </p>
-          <h1 id="destinations-heading" className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3">
+          <h1 id="destinations-heading" className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 drop-shadow-lg">
             {tDest.hero.title}
           </h1>
           {/* Nature Divider */}
           <div className="flex items-center justify-center gap-3 mb-4" aria-hidden="true">
-            <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
-            <svg className="w-5 h-5 text-emerald-500/60" fill="currentColor" viewBox="0 0 24 24">
+            <div className="h-px w-12 md:w-20 bg-emerald-400/70" />
+            <svg className="w-5 h-5 text-emerald-300 drop-shadow-md" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17 8C8 10 5.9 16.17 3.82 21.15 9.34 19.67 12 14 12 14s-2.85 7-8 7c1.07-5 6.11-13 13-13zM21 2c-4 0-10.17 3.43-12 8 1.83 1.83 8 1.83 12-8z" />
             </svg>
-            <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
+            <div className="h-px w-12 md:w-20 bg-emerald-400/70" />
           </div>
-          <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
             {tDest.hero.subtitle}
           </p>
         </div>

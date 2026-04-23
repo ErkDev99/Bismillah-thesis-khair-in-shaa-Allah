@@ -449,18 +449,18 @@ function ToursPageInner() {
           sizes="100vw"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-emerald-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
         <div className="relative max-w-7xl mx-auto text-center">
-          <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
+          <p className="text-emerald-300 uppercase tracking-[0.3em] text-xs mb-2 drop-shadow-md">
             {tTours.hero.eyebrow}
           </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 font-serif leading-tight">
-            {tTours.hero.titlePrefix} <span className="text-emerald-400">{tTours.hero.titleAccent}</span>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 font-serif leading-tight drop-shadow-lg">
+            {tTours.hero.titlePrefix} <span className="text-emerald-300">{tTours.hero.titleAccent}</span>
           </h1>
           <NatureDivider className="mb-4" />
-          <p className="text-stone-300 max-w-2xl mx-auto text-base md:text-lg">
+          <p className="text-white/90 max-w-2xl mx-auto text-base md:text-lg drop-shadow-md">
             {tTours.hero.subtitle}
           </p>
         </div>

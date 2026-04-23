@@ -69,7 +69,7 @@ function DestinationHero({
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
       </div>
 
       {/* Radial glow */}
@@ -110,11 +110,11 @@ function DestinationHero({
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-serif">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-serif drop-shadow-lg">
           {name}
         </h1>
 
-        <p className="text-lg md:text-xl text-stone-300 max-w-3xl leading-relaxed">
+        <p className="text-lg md:text-xl text-white/90 max-w-3xl leading-relaxed drop-shadow-md">
           {description}
         </p>
       </div>

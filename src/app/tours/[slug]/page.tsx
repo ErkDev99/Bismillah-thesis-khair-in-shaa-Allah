@@ -71,7 +71,7 @@ function TourHeader({
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
       </div>
 
       {/* Radial glow */}
@@ -109,7 +109,7 @@ function TourHeader({
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-serif">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 font-serif drop-shadow-lg">
           {title}
         </h1>
 

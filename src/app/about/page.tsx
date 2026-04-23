@@ -54,7 +54,7 @@ function HeroSection() {
         sizes="100vw"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
@@ -62,20 +62,20 @@ function HeroSection() {
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
-          <div className="h-px w-12 md:w-20 bg-emerald-500/60" />
-          <span className="text-emerald-400/80 text-xs tracking-[0.3em] uppercase">Since 2018</span>
-          <div className="h-px w-12 md:w-20 bg-emerald-500/60" />
+          <div className="h-px w-12 md:w-20 bg-emerald-400/70" />
+          <span className="text-emerald-300 text-xs tracking-[0.3em] uppercase drop-shadow-md">Since 2018</span>
+          <div className="h-px w-12 md:w-20 bg-emerald-400/70" />
         </div>
 
-        <p className="text-emerald-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3">
+        <p className="text-emerald-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3 drop-shadow-md">
           Our Story
         </p>
 
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif">
-          About <span className="text-emerald-400">Wanderlust</span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-lg">
+          About <span className="text-emerald-300">Wanderlust</span>
         </h1>
 
-        <p className="text-base md:text-lg text-stone-300 max-w-2xl mx-auto mb-4 leading-relaxed">
+        <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-4 leading-relaxed drop-shadow-md">
           We&apos;re passionate travelers dedicated to sharing the hidden gems
           of Central Asia with the world.
         </p>
