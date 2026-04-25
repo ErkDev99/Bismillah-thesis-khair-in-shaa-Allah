@@ -406,6 +406,105 @@ const en = {
       },
     },
   },
+  about: {
+    hero: {
+      ariaLabel: "About Wanderlust",
+      since: "Since 2018",
+      eyebrow: "Our Story",
+      titlePrefix: "About",
+      titleAccent: "Wanderlust",
+      subtitle:
+        "We're passionate travelers dedicated to sharing the hidden gems of Central Asia with the world.",
+    },
+    story: {
+      eyebrow: "Our Journey",
+      title: "Our Story",
+      imageAlt: "Central Asian landscape",
+      paragraphs: [
+        "Wanderlust was born from a simple belief: Central Asia is one of the world's most underrated travel destinations, and it deserves to be shared with curious explorers everywhere.",
+        "Founded in 2018 by a group of local guides and international travel enthusiasts, we set out to create authentic, immersive experiences that go beyond typical tourism. We wanted travelers to feel the warmth of nomadic hospitality, taste home-cooked meals in remote villages, and witness landscapes that few outsiders ever see.",
+        "Today, we've helped over 1,000 travelers discover the magic of the Silk Road, from the turquoise domes of Samarkand to the wild peaks of the Tian Shan. Every trip we design reflects our commitment to sustainable travel, cultural respect, and unforgettable adventure.",
+      ] as [string, string, string],
+    },
+    mission: {
+      eyebrow: "Our Purpose",
+      title: "Our Mission",
+      body: "To connect travelers with the authentic soul of Central Asia through responsible, meaningful experiences that benefit local communities and preserve cultural heritage for future generations.",
+    },
+    team: {
+      eyebrow: "The People",
+      title: "Meet Our Team",
+      subtitle:
+        "Local experts and global adventurers united by a love for Central Asia.",
+      members: [
+        {
+          name: "Aibek Nurzhanov",
+          role: "Founder & Lead Guide",
+          bio: "Born in the Tian Shan foothills, Aibek has 15+ years of guiding experience across Central Asia.",
+        },
+        {
+          name: "Sarah Mitchell",
+          role: "Operations Director",
+          bio: "Former travel journalist who fell in love with the region and never left. Manages logistics and partnerships.",
+        },
+        {
+          name: "Bekzat Omarov",
+          role: "Cultural Expert",
+          bio: "Historian and storyteller specializing in Silk Road history and nomadic traditions.",
+        },
+        {
+          name: "Elena Petrova",
+          role: "Customer Experience",
+          bio: "Ensures every traveler feels supported from first inquiry to final farewell.",
+        },
+      ] as [
+        { name: string; role: string; bio: string },
+        { name: string; role: string; bio: string },
+        { name: string; role: string; bio: string },
+        { name: string; role: string; bio: string },
+      ],
+    },
+    values: {
+      eyebrow: "What We Stand For",
+      title: "Our Values",
+      subtitle: "The principles that guide every journey we create.",
+      items: [
+        {
+          title: "Authentic Experiences",
+          description:
+            "We go beyond tourist traps to connect you with real people, traditions, and hidden places.",
+        },
+        {
+          title: "Sustainable Travel",
+          description:
+            "We minimize environmental impact and ensure tourism benefits local communities directly.",
+        },
+        {
+          title: "Safety First",
+          description:
+            "Experienced guides, vetted partners, and 24/7 support ensure your peace of mind.",
+        },
+        {
+          title: "Small Groups",
+          description:
+            "Intimate group sizes mean personalized attention and deeper connections.",
+        },
+      ] as [
+        { title: string; description: string },
+        { title: string; description: string },
+        { title: string; description: string },
+        { title: string; description: string },
+      ],
+    },
+    cta: {
+      eyebrow: "Begin Your Journey",
+      title: "Ready to Explore With Us?",
+      subtitle:
+        "Let's plan your Central Asian adventure together. Our team is here to answer your questions and craft your perfect trip.",
+      contactUs: "Contact Us",
+      browseTours: "Browse Tours",
+    },
+  },
 };
 
 export type Translations = typeof en;

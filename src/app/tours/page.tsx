@@ -449,7 +449,7 @@ function ToursPageInner() {
           sizes="100vw"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/25 to-black/45" aria-hidden="true" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-emerald-500/10 rounded-full blur-3xl" aria-hidden="true" />
 
         <div className="relative max-w-7xl mx-auto text-center">

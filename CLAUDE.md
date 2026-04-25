@@ -1,6 +1,6 @@
 # Wanderlust – Bachelor's Thesis Website
 
-*Last updated: 2026-04-22 (Session 32 — destinations listing + detail pages translated; long-field `*Ru` siblings filled for all 6 destinations)*
+*Last updated: 2026-04-25 (Session 34 — translated `/about` page to EN/RU; converted to client component, dropped server `metadata` export, added `about` namespace to en.ts/ru.ts)*
 
 Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Next.js 16, React 19, Tailwind CSS v4. Evaluated as a bachelor's thesis.
 
@@ -23,18 +23,18 @@ Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Ne
 | Review & Rating System (`/review`, `/reviews`, social proof strip) | ✅ Complete |
 | QuickSearchBar with instant results (country → tours w/ prices) | ✅ Complete |
 | Contact page Google Map (Bishkek embed) | ✅ Complete |
-| **i18n (EN/RU)** | 🔄 Infra + Header + Footer + ChatWidget + Homepage + Tours + Destinations (listings + `[slug]`) done; 11 pages remaining |
+| **i18n (EN/RU)** | 🔄 Infra + Header + Footer + ChatWidget + Homepage + Tours + Destinations (listings + `[slug]`) + About done; 10 pages remaining |
 
 ---
 
 ## Quick Start for Next Session
 
-**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, ChatWidget, Homepage, **Tours pages** (`tours/page.tsx` + `tours/[slug]/page.tsx`), and **Destinations pages** (`destinations/page.tsx` + `destinations/[slug]/page.tsx`) are translated. Both `[slug]` pages converted to client components — use React 19 `use(params)` to unwrap `Promise<{slug}>` — and drop `generateStaticParams` / `generateMetadata` (Phase 4 SEO skipped). Tour and Destination long-field `*Ru` siblings filled inline on the TS interfaces for all 6 tours and all 6 destinations.
+**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, ChatWidget, Homepage, **Tours pages** (`tours/page.tsx` + `tours/[slug]/page.tsx`), **Destinations pages** (`destinations/page.tsx` + `destinations/[slug]/page.tsx`), and **About page** (`about/page.tsx`) are translated. Both `[slug]` pages converted to client components — use React 19 `use(params)` to unwrap `Promise<{slug}>` — and drop `generateStaticParams` / `generateMetadata` (Phase 4 SEO skipped). Tour and Destination long-field `*Ru` siblings filled inline on the TS interfaces for all 6 tours and all 6 destinations.
 
 **Next up:** Content pages in this order:
 1. ~~tours (listing + `[slug]`)~~ ✅ Session 31
 2. ~~destinations (listing + `[slug]`)~~ ✅ Session 32
-3. about, contact, practical-info, faq — **next**. Static content pages; add an `about`/`contact`/`practicalInfo`/`faq` namespace per page. No dynamic routes, so no `use(params)` conversion needed — just add `"use client"` + `useLocale()` and swap hardcoded copy.
+3. ~~about~~ ✅ Session 34. **Next:** contact, practical-info, faq. Static content pages; add a `contact`/`practicalInfo`/`faq` namespace per page. No dynamic routes, so no `use(params)` conversion needed — just add `"use client"` + `useLocale()` and swap hardcoded copy.
 4. blog (listing + `[slug]`) — split `blog.en.ts`/`blog.ru.ts` since post bodies are long
 5. review, reviews, privacy, terms, voice-chat
 
@@ -104,6 +104,7 @@ Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Ne
 - **Data-layer localization — `*Ru` sibling pattern** — for short data fields (`title`, `description`, `name`, `country`, `location`, etc.), add optional `titleRu?: string` siblings on the TS interface. Components pick with `locale === "ru" && item.fieldRu ? item.fieldRu : item.field` — EN is the fallback so a missing RU gracefully degrades instead of rendering `undefined`. Keep the field optional so you can roll out RU data incrementally per page. For **long** fields (itinerary steps, blog bodies, multi-paragraph descriptions), a separate `*.ru.ts` file is cleaner than inlined siblings.
 - **Tighten loose string types for i18n indexing** — if a data field is `category: string` but the translation dict is keyed by literal values (`t.tourCategory.cultural`), narrow the field to a union (`"cultural" | "adventure"`) so TS can index the dict without an `as` cast. Catches typos and enforces that every data value has a matching translation key.
 - **React 19 `use(params)` for client-page conversion** — Next.js 15+ passes dynamic route params as `Promise<{...}>`. When converting a server page with `async function Page({ params })` + `await params` to a client component (needed for `useLocale()`), switch to `import { use } from "react"` and `const { slug } = use(params)`. Drop `generateStaticParams` and `generateMetadata` (they're server-only; acceptable here since Phase 4 SEO is skipped). Keeps the dynamic route working without resorting to route wrappers.
+- **Hero overlay strength depends on hero shape** — homepage's `from-black/40 via-transparent to-transparent` (bottom gradient only) works because the hero is `min-h-[70vh]` and the centered title sits well above the gradient. The same overlay on a compact band hero (tours/destinations/contact/about, `py-4 md:py-6`) leaves the centered title without contrast — needed `bg-gradient-to-b from-black/15 via-black/25 to-black/45` to add a faint top-to-bottom wash. For detail `[slug]` heroes (50vh, title at bottom via `flex items-end`), `from-black/55 via-black/10 to-transparent` keeps the photo bright while ensuring title legibility. Lesson: gradient direction and stop strengths must match where the text sits, not a one-size-fits-all rule.
 
 ---
 
@@ -165,8 +166,10 @@ Changed from Art Deco/amber in Session 24. Teacher: "Kyrgyzstan is green — use
 
 ### Hero Images
 - **NO dark overlay** — teacher: "remove that darkness."
-- Subtle bottom gradient only: `bg-gradient-to-t from-black/40 via-transparent to-transparent`
-- Add `drop-shadow-md` to text over bright photos.
+- Tall heroes (homepage `min-h-[70vh]`): subtle bottom gradient only — `bg-gradient-to-t from-black/40 via-transparent to-transparent`.
+- Compact band heroes (`py-4 md:py-6` on tours/destinations/contact/about): top-to-bottom wash — `bg-gradient-to-b from-black/15 via-black/25 to-black/45`. The pure bottom-only gradient leaves centered title without contrast on a thin band.
+- Detail `[slug]` heroes (`h-[50vh]` with title at bottom via `flex items-end`): `bg-gradient-to-t from-black/55 via-black/10 to-transparent` — bright photo at top, just enough darkening at the bottom for the title.
+- Always add `drop-shadow-md` (body) / `drop-shadow-lg` (h1) to text over bright photos. Use `text-emerald-300` (not `-400`) and `text-white/90` (not `text-stone-300`) for accent + body on hero photos — better contrast against varied imagery.
 
 ### DifficultyBadge
 - Easy: emerald (green = easy, semantic)
@@ -198,7 +201,7 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 | # | File | Status |
 |---|------|--------|
 | 1 | `src/components/LocaleProvider.tsx` | ✅ |
-| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` + `home` + `tourCategory` + `tours` + `destinations` ns) | ✅ |
+| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` + `home` + `tourCategory` + `tours` + `destinations` + `about` ns) | ✅ |
 | 3 | `src/app/layout.tsx` (wraps `<LocaleProvider>`) | ✅ |
 | 4 | `src/components/layout/Header.tsx` (EN\|RU toggle + nav) | ✅ |
 | 5 | `src/components/layout/Footer.tsx` | ✅ |
@@ -210,8 +213,8 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 | 9b | `src/lib/data/destinations.ts` — long fields (`longDescriptionRu`/`highlightsRu`/`bestTimeToVisitRu`/`weatherRu`/`languagesRu`/`currencyRu`/`quickFactsRu`/`thingsToDoRu`) | ✅ |
 | 10 | `src/app/tours/page.tsx` + `[slug]/page.tsx` | ✅ |
 | 11 | `src/app/destinations/page.tsx` + `[slug]/page.tsx` | ✅ |
-| 12 | `src/app/about/page.tsx` | ⬜ **Next** |
-| 13 | `src/app/contact/page.tsx` | ⬜ |
+| 12 | `src/app/about/page.tsx` | ✅ |
+| 13 | `src/app/contact/page.tsx` | ⬜ **Next** |
 | 14 | `src/app/practical-info/page.tsx` | ⬜ |
 | 15 | `src/app/faq/page.tsx` | ⬜ |
 | 16 | `src/app/blog/page.tsx` + `[slug]/page.tsx` | ⬜ (split `blog.en.ts`/`blog.ru.ts`) |
@@ -372,3 +375,5 @@ Missing (out of thesis scope): real booking/payment flow, user accounts
 *Session 29 consolidation: `HANDOVER.md` merged into this file. Single source of truth going forward.*
 *Session 31: tours listing + `[slug]` pages translated; `tours` namespace added to `en.ts`/`ru.ts`; Tour interface gained long-field RU siblings; `[slug]/page.tsx` converted to client via React 19 `use(params)`.*
 *Session 32: destinations listing + `[slug]` pages translated; `destinations` namespace added to `en.ts`/`ru.ts`; Destination interface gained long-field RU siblings (`longDescriptionRu`/`highlightsRu`/`bestTimeToVisitRu`/`weatherRu`/`languagesRu`/`currencyRu`/`quickFactsRu`/`thingsToDoRu`); `[slug]/page.tsx` converted to client via React 19 `use(params)`.*
+*Session 33: removed heavy dark hero overlays. Replaced `bg-black/70` (and `/50` on about) on tours/destinations/contact/about hero bands with `bg-gradient-to-b from-black/15 via-black/25 to-black/45` (after first trying `from-black/40 via-transparent` and finding it too washed for compact bands). Tours/[slug] + destinations/[slug] gradient eased from `from-black/80 via-black/40` to `from-black/55 via-black/10 to-transparent`. Hero text bumped from `text-emerald-400`/`text-stone-300` to `text-emerald-300`/`text-white/90` and given `drop-shadow-md` (body) / `drop-shadow-lg` (h1). Updated Design System "Hero Images" section to document the per-shape gradient pattern + added a Lessons Learned entry. No i18n progress this session.*
+*Session 34: translated `/about` page. Added `about` namespace to `en.ts`/`ru.ts` (hero, story, mission, team, values, cta sub-sections). Converted `about/page.tsx` to client component (`"use client"` + `useLocale()`) and removed the server `metadata` export (Phase 4 SEO skipped). Team `members` and `values.items` typed as 4-tuples; SVG icons + photo paths kept as parallel const arrays in the component, indexed by position so the translation dict only carries text. Typecheck clean.*

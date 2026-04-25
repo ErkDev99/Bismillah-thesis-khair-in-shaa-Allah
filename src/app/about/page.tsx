@@ -1,27 +1,15 @@
+"use client";
+
 // src/app/about/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Server Component — no "use client" needed.
+// Client Component (uses useLocale for EN/RU translations).
 // Style: Nature / Travel Magazine — emerald + cream palette, serif headings,
 // leaf ornaments, rounded corners, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import Link from "next/link";
 import Image from "next/image";
-import type { Metadata } from "next";
-
-// ─── SEO Metadata ─────────────────────────────────────────────────────────────
-export const metadata: Metadata = {
-  title: "About Us | Wanderlust — Central Asia Tour Experts",
-  description:
-    "Meet the team behind Wanderlust. Local guides and international travel experts crafting authentic small-group journeys through Kazakhstan, Kyrgyzstan, and Uzbekistan since 2018.",
-  openGraph: {
-    title: "About Wanderlust — Central Asia Tour Experts",
-    description:
-      "Local guides and international travel experts crafting authentic small-group journeys through Central Asia since 2018.",
-    type: "website",
-    siteName: "Wanderlust",
-  },
-};
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ──────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -40,9 +28,10 @@ function NatureDivider({ className = "" }: { className?: string }) {
 // SECTION 1 — HERO
 // ═════════════════════════════════════════════════════════════════════════════
 function HeroSection() {
+  const { t } = useLocale();
   return (
     <section
-      aria-label="About Wanderlust"
+      aria-label={t.about.hero.ariaLabel}
       className="relative text-center text-white overflow-hidden"
     >
       <Image
@@ -54,7 +43,7 @@ function HeroSection() {
         sizes="100vw"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/25 to-black/45" aria-hidden="true" />
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-emerald-500/10 rounded-full blur-3xl"
         aria-hidden="true"
@@ -63,21 +52,20 @@ function HeroSection() {
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
           <div className="h-px w-12 md:w-20 bg-emerald-400/70" />
-          <span className="text-emerald-300 text-xs tracking-[0.3em] uppercase drop-shadow-md">Since 2018</span>
+          <span className="text-emerald-300 text-xs tracking-[0.3em] uppercase drop-shadow-md">{t.about.hero.since}</span>
           <div className="h-px w-12 md:w-20 bg-emerald-400/70" />
         </div>
 
         <p className="text-emerald-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3 drop-shadow-md">
-          Our Story
+          {t.about.hero.eyebrow}
         </p>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-lg">
-          About <span className="text-emerald-300">Wanderlust</span>
+          {t.about.hero.titlePrefix} <span className="text-emerald-300">{t.about.hero.titleAccent}</span>
         </h1>
 
         <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-4 leading-relaxed drop-shadow-md">
-          We&apos;re passionate travelers dedicated to sharing the hidden gems
-          of Central Asia with the world.
+          {t.about.hero.subtitle}
         </p>
 
         <NatureDivider />
@@ -90,6 +78,7 @@ function HeroSection() {
 // SECTION 2 — STORY
 // ═════════════════════════════════════════════════════════════════════════════
 function StorySection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="story-heading"
@@ -101,7 +90,7 @@ function StorySection() {
           <div className="group relative h-80 lg:h-[450px] overflow-hidden rounded-xl">
             <Image
               src="/images/hero/hero.jpg"
-              alt="Central Asian landscape"
+              alt={t.about.story.imageAlt}
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -117,36 +106,19 @@ function StorySection() {
           {/* Content */}
           <div>
             <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-              Our Journey
+              {t.about.story.eyebrow}
             </p>
             <h2
               id="story-heading"
               className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-5 font-serif"
             >
-              Our Story
+              {t.about.story.title}
             </h2>
             <NatureDivider className="mb-6 !justify-start" />
             <div className="space-y-4 text-stone-600 dark:text-stone-400 leading-relaxed">
-              <p>
-                Wanderlust was born from a simple belief: Central Asia is one of
-                the world&apos;s most underrated travel destinations, and it
-                deserves to be shared with curious explorers everywhere.
-              </p>
-              <p>
-                Founded in 2018 by a group of local guides and international
-                travel enthusiasts, we set out to create authentic, immersive
-                experiences that go beyond typical tourism. We wanted travelers
-                to feel the warmth of nomadic hospitality, taste home-cooked
-                meals in remote villages, and witness landscapes that few
-                outsiders ever see.
-              </p>
-              <p>
-                Today, we&apos;ve helped over 1,000 travelers discover the magic
-                of the Silk Road, from the turquoise domes of Samarkand to the
-                wild peaks of the Tian Shan. Every trip we design reflects our
-                commitment to sustainable travel, cultural respect, and
-                unforgettable adventure.
-              </p>
+              {t.about.story.paragraphs.map((para, i) => (
+                <p key={i}>{para}</p>
+              ))}
             </div>
           </div>
         </div>
@@ -159,6 +131,7 @@ function StorySection() {
 // SECTION 3 — MISSION
 // ═════════════════════════════════════════════════════════════════════════════
 function MissionSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="mission-heading"
@@ -167,19 +140,17 @@ function MissionSection() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors rounded-xl p-10 md:p-14 text-center">
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Our Purpose
+            {t.about.mission.eyebrow}
           </p>
           <h2
             id="mission-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-5 font-serif"
           >
-            Our Mission
+            {t.about.mission.title}
           </h2>
           <NatureDivider className="mb-6" />
           <p className="text-lg md:text-xl text-stone-600 dark:text-stone-300 leading-relaxed font-serif italic">
-            To connect travelers with the authentic soul of Central Asia through
-            responsible, meaningful experiences that benefit local communities
-            and preserve cultural heritage for future generations.
+            {t.about.mission.body}
           </p>
         </div>
       </div>
@@ -190,34 +161,15 @@ function MissionSection() {
 // ═════════════════════════════════════════════════════════════════════════════
 // SECTION 4 — TEAM
 // ═════════════════════════════════════════════════════════════════════════════
-const teamMembers = [
-  {
-    name: "Aibek Nurzhanov",
-    role: "Founder & Lead Guide",
-    bio: "Born in the Tian Shan foothills, Aibek has 15+ years of guiding experience across Central Asia.",
-    image: "/images/team/aibek.jpg",
-  },
-  {
-    name: "Sarah Mitchell",
-    role: "Operations Director",
-    bio: "Former travel journalist who fell in love with the region and never left. Manages logistics and partnerships.",
-    image: "/images/team/sarah.jpg",
-  },
-  {
-    name: "Bekzat Omarov",
-    role: "Cultural Expert",
-    bio: "Historian and storyteller specializing in Silk Road history and nomadic traditions.",
-    image: "/images/team/bekzat.jpg",
-  },
-  {
-    name: "Elena Petrova",
-    role: "Customer Experience",
-    bio: "Ensures every traveler feels supported from first inquiry to final farewell.",
-    image: "/images/team/elena.jpg",
-  },
-];
+const teamImages = [
+  "/images/team/aibek.jpg",
+  "/images/team/sarah.jpg",
+  "/images/team/bekzat.jpg",
+  "/images/team/elena.jpg",
+] as const;
 
 function TeamSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="team-heading"
@@ -226,31 +178,30 @@ function TeamSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            The People
+            {t.about.team.eyebrow}
           </p>
           <h2
             id="team-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Meet Our Team
+            {t.about.team.title}
           </h2>
           <p className="text-stone-600 dark:text-stone-400 max-w-xl mx-auto">
-            Local experts and global adventurers united by a love for Central
-            Asia.
+            {t.about.team.subtitle}
           </p>
           <NatureDivider className="mt-5" />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {teamMembers.map((member) => (
+          {t.about.team.members.map((member, i) => (
             <article
-              key={member.name}
+              key={i}
               className="group bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-300 rounded-xl overflow-hidden flex flex-col"
             >
               {/* Team member photo */}
               <div className="relative h-72 overflow-hidden">
                 <Image
-                  src={member.image}
+                  src={teamImages[i]}
                   alt={member.name}
                   fill
                   className="object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500"
@@ -280,62 +231,47 @@ function TeamSection() {
 // ═════════════════════════════════════════════════════════════════════════════
 // SECTION 5 — VALUES
 // ═════════════════════════════════════════════════════════════════════════════
-const values = [
-  {
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    ),
-    title: "Authentic Experiences",
-    description:
-      "We go beyond tourist traps to connect you with real people, traditions, and hidden places.",
-  },
-  {
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-      />
-    ),
-    title: "Sustainable Travel",
-    description:
-      "We minimize environmental impact and ensure tourism benefits local communities directly.",
-  },
-  {
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-      />
-    ),
-    title: "Safety First",
-    description:
-      "Experienced guides, vetted partners, and 24/7 support ensure your peace of mind.",
-  },
-  {
-    icon: (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-      />
-    ),
-    title: "Small Groups",
-    description:
-      "Intimate group sizes mean personalized attention and deeper connections.",
-  },
-];
+const valueIcons = [
+  (
+    <path
+      key="auth"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    />
+  ),
+  (
+    <path
+      key="sus"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+    />
+  ),
+  (
+    <path
+      key="safe"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+    />
+  ),
+  (
+    <path
+      key="small"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+    />
+  ),
+] as const;
 
 function ValuesSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="values-heading"
@@ -349,24 +285,24 @@ function ValuesSection() {
       <div className="relative max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            What We Stand For
+            {t.about.values.eyebrow}
           </p>
           <h2
             id="values-heading"
             className="text-3xl md:text-4xl font-bold mb-3 font-serif"
           >
-            Our Values
+            {t.about.values.title}
           </h2>
           <p className="text-stone-400 max-w-xl mx-auto">
-            The principles that guide every journey we create.
+            {t.about.values.subtitle}
           </p>
           <NatureDivider className="mt-5" />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {values.map((value) => (
+          {t.about.values.items.map((value, i) => (
             <div
-              key={value.title}
+              key={i}
               className="group bg-white/5 backdrop-blur-sm border border-emerald-500/20 hover:border-emerald-500/60 transition-all duration-300 rounded-xl p-6 text-center"
             >
               <div className="inline-flex items-center justify-center w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-400 mb-4 group-hover:bg-emerald-500/20 transition-colors">
@@ -377,7 +313,7 @@ function ValuesSection() {
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
-                  {value.icon}
+                  {valueIcons[i]}
                 </svg>
               </div>
               <h3 className="text-lg font-bold mb-2 font-serif">{value.title}</h3>
@@ -396,6 +332,7 @@ function ValuesSection() {
 // SECTION 6 — CTA
 // ═════════════════════════════════════════════════════════════════════════════
 function CTASection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="cta-heading"
@@ -404,17 +341,16 @@ function CTASection() {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors rounded-xl p-10 md:p-14 text-center">
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Begin Your Journey
+            {t.about.cta.eyebrow}
           </p>
           <h2
             id="cta-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-4 font-serif"
           >
-            Ready to Explore With Us?
+            {t.about.cta.title}
           </h2>
           <p className="text-stone-600 dark:text-stone-400 mb-6 max-w-2xl mx-auto leading-relaxed">
-            Let&apos;s plan your Central Asian adventure together. Our team is
-            here to answer your questions and craft your perfect trip.
+            {t.about.cta.subtitle}
           </p>
 
           <NatureDivider className="mb-8" />
@@ -424,13 +360,13 @@ function CTASection() {
               href="/contact"
               className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg px-8 py-4 font-semibold uppercase tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
             >
-              Contact Us
+              {t.about.cta.contactUs}
             </Link>
             <Link
               href="/tours"
               className="border-2 border-emerald-500 hover:bg-emerald-600 hover:text-white rounded-lg text-emerald-700 dark:text-emerald-400 px-8 py-4 font-semibold uppercase tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
             >
-              Browse Tours
+              {t.about.cta.browseTours}
             </Link>
           </div>
         </div>
