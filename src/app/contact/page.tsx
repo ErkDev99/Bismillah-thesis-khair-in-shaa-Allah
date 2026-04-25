@@ -1,6 +1,6 @@
 // src/app/contact/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Client Component — form state.
+// Client Component — form state + EN/RU via useLocale.
 // Style: Nature / Travel Magazine — emerald + cream palette, serif headings,
 // leaf ornaments, rounded corners, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -9,6 +9,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -23,9 +24,10 @@ function NatureDivider({ className = "" }: { className?: string }) {
   );
 }
 
-// ─── Contact Info Data ───────────────────────────────────────────────────────
-const contactInfo = [
+// ─── Contact Info — concrete data (email/phone/address are not UI copy) ─────
+const contactInfoData = [
   {
+    key: "email" as const,
     icon: (
       <path
         strokeLinecap="round"
@@ -34,11 +36,11 @@ const contactInfo = [
         d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
       />
     ),
-    label: "Email",
     value: "info@wanderlust.com",
     href: "mailto:info@wanderlust.com",
   },
   {
+    key: "phone" as const,
     icon: (
       <path
         strokeLinecap="round"
@@ -47,22 +49,22 @@ const contactInfo = [
         d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
       />
     ),
-    label: "Phone",
     value: "+1 (555) 123-4567",
     href: "tel:+15551234567",
   },
   {
+    key: "office" as const,
     icon: (
       <>
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
       </>
     ),
-    label: "Office",
     value: "123 Travel Street, Adventure City, AC 12345",
     href: null,
   },
   {
+    key: "hours" as const,
     icon: (
       <path
         strokeLinecap="round"
@@ -71,8 +73,7 @@ const contactInfo = [
         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
       />
     ),
-    label: "Hours",
-    value: "Mon-Fri: 9AM-6PM (UTC+6)",
+    value: null,
     href: null,
   },
 ];
@@ -81,9 +82,10 @@ const contactInfo = [
 // SECTION 1 — HERO
 // ═════════════════════════════════════════════════════════════════════════════
 function HeroSection() {
+  const { t } = useLocale();
   return (
     <section
-      aria-label="Contact Wanderlust"
+      aria-label={t.contact.hero.ariaLabel}
       className="relative text-center text-white overflow-hidden"
     >
       <Image
@@ -103,18 +105,17 @@ function HeroSection() {
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <p className="text-emerald-300 uppercase tracking-[0.3em] text-xs mb-2 drop-shadow-md" aria-hidden="true">
-          We&apos;re Listening
+          {t.contact.hero.eyebrow}
         </p>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-lg">
-          Get in <span className="text-emerald-300">Touch</span>
+          {t.contact.hero.titlePrefix} <span className="text-emerald-300">{t.contact.hero.titleAccent}</span>
         </h1>
 
         <NatureDivider className="mb-4" />
 
         <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-          Have questions about a tour? Ready to start planning? We would love
-          to hear from you.
+          {t.contact.hero.subtitle}
         </p>
       </div>
     </section>
@@ -125,6 +126,7 @@ function HeroSection() {
 // CONTACT FORM
 // ═════════════════════════════════════════════════════════════════════════════
 function ContactForm() {
+  const { t } = useLocale();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -163,7 +165,7 @@ function ContactForm() {
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="name" className={labelClasses}>
-            Full Name *
+            {t.contact.form.fullNameLabel}
           </label>
           <input
             type="text"
@@ -175,12 +177,12 @@ function ContactForm() {
             value={formData.name}
             onChange={handleChange}
             className={inputClasses}
-            placeholder="John Doe"
+            placeholder={t.contact.form.fullNamePlaceholder}
           />
         </div>
         <div>
           <label htmlFor="email" className={labelClasses}>
-            Email Address *
+            {t.contact.form.emailLabel}
           </label>
           <input
             type="email"
@@ -192,7 +194,7 @@ function ContactForm() {
             value={formData.email}
             onChange={handleChange}
             className={inputClasses}
-            placeholder="john@example.com"
+            placeholder={t.contact.form.emailPlaceholder}
           />
         </div>
       </div>
@@ -200,7 +202,7 @@ function ContactForm() {
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="phone" className={labelClasses}>
-            Phone Number
+            {t.contact.form.phoneLabel}
           </label>
           <input
             type="tel"
@@ -210,12 +212,12 @@ function ContactForm() {
             value={formData.phone}
             onChange={handleChange}
             className={inputClasses}
-            placeholder="+1 (555) 000-0000"
+            placeholder={t.contact.form.phonePlaceholder}
           />
         </div>
         <div>
           <label htmlFor="subject" className={labelClasses}>
-            Subject *
+            {t.contact.form.subjectLabel}
           </label>
           <select
             id="subject"
@@ -226,20 +228,20 @@ function ContactForm() {
             onChange={handleChange}
             className={inputClasses}
           >
-            <option value="">Select a subject</option>
-            <option value="tour-inquiry">Tour Inquiry</option>
-            <option value="custom-trip">Custom Trip Planning</option>
-            <option value="booking">Booking Question</option>
-            <option value="partnership">Partnership Opportunity</option>
-            <option value="feedback">Feedback</option>
-            <option value="other">Other</option>
+            <option value="">{t.contact.form.selectSubject}</option>
+            <option value="tour-inquiry">{t.contact.form.subjects.tourInquiry}</option>
+            <option value="custom-trip">{t.contact.form.subjects.customTrip}</option>
+            <option value="booking">{t.contact.form.subjects.booking}</option>
+            <option value="partnership">{t.contact.form.subjects.partnership}</option>
+            <option value="feedback">{t.contact.form.subjects.feedback}</option>
+            <option value="other">{t.contact.form.subjects.other}</option>
           </select>
         </div>
       </div>
 
       <div>
         <label htmlFor="message" className={labelClasses}>
-          Message *
+          {t.contact.form.messageLabel}
         </label>
         <textarea
           id="message"
@@ -250,7 +252,7 @@ function ContactForm() {
           value={formData.message}
           onChange={handleChange}
           className={`${inputClasses} resize-none`}
-          placeholder="Tell us about your travel plans or questions..."
+          placeholder={t.contact.form.messagePlaceholder}
         />
       </div>
 
@@ -259,7 +261,7 @@ function ContactForm() {
         disabled={status === "loading"}
         className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:bg-emerald-400 disabled:cursor-not-allowed text-white rounded-lg py-4 font-semibold uppercase tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300/50 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
       >
-        {status === "loading" ? "Sending..." : "Send Message"}
+        {status === "loading" ? t.contact.form.sending : t.contact.form.submit}
       </button>
 
       {status === "success" && (
@@ -268,7 +270,7 @@ function ContactForm() {
           aria-live="polite"
           className="relative bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 rounded-lg px-4 py-3 text-center text-sm"
         >
-          Thank you! Your message has been sent. We will get back to you within 24 hours.
+          {t.contact.form.success}
         </div>
       )}
 
@@ -278,7 +280,7 @@ function ContactForm() {
           aria-live="assertive"
           className="relative bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg px-4 py-3 text-center text-sm"
         >
-          Something went wrong. Please try again or email us directly.
+          {t.contact.form.error}
         </div>
       )}
     </form>
@@ -289,6 +291,7 @@ function ContactForm() {
 // CONTACT INFO CARD
 // ═════════════════════════════════════════════════════════════════════════════
 function ContactInfoCard() {
+  const { t } = useLocale();
   return (
     <div className="relative bg-emerald-950 dark:bg-black text-white rounded-xl p-8 h-fit overflow-hidden">
       {/* Radial Emerald Glow */}
@@ -296,47 +299,51 @@ function ContactInfoCard() {
 
       <div className="relative">
         <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-          Reach Us
+          {t.contact.info.eyebrow}
         </p>
-        <h3 className="text-xl font-bold mb-6 font-serif">Contact Information</h3>
+        <h3 className="text-xl font-bold mb-6 font-serif">{t.contact.info.title}</h3>
 
         <div className="space-y-6">
-          {contactInfo.map((item) => (
-            <div key={item.label} className="flex items-start gap-4">
-              <div className="text-emerald-400 shrink-0 w-10 h-10 border border-emerald-500/30 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  {item.icon}
-                </svg>
-              </div>
-              <div>
-                <p className="text-emerald-400/70 text-[11px] uppercase tracking-[0.2em] mb-0.5">
-                  {item.label}
-                </p>
-                {item.href ? (
-                  <a
-                    href={item.href}
-                    className="text-white hover:text-emerald-300 transition-colors text-sm focus:outline-none focus:underline"
+          {contactInfoData.map((item) => {
+            const label = t.contact.info.labels[item.key];
+            const value = item.key === "hours" ? t.contact.info.hours : item.value;
+            return (
+              <div key={item.key} className="flex items-start gap-4">
+                <div className="text-emerald-400 shrink-0 w-10 h-10 border border-emerald-500/30 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
-                    {item.value}
-                  </a>
-                ) : (
-                  <p className="text-white text-sm">{item.value}</p>
-                )}
+                    {item.icon}
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-emerald-400/70 text-[11px] uppercase tracking-[0.2em] mb-0.5">
+                    {label}
+                  </p>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      className="text-white hover:text-emerald-300 transition-colors text-sm focus:outline-none focus:underline"
+                    >
+                      {value}
+                    </a>
+                  ) : (
+                    <p className="text-white text-sm">{value}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <NatureDivider className="my-8" />
 
         <div>
-          <p className="text-emerald-400/70 text-[11px] uppercase tracking-[0.2em] mb-4">Follow Us</p>
+          <p className="text-emerald-400/70 text-[11px] uppercase tracking-[0.2em] mb-4">{t.contact.info.followUs}</p>
           <div className="flex gap-3">
             <a
               href="#"
@@ -376,6 +383,7 @@ function ContactInfoCard() {
 // MAP SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function MapSection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="map-heading"
@@ -384,19 +392,19 @@ function MapSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10">
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Our Location
+            {t.contact.map.eyebrow}
           </p>
           <h2
             id="map-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-stone-100 mb-3 font-serif"
           >
-            Find Us
+            {t.contact.map.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
         <div className="h-80 md:h-96 overflow-hidden rounded-xl border border-stone-200 dark:border-slate-800">
           <iframe
-            title="Our location in Bishkek, Kyrgyzstan"
+            title={t.contact.map.iframeTitle}
             src="https://www.google.com/maps?q=Bishkek,Kyrgyzstan&z=12&output=embed"
             className="w-full h-full border-0"
             loading="lazy"
@@ -413,24 +421,7 @@ function MapSection() {
 // FAQ SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function FAQSection() {
-  const faqs = [
-    {
-      question: "How quickly will you respond to my inquiry?",
-      answer:
-        "We typically respond within 24 hours during business days. For urgent matters, please call us directly.",
-    },
-    {
-      question: "Can you create custom itineraries?",
-      answer:
-        "Absolutely! We specialize in tailor-made trips. Share your interests, budget, and timeframe, and we will craft the perfect journey.",
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer:
-        "We accept major credit cards, bank transfers, and PayPal. A 30% deposit secures your booking, with the balance due 30 days before departure.",
-    },
-  ];
-
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="faq-heading"
@@ -439,19 +430,19 @@ function FAQSection() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Quick Answers
+            {t.contact.faq.eyebrow}
           </p>
           <h2
             id="faq-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-stone-100 mb-3 font-serif"
           >
-            Frequently Asked Questions
+            {t.contact.faq.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
 
         <div className="space-y-4">
-          {faqs.map((faq, index) => (
+          {t.contact.faq.items.map((faq, index) => (
             <details
               key={index}
               className="group bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors rounded-xl overflow-hidden"
@@ -478,12 +469,12 @@ function FAQSection() {
         </div>
 
         <p className="text-center text-stone-600 dark:text-stone-400 mt-8 text-sm">
-          More questions?{" "}
+          {t.contact.faq.moreQuestionsPrefix}{" "}
           <Link
             href="/practical-info"
             className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold uppercase tracking-wide focus:outline-none focus:underline"
           >
-            Check our Practical Info page
+            {t.contact.faq.moreQuestionsLink}
           </Link>
         </p>
       </div>
@@ -495,6 +486,7 @@ function FAQSection() {
 // PAGE ROOT
 // ═════════════════════════════════════════════════════════════════════════════
 export default function ContactPage() {
+  const { t } = useLocale();
   return (
     <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       <HeroSection />
@@ -506,16 +498,16 @@ export default function ContactPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 rounded-xl p-8 md:p-10">
               <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-                Inquiry Form
+                {t.contact.form.eyebrow}
               </p>
               <h2
                 id="form-heading"
                 className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-stone-100 mb-2 font-serif"
               >
-                Send Us a Message
+                {t.contact.form.title}
               </h2>
               <p className="text-stone-600 dark:text-stone-400 mb-8 text-sm">
-                Fill out the form below and we will get back to you as soon as possible.
+                {t.contact.form.subtitle}
               </p>
               <ContactForm />
             </div>

@@ -1,26 +1,14 @@
+"use client";
+
 // src/app/practical-info/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Server Component — no "use client" needed.
+// Client Component (uses useLocale for EN/RU translations).
 // Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
 // leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 import Link from "next/link";
 import Image from "next/image";
-import type { Metadata } from "next";
-
-// ─── SEO Metadata ─────────────────────────────────────────────────────────────
-export const metadata: Metadata = {
-  title: "Practical Travel Info | Wanderlust — Central Asia",
-  description:
-    "Everything you need to prepare for your Central Asian adventure: visas, weather, packing lists, health, money, and cultural etiquette for Kazakhstan, Kyrgyzstan, and Uzbekistan.",
-  openGraph: {
-    title: "Practical Travel Info — Central Asia",
-    description:
-      "Visas, weather, packing, health, money, and cultural etiquette for travel to Kazakhstan, Kyrgyzstan, and Uzbekistan.",
-    type: "website",
-    siteName: "Wanderlust",
-  },
-};
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -44,184 +32,14 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-const visaInfo = [
-  {
-    country: "Kazakhstan",
-    flag: "🇰🇿",
-    visaFree: ["USA", "UK", "EU countries", "Canada", "Australia", "Japan", "South Korea", "UAE"],
-    duration: "30 days",
-    notes: "Visa-free for 70+ countries. Registration required for stays over 30 days.",
-  },
-  {
-    country: "Kyrgyzstan",
-    flag: "🇰🇬",
-    visaFree: ["USA", "UK", "EU countries", "Canada", "Australia", "Japan", "Most countries"],
-    duration: "60 days",
-    notes: "One of the most open visa policies in Central Asia. E-visa available for others.",
-  },
-  {
-    country: "Uzbekistan",
-    flag: "🇺🇿",
-    visaFree: ["USA", "UK", "EU countries", "Canada", "Australia", "Japan", "South Korea"],
-    duration: "30 days",
-    notes: "Visa-free since 2019 for 90+ countries. E-visa available for others.",
-  },
-];
-
-const weatherData = [
-  {
-    season: "Spring (Mar-May)",
-    icon: "🌸",
-    description: "Mild temperatures, occasional rain. Flowers bloom across the steppes.",
-    temp: "10-20°C (50-68°F)",
-    ideal: "City tours, cultural sites, photography",
-  },
-  {
-    season: "Summer (Jun-Aug)",
-    icon: "☀️",
-    description: "Hot in lowlands, perfect in mountains. Peak trekking season.",
-    temp: "25-40°C (77-104°F)",
-    ideal: "Mountain treks, lake visits, nomadic experiences",
-  },
-  {
-    season: "Autumn (Sep-Nov)",
-    icon: "🍂",
-    description: "Golden colors, comfortable temperatures. Fewer crowds.",
-    temp: "10-25°C (50-77°F)",
-    ideal: "Hiking, photography, cultural festivals",
-  },
-  {
-    season: "Winter (Dec-Feb)",
-    icon: "❄️",
-    description: "Cold but magical. Skiing opportunities in mountains.",
-    temp: "-10 to 5°C (14-41°F)",
-    ideal: "Skiing, winter landscapes, hot springs",
-  },
-];
-
-const packingLists = {
-  essentials: [
-    "Passport (valid 6+ months)",
-    "Travel insurance documents",
-    "Copies of important documents",
-    "Credit/debit cards + some cash (USD)",
-    "Phone + charger + adapter (Type C/F)",
-    "Medications + basic first aid",
-    "Sunscreen + sunglasses",
-    "Reusable water bottle",
-  ],
-  clothing: [
-    "Layers (weather varies greatly)",
-    "Comfortable walking shoes",
-    "Light jacket or fleece",
-    "Rain jacket (spring/autumn)",
-    "Hat for sun protection",
-    "Modest clothing for religious sites",
-    "Warm clothes if visiting mountains",
-    "Swimwear (for lakes/pools)",
-  ],
-  trekking: [
-    "Sturdy hiking boots (broken in)",
-    "Trekking poles",
-    "Daypack (20-30L)",
-    "Headlamp + batteries",
-    "Thermal underwear",
-    "Down jacket",
-    "Gloves + warm hat",
-    "Sleeping bag liner (for yurt stays)",
-  ],
-};
-
-const healthSafety = [
-  {
-    title: "Vaccinations",
-    icon: "💉",
-    content:
-      "No mandatory vaccinations required. Recommended: Hepatitis A & B, Typhoid, routine vaccinations. Consult your doctor 4-6 weeks before travel.",
-  },
-  {
-    title: "Altitude",
-    icon: "⛰️",
-    content:
-      "Many destinations are above 2,000m. Acclimatize gradually, stay hydrated, and watch for altitude sickness symptoms. Descend if symptoms worsen.",
-  },
-  {
-    title: "Water",
-    icon: "💧",
-    content:
-      "Drink only bottled or purified water. Avoid ice in drinks outside major hotels. Bottled water is widely available and inexpensive.",
-  },
-  {
-    title: "Safety",
-    icon: "🛡️",
-    content:
-      "Central Asia is generally very safe for tourists. Use common sense, avoid displaying expensive items, and keep valuables secure.",
-  },
-];
-
-const moneyInfo = [
-  {
-    country: "Kazakhstan",
-    currency: "Tenge (KZT)",
-    rate: "~450 KZT = 1 USD",
-    tips:
-      "ATMs widely available in cities. Cards accepted in major establishments. Carry cash for bazaars and rural areas.",
-  },
-  {
-    country: "Kyrgyzstan",
-    currency: "Som (KGS)",
-    rate: "~88 KGS = 1 USD",
-    tips: "Cash preferred in most places. ATMs available in Bishkek and major towns. USD easily exchanged.",
-  },
-  {
-    country: "Uzbekistan",
-    currency: "Som (UZS)",
-    rate: "~12,500 UZS = 1 USD",
-    tips: "Cash is king. Bring clean, new USD bills. Cards increasingly accepted in tourist areas.",
-  },
-];
-
-const culturalTips = [
-  {
-    title: "Hospitality",
-    description:
-      "Central Asians are incredibly hospitable. You may be invited into homes for tea—it's polite to accept. Remove shoes when entering homes.",
-  },
-  {
-    title: "Greetings",
-    description:
-      "Handshakes are common between men. With women, wait for them to extend their hand first. A slight bow shows respect to elders.",
-  },
-  {
-    title: "Bread",
-    description:
-      "Bread (non/nan) is sacred. Never place it upside down, throw it away, or put it on the ground. Break it by hand, don't cut with a knife.",
-  },
-  {
-    title: "Photography",
-    description:
-      "Always ask permission before photographing people. Some religious sites prohibit photography. Military installations are off-limits.",
-  },
-  {
-    title: "Dress Code",
-    description:
-      "Dress modestly, especially at religious sites. Women should cover shoulders and knees. Headscarves required at some mosques.",
-  },
-  {
-    title: "Bargaining",
-    description:
-      "Expected at bazaars and markets. Start at 50-60% of asking price. Keep it friendly and smile. Fixed prices in shops and supermarkets.",
-  },
-];
-
 // ═════════════════════════════════════════════════════════════════════════════
 // SECTION 1 — HERO
 // ═════════════════════════════════════════════════════════════════════════════
 function HeroSection() {
+  const { t } = useLocale();
   return (
     <section
-      aria-label="Practical travel information"
+      aria-label={t.practicalInfo.hero.ariaLabel}
       className="relative text-center text-white overflow-hidden"
     >
       <Image
@@ -242,20 +60,20 @@ function HeroSection() {
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
           <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
-          <span className="text-emerald-300/80 text-xs tracking-[0.3em] uppercase drop-shadow-md">Travel Guide</span>
+          <span className="text-emerald-300/80 text-xs tracking-[0.3em] uppercase drop-shadow-md">{t.practicalInfo.hero.bannerLabel}</span>
           <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
         </div>
 
         <p className="text-emerald-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3 drop-shadow-md">
-          Know Before You Go
+          {t.practicalInfo.hero.eyebrow}
         </p>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-md">
-          Practical <span className="text-emerald-400">Information</span>
+          {t.practicalInfo.hero.titlePrefix} <span className="text-emerald-400">{t.practicalInfo.hero.titleAccent}</span>
         </h1>
 
         <p className="text-base md:text-lg text-stone-200 max-w-2xl mx-auto mb-4 leading-relaxed drop-shadow-md">
-          Everything you need to know to prepare for your Central Asian adventure.
+          {t.practicalInfo.hero.subtitle}
         </p>
 
         <NatureDivider />
@@ -268,18 +86,19 @@ function HeroSection() {
 // QUICK NAV — sticky section jump bar
 // ═════════════════════════════════════════════════════════════════════════════
 function QuickNav() {
+  const { t } = useLocale();
   const sections = [
-    { id: "visa", label: "Visa Info" },
-    { id: "weather", label: "Weather" },
-    { id: "packing", label: "Packing" },
-    { id: "health", label: "Health & Safety" },
-    { id: "money", label: "Money" },
-    { id: "culture", label: "Culture" },
+    { id: "visa", label: t.practicalInfo.quickNav.sections.visa },
+    { id: "weather", label: t.practicalInfo.quickNav.sections.weather },
+    { id: "packing", label: t.practicalInfo.quickNav.sections.packing },
+    { id: "health", label: t.practicalInfo.quickNav.sections.health },
+    { id: "money", label: t.practicalInfo.quickNav.sections.money },
+    { id: "culture", label: t.practicalInfo.quickNav.sections.culture },
   ];
 
   return (
     <nav
-      aria-label="Practical info sections"
+      aria-label={t.practicalInfo.quickNav.ariaLabel}
       className="bg-emerald-950 dark:bg-slate-950 border-b border-emerald-500/20 sticky top-16 z-40 shadow-sm"
     >
       <div className="max-w-7xl mx-auto px-4">
@@ -303,6 +122,7 @@ function QuickNav() {
 // VISA SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function VisaSection() {
+  const { t } = useLocale();
   return (
     <section
       id="visa"
@@ -311,18 +131,18 @@ function VisaSection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <Eyebrow>Entry Requirements</Eyebrow>
+          <Eyebrow>{t.practicalInfo.visa.eyebrow}</Eyebrow>
           <h2
             id="visa-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Visa Information
+            {t.practicalInfo.visa.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {visaInfo.map((country) => (
+          {t.practicalInfo.visa.countries.map((country) => (
             <article
               key={country.country}
               className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
@@ -338,7 +158,7 @@ function VisaSection() {
               <div className="space-y-4">
                 <div>
                   <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
-                    Visa-free duration
+                    {t.practicalInfo.visa.durationLabel}
                   </p>
                   <p className="font-semibold text-emerald-700 dark:text-emerald-400 font-serif text-lg">
                     {country.duration}
@@ -346,10 +166,10 @@ function VisaSection() {
                 </div>
                 <div>
                   <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
-                    Visa-free for citizens of
+                    {t.practicalInfo.visa.visaFreeForLabel}
                   </p>
                   <p className="text-stone-700 dark:text-stone-300 text-sm mt-0.5">
-                    {country.visaFree.join(", ")}
+                    {country.visaFree}
                   </p>
                 </div>
                 <div className="pt-4 border-t border-stone-200 dark:border-slate-700">
@@ -367,9 +187,8 @@ function VisaSection() {
           className="relative mt-8 bg-emerald-100/50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700 p-5 rounded-xl"
         >
           <p className="text-emerald-900 dark:text-emerald-200 text-sm leading-relaxed">
-            <strong className="uppercase tracking-wider text-xs">Note:</strong>{" "}
-            Visa requirements change frequently. Always verify current
-            requirements with the official embassy or consulate before traveling.
+            <strong className="uppercase tracking-wider text-xs">{t.practicalInfo.visa.noteStrong}</strong>{" "}
+            {t.practicalInfo.visa.noteBody}
           </p>
         </div>
       </div>
@@ -381,6 +200,7 @@ function VisaSection() {
 // WEATHER SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function WeatherSection() {
+  const { t } = useLocale();
   return (
     <section
       id="weather"
@@ -389,18 +209,18 @@ function WeatherSection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <Eyebrow>When to Visit</Eyebrow>
+          <Eyebrow>{t.practicalInfo.weather.eyebrow}</Eyebrow>
           <h2
             id="weather-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Weather &amp; Best Time to Visit
+            {t.practicalInfo.weather.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {weatherData.map((season) => (
+          {t.practicalInfo.weather.seasons.map((season) => (
             <article
               key={season.season}
               className="relative bg-white dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
@@ -419,7 +239,7 @@ function WeatherSection() {
               </p>
               <div className="pt-4 border-t border-stone-200 dark:border-slate-700">
                 <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
-                  Best for
+                  {t.practicalInfo.weather.bestForLabel}
                 </p>
                 <p className="text-sm text-stone-700 dark:text-stone-300 mt-1">
                   {season.ideal}
@@ -443,7 +263,7 @@ function PackingCard({
 }: {
   title: string;
   emoji: string;
-  items: string[];
+  items: readonly string[];
 }) {
   return (
     <article className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl">
@@ -481,6 +301,7 @@ function PackingCard({
 }
 
 function PackingSection() {
+  const { t } = useLocale();
   return (
     <section
       id="packing"
@@ -489,20 +310,20 @@ function PackingSection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <Eyebrow>What to Bring</Eyebrow>
+          <Eyebrow>{t.practicalInfo.packing.eyebrow}</Eyebrow>
           <h2
             id="packing-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Packing Lists
+            {t.practicalInfo.packing.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <PackingCard title="Essentials" emoji="📋" items={packingLists.essentials} />
-          <PackingCard title="Clothing" emoji="👕" items={packingLists.clothing} />
-          <PackingCard title="Trekking Gear" emoji="🥾" items={packingLists.trekking} />
+          <PackingCard title={t.practicalInfo.packing.essentials.title} emoji="📋" items={t.practicalInfo.packing.essentials.items} />
+          <PackingCard title={t.practicalInfo.packing.clothing.title} emoji="👕" items={t.practicalInfo.packing.clothing.items} />
+          <PackingCard title={t.practicalInfo.packing.trekking.title} emoji="🥾" items={t.practicalInfo.packing.trekking.items} />
         </div>
       </div>
     </section>
@@ -513,6 +334,7 @@ function PackingSection() {
 // HEALTH SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function HealthSection() {
+  const { t } = useLocale();
   return (
     <section
       id="health"
@@ -521,18 +343,18 @@ function HealthSection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <Eyebrow>Stay Well</Eyebrow>
+          <Eyebrow>{t.practicalInfo.health.eyebrow}</Eyebrow>
           <h2
             id="health-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Health &amp; Safety
+            {t.practicalInfo.health.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
-          {healthSafety.map((item) => (
+          {t.practicalInfo.health.items.map((item) => (
             <article
               key={item.title}
               className="relative bg-white dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 flex gap-4 rounded-xl"
@@ -557,8 +379,8 @@ function HealthSection() {
           className="mt-8 bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-800 p-5 rounded-xl"
         >
           <p className="text-red-800 dark:text-red-200 text-sm leading-relaxed">
-            <strong className="uppercase tracking-wider text-xs">Emergency Numbers:</strong>{" "}
-            Police: 102 | Ambulance: 103 | Fire: 101 (in all Central Asian countries)
+            <strong className="uppercase tracking-wider text-xs">{t.practicalInfo.health.emergencyStrong}</strong>{" "}
+            {t.practicalInfo.health.emergencyBody}
           </p>
         </div>
       </div>
@@ -570,6 +392,7 @@ function HealthSection() {
 // MONEY SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function MoneySection() {
+  const { t } = useLocale();
   return (
     <section
       id="money"
@@ -578,18 +401,18 @@ function MoneySection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <Eyebrow>Currency</Eyebrow>
+          <Eyebrow>{t.practicalInfo.money.eyebrow}</Eyebrow>
           <h2
             id="money-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Money &amp; Currency
+            {t.practicalInfo.money.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {moneyInfo.map((info) => (
+          {t.practicalInfo.money.countries.map((info) => (
             <article
               key={info.country}
               className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
@@ -600,7 +423,7 @@ function MoneySection() {
               <div className="space-y-4">
                 <div>
                   <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
-                    Currency
+                    {t.practicalInfo.money.currencyLabel}
                   </p>
                   <p className="font-semibold text-stone-900 dark:text-emerald-100 font-serif">
                     {info.currency}
@@ -608,7 +431,7 @@ function MoneySection() {
                 </div>
                 <div>
                   <p className="text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em]">
-                    Approximate rate
+                    {t.practicalInfo.money.rateLabel}
                   </p>
                   <p className="font-semibold text-emerald-700 dark:text-emerald-400 font-serif">
                     {info.rate}
@@ -629,9 +452,8 @@ function MoneySection() {
           className="mt-8 bg-emerald-100/50 dark:bg-emerald-900/20 border border-emerald-300 dark:border-emerald-700 p-5 rounded-xl"
         >
           <p className="text-emerald-900 dark:text-emerald-200 text-sm leading-relaxed">
-            <strong className="uppercase tracking-wider text-xs">Tip:</strong>{" "}
-            Bring clean, unmarked US dollars (2009 or newer) for the best
-            exchange rates. Torn or marked bills may be refused.
+            <strong className="uppercase tracking-wider text-xs">{t.practicalInfo.money.tipStrong}</strong>{" "}
+            {t.practicalInfo.money.tipBody}
           </p>
         </div>
       </div>
@@ -643,6 +465,7 @@ function MoneySection() {
 // CULTURE SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function CultureSection() {
+  const { t } = useLocale();
   return (
     <section
       id="culture"
@@ -651,18 +474,18 @@ function CultureSection() {
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <Eyebrow>Local Customs</Eyebrow>
+          <Eyebrow>{t.practicalInfo.culture.eyebrow}</Eyebrow>
           <h2
             id="culture-heading"
             className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
           >
-            Cultural Etiquette
+            {t.practicalInfo.culture.title}
           </h2>
           <NatureDivider className="mt-4" />
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {culturalTips.map((tip) => (
+          {t.practicalInfo.culture.tips.map((tip) => (
             <article
               key={tip.title}
               className="relative bg-white dark:bg-slate-950 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors p-6 rounded-xl"
@@ -685,6 +508,7 @@ function CultureSection() {
 // CTA SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function CTASection() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="info-cta-heading"
@@ -697,16 +521,16 @@ function CTASection() {
 
       <div className="relative max-w-3xl mx-auto text-center">
         <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-3">
-          Your Next Step
+          {t.practicalInfo.cta.eyebrow}
         </p>
         <h2
           id="info-cta-heading"
           className="text-3xl md:text-5xl font-bold mb-4 font-serif"
         >
-          Ready to Start Your Adventure?
+          {t.practicalInfo.cta.title}
         </h2>
         <p className="text-stone-400 mb-8 max-w-xl mx-auto leading-relaxed">
-          Now that you know what to expect, let us help you plan the perfect trip.
+          {t.practicalInfo.cta.subtitle}
         </p>
 
         <NatureDivider className="mb-10" />
@@ -716,13 +540,13 @@ function CTASection() {
             href="/tours"
             className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Browse Tours
+            {t.practicalInfo.cta.browseTours}
           </Link>
           <Link
             href="/contact"
             className="border-2 border-emerald-500 hover:bg-emerald-600 hover:text-white text-emerald-300 px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Contact Us
+            {t.practicalInfo.cta.contactUs}
           </Link>
         </div>
       </div>

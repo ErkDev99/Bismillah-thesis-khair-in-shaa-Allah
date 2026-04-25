@@ -1,53 +1,22 @@
 // src/app/blog/[slug]/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Server Component — no "use client" needed.
-// Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
-// leaf dividers, bright photography, dark mode throughout.
+// Client Component — needs useLocale(). React 19 `use(params)` unwraps the
+// Promise<{slug}> Next.js 15+ passes in. generateStaticParams /
+// generateMetadata dropped (server-only; Phase 4 SEO skipped).
+// Style: Nature / Travel Magazine — emerald + cream palette.
 // ─────────────────────────────────────────────────────────────────────────────
+"use client";
+
+import { use } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   getPostBySlug,
-  getAllPosts,
   getRelatedPosts,
   type BlogPost,
 } from "@/lib/data/blog";
-
-// ─── Generate static params for all posts ───────────────────────────────────
-export async function generateStaticParams() {
-  const posts = getAllPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
-// ─── Generate metadata for SEO ──────────────────────────────────────────────
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const post = getPostBySlug(slug);
-
-  if (!post) {
-    return { title: "Post Not Found" };
-  }
-
-  return {
-    title: `${post.title} | Wanderlust Blog`,
-    description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: "article",
-      siteName: "Wanderlust",
-      publishedTime: post.publishedAt,
-      authors: [post.author.name],
-    },
-  };
-}
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -62,19 +31,20 @@ function NatureDivider({ className = "" }: { className?: string }) {
   );
 }
 
-// ─── Format date helper ──────────────────────────────────────────────────────
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+// ─── Format date helper (locale-aware) ───────────────────────────────────────
+function formatDate(dateString: string, locale: "en" | "ru"): string {
+  return new Date(dateString).toLocaleDateString(
+    locale === "ru" ? "ru-RU" : "en-US",
+    { year: "numeric", month: "long", day: "numeric" }
+  );
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
 // ARTICLE HEADER
 // ═════════════════════════════════════════════════════════════════════════════
 function ArticleHeader({ post }: { post: BlogPost }) {
+  const { locale, t } = useLocale();
+  const tb = t.blog;
   return (
     <header className="mb-8">
       <Link
@@ -90,12 +60,12 @@ function ArticleHeader({ post }: { post: BlogPost }) {
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        Back to Blog
+        {tb.detail.back}
       </Link>
 
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <span className="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] border border-emerald-300 dark:border-emerald-700 rounded-lg">
-          {post.category}
+          {tb.categories[post.category]}
         </span>
         <span className="text-stone-600 dark:text-stone-400 text-xs uppercase tracking-[0.15em]">
           {post.readTime}
@@ -125,7 +95,7 @@ function ArticleHeader({ post }: { post: BlogPost }) {
             {post.author.name}
           </p>
           <p className="text-xs text-stone-600 dark:text-stone-400 uppercase tracking-[0.15em] mt-0.5">
-            {post.author.role} &middot; {formatDate(post.publishedAt)}
+            {post.author.role} &middot; {formatDate(post.publishedAt, locale)}
           </p>
         </div>
       </div>
@@ -232,10 +202,11 @@ function ArticleContent({ content }: { content: string }) {
 // TAG LIST
 // ═════════════════════════════════════════════════════════════════════════════
 function TagList({ tags }: { tags: string[] }) {
+  const { t } = useLocale();
   return (
     <div className="mt-10 pt-8 border-t border-stone-200 dark:border-slate-800">
       <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-[10px] mb-3">
-        Tags
+        {t.blog.detail.tagsLabel}
       </p>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
@@ -255,26 +226,28 @@ function TagList({ tags }: { tags: string[] }) {
 // SHARE BUTTONS
 // ═════════════════════════════════════════════════════════════════════════════
 function ShareButtons() {
+  const { t } = useLocale();
+  const td = t.blog.detail;
   const buttonClass =
     "w-10 h-10 border border-emerald-500/30 hover:border-emerald-500 hover:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 flex items-center justify-center transition-all rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500";
 
   return (
     <div className="flex flex-wrap items-center gap-4 mt-8 pt-8 border-t border-stone-200 dark:border-slate-800">
       <span className="text-stone-700 dark:text-stone-300 font-semibold text-xs uppercase tracking-[0.2em]">
-        Share this article
+        {td.share}
       </span>
       <div className="flex gap-2">
-        <button type="button" className={buttonClass} aria-label="Share on Twitter">
+        <button type="button" className={buttonClass} aria-label={td.shareTwitter}>
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
           </svg>
         </button>
-        <button type="button" className={buttonClass} aria-label="Share on Facebook">
+        <button type="button" className={buttonClass} aria-label={td.shareFacebook}>
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
           </svg>
         </button>
-        <button type="button" className={buttonClass} aria-label="Share on LinkedIn">
+        <button type="button" className={buttonClass} aria-label={td.shareLinkedIn}>
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
           </svg>
@@ -288,6 +261,8 @@ function ShareButtons() {
 // RELATED POSTS
 // ═════════════════════════════════════════════════════════════════════════════
 function RelatedPosts({ posts }: { posts: BlogPost[] }) {
+  const { t } = useLocale();
+  const tr = t.blog.detail.related;
   if (posts.length === 0) return null;
 
   return (
@@ -297,13 +272,13 @@ function RelatedPosts({ posts }: { posts: BlogPost[] }) {
     >
       <div className="mb-8">
         <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
-          Keep Reading
+          {tr.eyebrow}
         </p>
         <h2
           id="related-heading"
           className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-emerald-100 font-serif"
         >
-          Related Articles
+          {tr.title}
         </h2>
       </div>
       <div className="grid md:grid-cols-3 gap-6">
@@ -311,7 +286,7 @@ function RelatedPosts({ posts }: { posts: BlogPost[] }) {
           <Link
             key={post.id}
             href={`/blog/${post.slug}`}
-            aria-label={`Read: ${post.title}`}
+            aria-label={`${tr.readAriaPrefix}: ${post.title}`}
             className="group relative focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
           >
             <article className="relative bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 rounded-xl">
@@ -344,6 +319,8 @@ function RelatedPosts({ posts }: { posts: BlogPost[] }) {
 // CTA SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function CTASection() {
+  const { t } = useLocale();
+  const tc = t.blog.detail.cta;
   return (
     <section
       aria-labelledby="blog-cta-heading"
@@ -356,14 +333,13 @@ function CTASection() {
 
       <div className="relative">
         <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-3">
-          Inspired?
+          {tc.eyebrow}
         </p>
         <h2 id="blog-cta-heading" className="text-2xl md:text-3xl font-bold mb-4 font-serif">
-          Ready to Experience Central Asia?
+          {tc.title}
         </h2>
         <p className="text-stone-400 mb-8 max-w-xl mx-auto leading-relaxed">
-          Turn inspiration into adventure. Browse our curated tours or contact us
-          to plan your custom journey.
+          {tc.subtitle}
         </p>
 
         <NatureDivider className="mb-8" />
@@ -373,13 +349,13 @@ function CTASection() {
             href="/tours"
             className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Explore Tours
+            {tc.exploreTours}
           </Link>
           <Link
             href="/contact"
             className="border-2 border-emerald-500 hover:bg-emerald-600 hover:text-white text-emerald-300 px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Contact Us
+            {tc.contactUs}
           </Link>
         </div>
       </div>
@@ -390,19 +366,21 @@ function CTASection() {
 // ═════════════════════════════════════════════════════════════════════════════
 // PAGE ROOT
 // ═════════════════════════════════════════════════════════════════════════════
-export default async function BlogPostPage({
+export default function BlogPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const { slug } = use(params);
+  const { locale } = useLocale();
+
+  const post = getPostBySlug(slug, locale);
 
   if (!post) {
     notFound();
   }
 
-  const relatedPosts = getRelatedPosts(slug, 3);
+  const relatedPosts = getRelatedPosts(slug, locale, 3);
 
   return (
     <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">

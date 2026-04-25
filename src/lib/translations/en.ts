@@ -505,6 +505,712 @@ const en = {
       browseTours: "Browse Tours",
     },
   },
+  contact: {
+    hero: {
+      ariaLabel: "Contact Wanderlust",
+      eyebrow: "We're Listening",
+      titlePrefix: "Get in",
+      titleAccent: "Touch",
+      subtitle:
+        "Have questions about a tour? Ready to start planning? We would love to hear from you.",
+    },
+    info: {
+      eyebrow: "Reach Us",
+      title: "Contact Information",
+      labels: {
+        email: "Email",
+        phone: "Phone",
+        office: "Office",
+        hours: "Hours",
+      },
+      hours: "Mon-Fri: 9AM-6PM (UTC+6)",
+      followUs: "Follow Us",
+    },
+    form: {
+      eyebrow: "Inquiry Form",
+      title: "Send Us a Message",
+      subtitle:
+        "Fill out the form below and we will get back to you as soon as possible.",
+      fullNameLabel: "Full Name *",
+      fullNamePlaceholder: "John Doe",
+      emailLabel: "Email Address *",
+      emailPlaceholder: "john@example.com",
+      phoneLabel: "Phone Number",
+      phonePlaceholder: "+1 (555) 000-0000",
+      subjectLabel: "Subject *",
+      selectSubject: "Select a subject",
+      subjects: {
+        tourInquiry: "Tour Inquiry",
+        customTrip: "Custom Trip Planning",
+        booking: "Booking Question",
+        partnership: "Partnership Opportunity",
+        feedback: "Feedback",
+        other: "Other",
+      },
+      messageLabel: "Message *",
+      messagePlaceholder: "Tell us about your travel plans or questions...",
+      submit: "Send Message",
+      sending: "Sending...",
+      success:
+        "Thank you! Your message has been sent. We will get back to you within 24 hours.",
+      error: "Something went wrong. Please try again or email us directly.",
+    },
+    map: {
+      eyebrow: "Our Location",
+      title: "Find Us",
+      iframeTitle: "Our location in Bishkek, Kyrgyzstan",
+    },
+    faq: {
+      eyebrow: "Quick Answers",
+      title: "Frequently Asked Questions",
+      items: [
+        {
+          question: "How quickly will you respond to my inquiry?",
+          answer:
+            "We typically respond within 24 hours during business days. For urgent matters, please call us directly.",
+        },
+        {
+          question: "Can you create custom itineraries?",
+          answer:
+            "Absolutely! We specialize in tailor-made trips. Share your interests, budget, and timeframe, and we will craft the perfect journey.",
+        },
+        {
+          question: "What payment methods do you accept?",
+          answer:
+            "We accept major credit cards, bank transfers, and PayPal. A 30% deposit secures your booking, with the balance due 30 days before departure.",
+        },
+      ] as [
+        { question: string; answer: string },
+        { question: string; answer: string },
+        { question: string; answer: string },
+      ],
+      moreQuestionsPrefix: "More questions?",
+      moreQuestionsLink: "Check our Practical Info page",
+    },
+  },
+  practicalInfo: {
+    hero: {
+      ariaLabel: "Practical travel information",
+      bannerLabel: "Travel Guide",
+      eyebrow: "Know Before You Go",
+      titlePrefix: "Practical",
+      titleAccent: "Information",
+      subtitle:
+        "Everything you need to know to prepare for your Central Asian adventure.",
+    },
+    quickNav: {
+      ariaLabel: "Practical info sections",
+      sections: {
+        visa: "Visa Info",
+        weather: "Weather",
+        packing: "Packing",
+        health: "Health & Safety",
+        money: "Money",
+        culture: "Culture",
+      },
+    },
+    visa: {
+      eyebrow: "Entry Requirements",
+      title: "Visa Information",
+      durationLabel: "Visa-free duration",
+      visaFreeForLabel: "Visa-free for citizens of",
+      noteStrong: "Note:",
+      noteBody:
+        "Visa requirements change frequently. Always verify current requirements with the official embassy or consulate before traveling.",
+      countries: [
+        {
+          country: "Kazakhstan",
+          flag: "🇰🇿",
+          visaFree: "USA, UK, EU countries, Canada, Australia, Japan, South Korea, UAE",
+          duration: "30 days",
+          notes:
+            "Visa-free for 70+ countries. Registration required for stays over 30 days.",
+        },
+        {
+          country: "Kyrgyzstan",
+          flag: "🇰🇬",
+          visaFree: "USA, UK, EU countries, Canada, Australia, Japan, Most countries",
+          duration: "60 days",
+          notes:
+            "One of the most open visa policies in Central Asia. E-visa available for others.",
+        },
+        {
+          country: "Uzbekistan",
+          flag: "🇺🇿",
+          visaFree: "USA, UK, EU countries, Canada, Australia, Japan, South Korea",
+          duration: "30 days",
+          notes:
+            "Visa-free since 2019 for 90+ countries. E-visa available for others.",
+        },
+      ] as [
+        { country: string; flag: string; visaFree: string; duration: string; notes: string },
+        { country: string; flag: string; visaFree: string; duration: string; notes: string },
+        { country: string; flag: string; visaFree: string; duration: string; notes: string },
+      ],
+    },
+    weather: {
+      eyebrow: "When to Visit",
+      title: "Weather & Best Time to Visit",
+      bestForLabel: "Best for",
+      seasons: [
+        {
+          season: "Spring (Mar–May)",
+          icon: "🌸",
+          temp: "10–20°C (50–68°F)",
+          description:
+            "Mild temperatures, occasional rain. Flowers bloom across the steppes.",
+          ideal: "City tours, cultural sites, photography",
+        },
+        {
+          season: "Summer (Jun–Aug)",
+          icon: "☀️",
+          temp: "25–40°C (77–104°F)",
+          description: "Hot in lowlands, perfect in mountains. Peak trekking season.",
+          ideal: "Mountain treks, lake visits, nomadic experiences",
+        },
+        {
+          season: "Autumn (Sep–Nov)",
+          icon: "🍂",
+          temp: "10–25°C (50–77°F)",
+          description: "Golden colors, comfortable temperatures. Fewer crowds.",
+          ideal: "Hiking, photography, cultural festivals",
+        },
+        {
+          season: "Winter (Dec–Feb)",
+          icon: "❄️",
+          temp: "-10 to 5°C (14–41°F)",
+          description: "Cold but magical. Skiing opportunities in mountains.",
+          ideal: "Skiing, winter landscapes, hot springs",
+        },
+      ] as [
+        { season: string; icon: string; temp: string; description: string; ideal: string },
+        { season: string; icon: string; temp: string; description: string; ideal: string },
+        { season: string; icon: string; temp: string; description: string; ideal: string },
+        { season: string; icon: string; temp: string; description: string; ideal: string },
+      ],
+    },
+    packing: {
+      eyebrow: "What to Bring",
+      title: "Packing Lists",
+      essentials: {
+        title: "Essentials",
+        items: [
+          "Passport (valid 6+ months)",
+          "Travel insurance documents",
+          "Copies of important documents",
+          "Credit/debit cards + some cash (USD)",
+          "Phone + charger + adapter (Type C/F)",
+          "Medications + basic first aid",
+          "Sunscreen + sunglasses",
+          "Reusable water bottle",
+        ] as [string, string, string, string, string, string, string, string],
+      },
+      clothing: {
+        title: "Clothing",
+        items: [
+          "Layers (weather varies greatly)",
+          "Comfortable walking shoes",
+          "Light jacket or fleece",
+          "Rain jacket (spring/autumn)",
+          "Hat for sun protection",
+          "Modest clothing for religious sites",
+          "Warm clothes if visiting mountains",
+          "Swimwear (for lakes/pools)",
+        ] as [string, string, string, string, string, string, string, string],
+      },
+      trekking: {
+        title: "Trekking Gear",
+        items: [
+          "Sturdy hiking boots (broken in)",
+          "Trekking poles",
+          "Daypack (20–30L)",
+          "Headlamp + batteries",
+          "Thermal underwear",
+          "Down jacket",
+          "Gloves + warm hat",
+          "Sleeping bag liner (for yurt stays)",
+        ] as [string, string, string, string, string, string, string, string],
+      },
+    },
+    health: {
+      eyebrow: "Stay Well",
+      title: "Health & Safety",
+      items: [
+        {
+          title: "Vaccinations",
+          icon: "💉",
+          content:
+            "No mandatory vaccinations required. Recommended: Hepatitis A & B, Typhoid, routine vaccinations. Consult your doctor 4–6 weeks before travel.",
+        },
+        {
+          title: "Altitude",
+          icon: "⛰️",
+          content:
+            "Many destinations are above 2,000 m. Acclimatize gradually, stay hydrated, and watch for altitude sickness symptoms. Descend if symptoms worsen.",
+        },
+        {
+          title: "Water",
+          icon: "💧",
+          content:
+            "Drink only bottled or purified water. Avoid ice in drinks outside major hotels. Bottled water is widely available and inexpensive.",
+        },
+        {
+          title: "Safety",
+          icon: "🛡️",
+          content:
+            "Central Asia is generally very safe for tourists. Use common sense, avoid displaying expensive items, and keep valuables secure.",
+        },
+      ] as [
+        { title: string; icon: string; content: string },
+        { title: string; icon: string; content: string },
+        { title: string; icon: string; content: string },
+        { title: string; icon: string; content: string },
+      ],
+      emergencyStrong: "Emergency Numbers:",
+      emergencyBody:
+        "Police: 102 | Ambulance: 103 | Fire: 101 (in all Central Asian countries)",
+    },
+    money: {
+      eyebrow: "Currency",
+      title: "Money & Currency",
+      currencyLabel: "Currency",
+      rateLabel: "Approximate rate",
+      countries: [
+        {
+          country: "Kazakhstan",
+          currency: "Tenge (KZT)",
+          rate: "~450 KZT = 1 USD",
+          tips:
+            "ATMs widely available in cities. Cards accepted in major establishments. Carry cash for bazaars and rural areas.",
+        },
+        {
+          country: "Kyrgyzstan",
+          currency: "Som (KGS)",
+          rate: "~88 KGS = 1 USD",
+          tips:
+            "Cash preferred in most places. ATMs available in Bishkek and major towns. USD easily exchanged.",
+        },
+        {
+          country: "Uzbekistan",
+          currency: "Som (UZS)",
+          rate: "~12,500 UZS = 1 USD",
+          tips:
+            "Cash is king. Bring clean, new USD bills. Cards increasingly accepted in tourist areas.",
+        },
+      ] as [
+        { country: string; currency: string; rate: string; tips: string },
+        { country: string; currency: string; rate: string; tips: string },
+        { country: string; currency: string; rate: string; tips: string },
+      ],
+      tipStrong: "Tip:",
+      tipBody:
+        "Bring clean, unmarked US dollars (2009 or newer) for the best exchange rates. Torn or marked bills may be refused.",
+    },
+    culture: {
+      eyebrow: "Local Customs",
+      title: "Cultural Etiquette",
+      tips: [
+        {
+          title: "Hospitality",
+          description:
+            "Central Asians are incredibly hospitable. You may be invited into homes for tea — it's polite to accept. Remove shoes when entering homes.",
+        },
+        {
+          title: "Greetings",
+          description:
+            "Handshakes are common between men. With women, wait for them to extend their hand first. A slight bow shows respect to elders.",
+        },
+        {
+          title: "Bread",
+          description:
+            "Bread (non/nan) is sacred. Never place it upside down, throw it away, or put it on the ground. Break it by hand, don't cut with a knife.",
+        },
+        {
+          title: "Photography",
+          description:
+            "Always ask permission before photographing people. Some religious sites prohibit photography. Military installations are off-limits.",
+        },
+        {
+          title: "Dress Code",
+          description:
+            "Dress modestly, especially at religious sites. Women should cover shoulders and knees. Headscarves required at some mosques.",
+        },
+        {
+          title: "Bargaining",
+          description:
+            "Expected at bazaars and markets. Start at 50–60% of asking price. Keep it friendly and smile. Fixed prices in shops and supermarkets.",
+        },
+      ] as [
+        { title: string; description: string },
+        { title: string; description: string },
+        { title: string; description: string },
+        { title: string; description: string },
+        { title: string; description: string },
+        { title: string; description: string },
+      ],
+    },
+    cta: {
+      eyebrow: "Your Next Step",
+      title: "Ready to Start Your Adventure?",
+      subtitle:
+        "Now that you know what to expect, let us help you plan the perfect trip.",
+      browseTours: "Browse Tours",
+      contactUs: "Contact Us",
+    },
+  },
+  faq: {
+    hero: {
+      ariaLabel: "Frequently asked questions",
+      bannerLabel: "Need Help?",
+      eyebrow: "Answers",
+      titlePrefix: "Frequently Asked",
+      titleAccent: "Questions",
+      subtitle:
+        "Everything you need to know about traveling with Wanderlust. Can't find your answer? Contact us anytime.",
+    },
+    quickNavAriaLabel: "FAQ categories",
+    categoryLabel: "Category",
+    categories: {
+      general: {
+        title: "General Questions",
+        faqs: [
+          {
+            question: "What countries does Wanderlust operate in?",
+            answer:
+              "We specialize in Central Asia, specifically Kazakhstan, Kyrgyzstan, and Uzbekistan. These three countries offer an incredible diversity of experiences — from the ancient Silk Road cities of Uzbekistan to the nomadic traditions of Kyrgyzstan and the modern cities and stunning nature of Kazakhstan.",
+          },
+          {
+            question: "Is Central Asia safe for tourists?",
+            answer:
+              "Yes, Central Asia is generally very safe for tourists. The region has low crime rates, and locals are known for their warm hospitality toward visitors. As with any travel, we recommend standard precautions: keep valuables secure, be aware of your surroundings, and follow local customs. Our guides are with you throughout the journey to ensure your safety and comfort.",
+          },
+          {
+            question: "What languages are spoken in Central Asia?",
+            answer:
+              "Each country has its own national language (Kazakh, Kyrgyz, Uzbek), but Russian is widely understood across the region as a common second language. English is spoken in tourist areas and by younger generations in cities, but less common in rural areas. All our tours include English-speaking guides, so language won't be a barrier.",
+          },
+          {
+            question: "What is the best time to visit Central Asia?",
+            answer:
+              "The best time depends on your interests. For general sightseeing and comfortable temperatures, visit in spring (April–June) or autumn (September–October). Summer (July–August) is ideal for mountain trekking but can be very hot in Uzbekistan. Winter (December–February) offers skiing opportunities in Kazakhstan and Kyrgyzstan, plus fewer crowds at historical sites.",
+          },
+        ] as [
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+        ],
+      },
+      booking: {
+        title: "Booking & Payments",
+        faqs: [
+          {
+            question: "How do I book a tour?",
+            answer:
+              "You can book a tour by clicking 'Book This Tour' on any tour page, which will take you to our contact form. Alternatively, email us at info@wanderlust.com or call +1 (555) 123-4567. We'll confirm availability, answer any questions, and send you a detailed itinerary and invoice.",
+          },
+          {
+            question: "What payment methods do you accept?",
+            answer:
+              "We accept major credit cards (Visa, MasterCard, American Express), bank transfers, and PayPal. For bank transfers, we provide details for both USD and EUR accounts. All payments are processed securely.",
+          },
+          {
+            question: "What is your deposit and payment policy?",
+            answer:
+              "We require a 30% deposit to secure your booking. The remaining 70% is due 30 days before your tour start date. For bookings made within 30 days of departure, full payment is required at the time of booking.",
+          },
+          {
+            question: "What is your cancellation policy?",
+            answer:
+              "We understand plans can change. Cancellations made 60+ days before departure receive a full refund minus a $100 admin fee. Cancellations 30–59 days before departure receive a 50% refund. Cancellations less than 30 days before departure are non-refundable. We strongly recommend purchasing travel insurance.",
+          },
+          {
+            question: "Can I customize a tour or create a private trip?",
+            answer:
+              "Absolutely! We love creating custom itineraries. Tell us your interests, budget, group size, and preferred dates, and we'll design a personalized journey just for you. Private tours are available for any of our existing itineraries as well.",
+          },
+        ] as [
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+        ],
+      },
+      tours: {
+        title: "Tours & Experiences",
+        faqs: [
+          {
+            question: "What is included in the tour price?",
+            answer:
+              "Our tour prices typically include: accommodation, transportation within the region, English-speaking guides, entrance fees to attractions, and meals as specified in the itinerary (usually breakfast daily plus some lunches and dinners). International flights, travel insurance, visa fees (if any), and personal expenses are not included unless otherwise stated.",
+          },
+          {
+            question: "What is the group size for tours?",
+            answer:
+              "Our group sizes vary by tour type. Cultural tours typically have 6–16 participants, adventure treks have 4–8, and photography expeditions are limited to 4–8 for personalized attention. We believe smaller groups provide better experiences and more meaningful connections.",
+          },
+          {
+            question: "What fitness level is required for your tours?",
+            answer:
+              "This varies by tour. Our cultural tours are suitable for anyone who can walk for a few hours with breaks. Adventure and trekking tours require moderate to good fitness — you should be comfortable hiking 10–15 km per day with elevation changes. Each tour page specifies the difficulty level (Easy, Moderate, or Challenging).",
+          },
+          {
+            question: "What type of accommodation is provided?",
+            answer:
+              "Accommodation varies by tour and location. In cities, we use 3–4 star hotels or boutique guesthouses. In rural areas, you may stay in traditional yurts, family homestays, or comfortable guesthouses. All accommodations are clean, safe, and carefully selected for authenticity and comfort.",
+          },
+          {
+            question: "Are meals included? What about dietary restrictions?",
+            answer:
+              "Most tours include breakfast daily, plus additional meals as specified. We can accommodate vegetarian, vegan, gluten-free, and other dietary requirements with advance notice. Central Asian cuisine is meat-heavy, but our team knows how to find delicious alternatives.",
+          },
+        ] as [
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+        ],
+      },
+      practical: {
+        title: "Practical Information",
+        faqs: [
+          {
+            question: "Do I need a visa to visit Central Asia?",
+            answer:
+              "Many nationalities enjoy visa-free access. Citizens of the USA, UK, EU, Canada, Australia, and 60+ other countries can visit Kazakhstan, Kyrgyzstan, and Uzbekistan visa-free for 30–60 days. Check our Practical Info page or your country's embassy website for the most current requirements.",
+          },
+          {
+            question: "What currency should I bring?",
+            answer:
+              "US dollars are the best currency to bring — they're easily exchanged everywhere and often get the best rates. Bring clean, unmarked bills from 2009 or newer. ATMs are available in cities, and credit cards are increasingly accepted in urban areas, but cash is essential for rural regions and bazaars.",
+          },
+          {
+            question: "What should I pack for a Central Asia trip?",
+            answer:
+              "Pack layers, as temperatures can vary significantly between day and night. Comfortable walking shoes are essential. For religious sites, bring modest clothing (covering shoulders and knees). Sun protection is important at high altitudes. Check our Practical Info page for detailed packing lists by season and tour type.",
+          },
+          {
+            question: "Is travel insurance required?",
+            answer:
+              "While not technically required, we strongly recommend comprehensive travel insurance that covers medical emergencies, evacuation, trip cancellation, and lost luggage. For adventure tours involving trekking at altitude, ensure your policy covers activities up to 4,000 m or higher.",
+          },
+          {
+            question: "What vaccinations do I need?",
+            answer:
+              "No vaccinations are mandatory for Central Asia. However, we recommend being up-to-date on routine vaccinations and considering Hepatitis A, Hepatitis B, and Typhoid. Consult your doctor or a travel clinic 4–6 weeks before departure for personalized advice.",
+          },
+          {
+            question: "Can I use my mobile phone in Central Asia?",
+            answer:
+              "Yes, mobile coverage is good in cities and along main routes. You can buy local SIM cards inexpensively at airports and phone shops (bring your passport). WiFi is available in most hotels and many cafes. In remote mountain areas, coverage may be limited or unavailable.",
+          },
+        ] as [
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+          { question: string; answer: string },
+        ],
+      },
+    },
+    contactCta: {
+      eyebrow: "Still Stuck?",
+      title: "Still Have Questions?",
+      subtitle:
+        "Our team is here to help. Reach out anytime and we'll get back to you within 24 hours.",
+      contactUs: "Contact Us",
+      emailUs: "Email Us Directly",
+      callUsPrefix: "Or call us at",
+    },
+    related: {
+      eyebrow: "Explore More",
+      title: "Helpful Resources",
+      items: [
+        {
+          title: "Practical Info",
+          description: "Visa, weather, packing lists, and more",
+        },
+        {
+          title: "Our Tours",
+          description: "Browse all available adventures",
+        },
+        {
+          title: "About Us",
+          description: "Learn about our team and mission",
+        },
+      ] as [
+        { title: string; description: string },
+        { title: string; description: string },
+        { title: string; description: string },
+      ],
+    },
+  },
+  blog: {
+    hero: {
+      ariaLabel: "Travel blog",
+      eyebrowOrnament: "The Journal",
+      eyebrow: "Stories from the Silk Road",
+      titlePrefix: "Travel Stories &",
+      titleAccent: "Guides",
+      subtitle:
+        "Insights, tips, and inspiration for your Central Asian adventure from our team of local experts.",
+    },
+    categories: {
+      "travel-guide": "Travel Guide",
+      culture: "Culture",
+      photography: "Photography",
+      "food-culture": "Food & Culture",
+      adventure: "Adventure",
+      destinations: "Destinations",
+    } as Record<
+      "travel-guide" | "culture" | "photography" | "food-culture" | "adventure" | "destinations",
+      string
+    >,
+    filter: {
+      ariaLabel: "Filter posts by category",
+      allPosts: "All Posts",
+    },
+    card: {
+      featured: "Featured",
+      readFeaturedAriaPrefix: "Read featured post",
+      readAriaPrefix: "Read",
+    },
+    empty: {
+      title: "No posts found",
+      subtitle: "No blog posts in this category yet.",
+      viewAll: "View all posts",
+    },
+    newsletter: {
+      ariaLabel: "Blog newsletter signup",
+      eyebrow: "Stay Inspired",
+      title: "Get Travel Tips in Your Inbox",
+      subtitle:
+        "Subscribe to our newsletter for exclusive guides, deals, and inspiration for your next adventure.",
+      emailLabel: "Your email address",
+      emailPlaceholder: "your@email.com",
+      subscribe: "Subscribe",
+    },
+    detail: {
+      back: "Back to Blog",
+      notFound: "Post Not Found",
+      tagsLabel: "Tags",
+      share: "Share this article",
+      shareTwitter: "Share on Twitter",
+      shareFacebook: "Share on Facebook",
+      shareLinkedIn: "Share on LinkedIn",
+      related: {
+        eyebrow: "Keep Reading",
+        title: "Related Articles",
+        readAriaPrefix: "Read",
+      },
+      cta: {
+        eyebrow: "Inspired?",
+        title: "Ready to Experience Central Asia?",
+        subtitle:
+          "Turn inspiration into adventure. Browse our curated tours or contact us to plan your custom journey.",
+        exploreTours: "Explore Tours",
+        contactUs: "Contact Us",
+      },
+    },
+  },
+  review: {
+    hero: {
+      eyebrow: "Share Your Experience",
+      titlePrefix: "Leave a",
+      titleAccent: "Review",
+      subtitle:
+        "Your feedback helps future travelers choose the right adventure and helps us improve our tours.",
+    },
+    steps: {
+      verify: "Verify Booking",
+      write: "Write Review",
+      done: "Done",
+    },
+    verify: {
+      title: "Verify Your Booking",
+      subtitle:
+        "To ensure authentic reviews, we verify that you traveled with us. Enter your booking reference and the email you used when booking.",
+      infoTitle: "Where to find your booking reference",
+      infoBody:
+        "Check the confirmation email you received after booking. Your reference starts with “WL-” followed by the year and a number (e.g., WL-2025-001).",
+      bookingRefLabel: "Booking Reference",
+      bookingRefPlaceholder: "e.g. WL-2025-001",
+      emailLabel: "Email Address",
+      emailPlaceholder: "The email you used when booking",
+      submit: "Verify Booking",
+      verifying: "Verifying...",
+      errorNotFound:
+        "Booking reference not found. Please check your confirmation email for the correct reference number. Demo references: WL-2025-001 through WL-2025-006.",
+      errorEmailMismatch:
+        "The email address does not match this booking. Please use the email you booked with.",
+    },
+    why: {
+      title: "Why do we verify reviews?",
+      items: [
+        {
+          strong: "Authenticity",
+          body: "Every review comes from someone who actually traveled with us",
+        },
+        {
+          strong: "Trust",
+          body: "Future travelers can book with confidence knowing reviews are real",
+        },
+        {
+          strong: "Quality",
+          body: "Verified feedback helps us continuously improve our tours",
+        },
+      ] as [
+        { strong: string; body: string },
+        { strong: string; body: string },
+        { strong: string; body: string },
+      ],
+    },
+    write: {
+      verifiedFor: "Verified booking for:",
+      title: "Write Your Review",
+      subtitle: "Tell us about your experience on the {tour}.",
+      ratingLabel: "Overall Rating",
+      starRatingAriaLabel: "Star rating",
+      starAriaSingular: "star",
+      starAriaPlural: "stars",
+      ratingLabels: ["Poor", "Fair", "Good", "Very Good", "Excellent"] as [
+        string,
+        string,
+        string,
+        string,
+        string,
+      ],
+      titleLabel: "Review Title",
+      titlePlaceholder: "Summarize your experience in a few words",
+      bodyLabel: "Your Review",
+      bodyPlaceholder:
+        "What did you enjoy most? What stood out? Would you recommend this tour?",
+      charsNeededSuffix: "more characters needed",
+      charsSuffix: "characters",
+      nameLabel: "Display Name",
+      namePlaceholder: "How your name will appear (e.g. Sarah M.)",
+      recommend: "I would recommend Wanderlust to a friend",
+      submit: "Submit Review",
+      errors: {
+        rating: "Please select a star rating.",
+        title: "Please add a title for your review.",
+        bodyMin: "Please write at least 20 characters in your review.",
+        name: "Please enter your name.",
+      },
+    },
+    success: {
+      title: "Thank You!",
+      body: "Your review for {tour} has been submitted successfully.",
+      livePrefix: "Your verified review is now live.",
+      viewAllReviews: "View all traveler reviews →",
+      verifiedTraveler: "Verified Traveler",
+      browseMoreTours: "Browse More Tours",
+      backToHome: "Back to Home",
+    },
+  },
 };
 
 export type Translations = typeof en;

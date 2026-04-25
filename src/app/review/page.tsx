@@ -8,6 +8,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -25,13 +26,46 @@ function NatureDivider({ className = "" }: { className?: string }) {
 // ─── Simulated Booking Database ─────────────────────────────────────────────
 // In production this would be a real API call. For the thesis demo,
 // we accept any well-formatted booking reference + email combination.
-const VALID_BOOKINGS: Record<string, { email: string; tour: string; date: string }> = {
-  "WL-2025-001": { email: "sarah@example.com", tour: "Silk Road Adventure", date: "2025-09-15" },
-  "WL-2025-002": { email: "david@example.com", tour: "Nomadic Life Experience", date: "2025-08-20" },
-  "WL-2025-003": { email: "aiko@example.com", tour: "Mountain Expedition", date: "2025-07-10" },
-  "WL-2024-004": { email: "maria@example.com", tour: "Cultural Heritage Tour", date: "2024-11-05" },
-  "WL-2024-005": { email: "john@example.com", tour: "Photography Expedition", date: "2024-10-12" },
-  "WL-2025-006": { email: "elena@example.com", tour: "Winter Wonderland", date: "2025-01-18" },
+const VALID_BOOKINGS: Record<
+  string,
+  { email: string; tour: string; tourRu: string; date: string }
+> = {
+  "WL-2025-001": {
+    email: "sarah@example.com",
+    tour: "Silk Road Adventure",
+    tourRu: "Приключение по Шёлковому пути",
+    date: "2025-09-15",
+  },
+  "WL-2025-002": {
+    email: "david@example.com",
+    tour: "Nomadic Life Experience",
+    tourRu: "Жизнь кочевников",
+    date: "2025-08-20",
+  },
+  "WL-2025-003": {
+    email: "aiko@example.com",
+    tour: "Mountain Expedition",
+    tourRu: "Горная экспедиция",
+    date: "2025-07-10",
+  },
+  "WL-2024-004": {
+    email: "maria@example.com",
+    tour: "Cultural Heritage Tour",
+    tourRu: "Тур по культурному наследию",
+    date: "2024-11-05",
+  },
+  "WL-2024-005": {
+    email: "john@example.com",
+    tour: "Photography Expedition",
+    tourRu: "Фотоэкспедиция",
+    date: "2024-10-12",
+  },
+  "WL-2025-006": {
+    email: "elena@example.com",
+    tour: "Winter Wonderland",
+    tourRu: "Зимняя сказка",
+    date: "2025-01-18",
+  },
 };
 
 type Step = "verify" | "review" | "success";
@@ -47,6 +81,9 @@ interface ReviewData {
 }
 
 export default function ReviewPage() {
+  const { locale, t } = useLocale();
+  const tr = t.review;
+
   const [step, setStep] = useState<Step>("verify");
 
   // Verification fields
@@ -54,7 +91,10 @@ export default function ReviewPage() {
   const [email, setEmail] = useState("");
   const [verifyError, setVerifyError] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
-  const [verifiedTour, setVerifiedTour] = useState("");
+  const [verifiedTour, setVerifiedTour] = useState<{ en: string; ru: string }>({
+    en: "",
+    ru: "",
+  });
 
   // Review fields
   const [rating, setRating] = useState(0);
@@ -77,6 +117,8 @@ export default function ReviewPage() {
     }
   }, []);
 
+  const verifiedTourLabel = locale === "ru" ? verifiedTour.ru : verifiedTour.en;
+
   function handleVerify(e: React.FormEvent) {
     e.preventDefault();
     setVerifyError("");
@@ -89,22 +131,18 @@ export default function ReviewPage() {
 
       const booking = VALID_BOOKINGS[trimmedRef];
       if (!booking) {
-        setVerifyError(
-          "Booking reference not found. Please check your confirmation email for the correct reference number. Demo references: WL-2025-001 through WL-2025-006."
-        );
+        setVerifyError(tr.verify.errorNotFound);
         setIsVerifying(false);
         return;
       }
 
       if (booking.email !== trimmedEmail) {
-        setVerifyError(
-          "The email address does not match this booking. Please use the email you booked with."
-        );
+        setVerifyError(tr.verify.errorEmailMismatch);
         setIsVerifying(false);
         return;
       }
 
-      setVerifiedTour(booking.tour);
+      setVerifiedTour({ en: booking.tour, ru: booking.tourRu });
       setStep("review");
       setIsVerifying(false);
     }, 800);
@@ -115,24 +153,24 @@ export default function ReviewPage() {
     setReviewError("");
 
     if (rating === 0) {
-      setReviewError("Please select a star rating.");
+      setReviewError(tr.write.errors.rating);
       return;
     }
     if (!reviewTitle.trim()) {
-      setReviewError("Please add a title for your review.");
+      setReviewError(tr.write.errors.title);
       return;
     }
     if (!reviewBody.trim() || reviewBody.trim().length < 20) {
-      setReviewError("Please write at least 20 characters in your review.");
+      setReviewError(tr.write.errors.bodyMin);
       return;
     }
     if (!displayName.trim()) {
-      setReviewError("Please enter your name.");
+      setReviewError(tr.write.errors.name);
       return;
     }
 
     const newReview: ReviewData = {
-      tour: verifiedTour,
+      tour: verifiedTour.en,
       rating,
       title: reviewTitle.trim(),
       body: reviewBody.trim(),
@@ -152,6 +190,8 @@ export default function ReviewPage() {
     setStep("success");
   }
 
+  const stepLabels = [tr.steps.verify, tr.steps.write, tr.steps.done] as const;
+
   return (
     <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       {/* Page Header */}
@@ -162,14 +202,12 @@ export default function ReviewPage() {
         />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 text-center">
           <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Share Your Experience
+            {tr.hero.eyebrow}
           </p>
           <h1 className="text-3xl md:text-4xl font-bold font-serif mb-3">
-            Leave a <span className="text-emerald-400">Review</span>
+            {tr.hero.titlePrefix} <span className="text-emerald-400">{tr.hero.titleAccent}</span>
           </h1>
-          <p className="text-stone-400 max-w-xl mx-auto">
-            Your feedback helps future travelers choose the right adventure and helps us improve our tours.
-          </p>
+          <p className="text-stone-400 max-w-xl mx-auto">{tr.hero.subtitle}</p>
           <NatureDivider className="mt-5" />
         </div>
       </div>
@@ -177,7 +215,7 @@ export default function ReviewPage() {
       {/* Progress Steps */}
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="flex items-center justify-center gap-2 mb-10">
-          {(["Verify Booking", "Write Review", "Done"] as const).map((label, i) => {
+          {stepLabels.map((label, i) => {
             const stepIndex = i;
             const currentIndex = step === "verify" ? 0 : step === "review" ? 1 : 2;
             const isActive = stepIndex === currentIndex;
@@ -231,10 +269,10 @@ export default function ReviewPage() {
         {step === "verify" && (
           <div className="bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-6 sm:p-8 rounded-xl">
             <h2 className="text-xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
-              Verify Your Booking
+              {tr.verify.title}
             </h2>
             <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
-              To ensure authentic reviews, we verify that you traveled with us. Enter your booking reference and the email you used when booking.
+              {tr.verify.subtitle}
             </p>
 
             {/* How it works info box */}
@@ -244,8 +282,8 @@ export default function ReviewPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div className="text-sm text-emerald-800 dark:text-emerald-300">
-                  <p className="font-semibold mb-1">Where to find your booking reference</p>
-                  <p>Check the confirmation email you received after booking. Your reference starts with &ldquo;WL-&rdquo; followed by the year and a number (e.g., WL-2025-001).</p>
+                  <p className="font-semibold mb-1">{tr.verify.infoTitle}</p>
+                  <p>{tr.verify.infoBody}</p>
                 </div>
               </div>
             </div>
@@ -253,14 +291,14 @@ export default function ReviewPage() {
             <form onSubmit={handleVerify} className="space-y-4">
               <div>
                 <label htmlFor="booking-ref" className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                  Booking Reference
+                  {tr.verify.bookingRefLabel}
                 </label>
                 <input
                   id="booking-ref"
                   type="text"
                   value={bookingRef}
                   onChange={(e) => setBookingRef(e.target.value)}
-                  placeholder="e.g. WL-2025-001"
+                  placeholder={tr.verify.bookingRefPlaceholder}
                   required
                   className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
                 />
@@ -268,14 +306,14 @@ export default function ReviewPage() {
 
               <div>
                 <label htmlFor="booking-email" className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                  Email Address
+                  {tr.verify.emailLabel}
                 </label>
                 <input
                   id="booking-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="The email you used when booking"
+                  placeholder={tr.verify.emailPlaceholder}
                   required
                   className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
                 />
@@ -298,10 +336,10 @@ export default function ReviewPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Verifying...
+                    {tr.verify.verifying}
                   </span>
                 ) : (
-                  "Verify Booking"
+                  tr.verify.submit
                 )}
               </button>
             </form>
@@ -317,24 +355,24 @@ export default function ReviewPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <span className="text-sm text-emerald-700 dark:text-emerald-400 font-medium">
-                Verified booking for: {verifiedTour}
+                {tr.write.verifiedFor} {verifiedTourLabel}
               </span>
             </div>
 
             <h2 className="text-xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
-              Write Your Review
+              {tr.write.title}
             </h2>
             <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
-              Tell us about your experience on the {verifiedTour}.
+              {tr.write.subtitle.replace("{tour}", verifiedTourLabel)}
             </p>
 
             <form onSubmit={handleSubmitReview} className="space-y-6">
               {/* Star Rating */}
               <div>
                 <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
-                  Overall Rating
+                  {tr.write.ratingLabel}
                 </label>
-                <div className="flex items-center gap-1" role="radiogroup" aria-label="Star rating">
+                <div className="flex items-center gap-1" role="radiogroup" aria-label={tr.write.starRatingAriaLabel}>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
@@ -345,7 +383,7 @@ export default function ReviewPage() {
                       className="p-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-transform hover:scale-110"
                       role="radio"
                       aria-checked={rating === star}
-                      aria-label={`${star} star${star > 1 ? "s" : ""}`}
+                      aria-label={`${star} ${star > 1 ? tr.write.starAriaPlural : tr.write.starAriaSingular}`}
                     >
                       <svg
                         className={`w-8 h-8 transition-colors ${
@@ -364,11 +402,7 @@ export default function ReviewPage() {
                   ))}
                   {rating > 0 && (
                     <span className="ml-2 text-sm text-stone-600 dark:text-stone-400">
-                      {rating === 1 && "Poor"}
-                      {rating === 2 && "Fair"}
-                      {rating === 3 && "Good"}
-                      {rating === 4 && "Very Good"}
-                      {rating === 5 && "Excellent"}
+                      {tr.write.ratingLabels[rating - 1]}
                     </span>
                   )}
                 </div>
@@ -377,14 +411,14 @@ export default function ReviewPage() {
               {/* Review Title */}
               <div>
                 <label htmlFor="review-title" className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                  Review Title
+                  {tr.write.titleLabel}
                 </label>
                 <input
                   id="review-title"
                   type="text"
                   value={reviewTitle}
                   onChange={(e) => setReviewTitle(e.target.value)}
-                  placeholder="Summarize your experience in a few words"
+                  placeholder={tr.write.titlePlaceholder}
                   required
                   maxLength={100}
                   className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
@@ -394,13 +428,13 @@ export default function ReviewPage() {
               {/* Review Body */}
               <div>
                 <label htmlFor="review-body" className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                  Your Review
+                  {tr.write.bodyLabel}
                 </label>
                 <textarea
                   id="review-body"
                   value={reviewBody}
                   onChange={(e) => setReviewBody(e.target.value)}
-                  placeholder="What did you enjoy most? What stood out? Would you recommend this tour?"
+                  placeholder={tr.write.bodyPlaceholder}
                   required
                   rows={5}
                   minLength={20}
@@ -408,22 +442,22 @@ export default function ReviewPage() {
                 />
                 <p className="text-xs text-stone-400 mt-1">
                   {reviewBody.length < 20
-                    ? `${20 - reviewBody.length} more characters needed`
-                    : `${reviewBody.length} characters`}
+                    ? `${20 - reviewBody.length} ${tr.write.charsNeededSuffix}`
+                    : `${reviewBody.length} ${tr.write.charsSuffix}`}
                 </p>
               </div>
 
               {/* Display Name */}
               <div>
                 <label htmlFor="display-name" className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
-                  Display Name
+                  {tr.write.nameLabel}
                 </label>
                 <input
                   id="display-name"
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="How your name will appear (e.g. Sarah M.)"
+                  placeholder={tr.write.namePlaceholder}
                   required
                   maxLength={50}
                   className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
@@ -448,7 +482,7 @@ export default function ReviewPage() {
                   />
                 </button>
                 <label className="text-sm text-stone-700 dark:text-stone-300">
-                  I would recommend Wanderlust to a friend
+                  {tr.write.recommend}
                 </label>
               </div>
 
@@ -462,7 +496,7 @@ export default function ReviewPage() {
                 type="submit"
                 className="w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-6 py-3 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2"
               >
-                Submit Review
+                {tr.write.submit}
               </button>
             </form>
           </div>
@@ -477,15 +511,24 @@ export default function ReviewPage() {
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
-              Thank You!
+              {tr.success.title}
             </h2>
             <p className="text-stone-600 dark:text-stone-400 mb-2">
-              Your review for <strong className="text-stone-900 dark:text-emerald-100">{verifiedTour}</strong> has been submitted successfully.
+              {(() => {
+                const parts = tr.success.body.split("{tour}");
+                return (
+                  <>
+                    {parts[0]}
+                    <strong className="text-stone-900 dark:text-emerald-100">{verifiedTourLabel}</strong>
+                    {parts[1]}
+                  </>
+                );
+              })()}
             </p>
             <p className="text-sm text-stone-500 dark:text-stone-500 mb-6">
-              Your verified review is now live.{" "}
+              {tr.success.livePrefix}{" "}
               <Link href="/reviews" className="text-emerald-600 dark:text-emerald-400 underline underline-offset-2 hover:text-emerald-700">
-                View all traveler reviews →
+                {tr.success.viewAllReviews}
               </Link>
             </p>
             <NatureDivider className="mb-6" />
@@ -511,8 +554,8 @@ export default function ReviewPage() {
                 &ldquo;{reviewBody}&rdquo;
               </p>
               <p className="text-xs text-stone-500">
-                {displayName} &middot; {verifiedTour} &middot;{" "}
-                <span className="text-emerald-600 dark:text-emerald-400">Verified Traveler</span>
+                {displayName} &middot; {verifiedTourLabel} &middot;{" "}
+                <span className="text-emerald-600 dark:text-emerald-400">{tr.success.verifiedTraveler}</span>
               </p>
             </div>
 
@@ -521,13 +564,13 @@ export default function ReviewPage() {
                 href="/tours"
                 className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-6 py-2.5 font-semibold uppercase tracking-wide transition-all text-sm rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
               >
-                Browse More Tours
+                {tr.success.browseMoreTours}
               </Link>
               <Link
                 href="/"
                 className="border-2 border-stone-300 dark:border-slate-600 hover:border-emerald-500 dark:hover:border-emerald-500 text-stone-700 dark:text-stone-300 px-6 py-2.5 font-semibold uppercase tracking-wide transition-all text-sm rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
               >
-                Back to Home
+                {tr.success.backToHome}
               </Link>
             </div>
           </div>
@@ -537,27 +580,17 @@ export default function ReviewPage() {
         {step === "verify" && (
           <div className="mt-8 bg-stone-50 dark:bg-slate-900/50 border border-stone-200 dark:border-slate-800 p-5 rounded-xl">
             <h3 className="text-sm font-semibold text-stone-900 dark:text-emerald-100 mb-2 font-serif">
-              Why do we verify reviews?
+              {tr.why.title}
             </h3>
             <ul className="space-y-2 text-sm text-stone-600 dark:text-stone-400">
-              <li className="flex gap-2">
-                <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span><strong>Authenticity</strong> — Every review comes from someone who actually traveled with us</span>
-              </li>
-              <li className="flex gap-2">
-                <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span><strong>Trust</strong> — Future travelers can book with confidence knowing reviews are real</span>
-              </li>
-              <li className="flex gap-2">
-                <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span><strong>Quality</strong> — Verified feedback helps us continuously improve our tours</span>
-              </li>
+              {tr.why.items.map((item) => (
+                <li key={item.strong} className="flex gap-2">
+                  <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span><strong>{item.strong}</strong> — {item.body}</span>
+                </li>
+              ))}
             </ul>
           </div>
         )}

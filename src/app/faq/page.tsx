@@ -1,26 +1,15 @@
+"use client";
+
 // src/app/faq/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Server Component — no "use client" needed.
+// Client Component (uses useLocale for EN/RU translations).
 // Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
 // leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
 import Link from "next/link";
 import Image from "next/image";
-import type { Metadata } from "next";
-
-// ─── SEO Metadata ─────────────────────────────────────────────────────────────
-export const metadata: Metadata = {
-  title: "FAQ | Wanderlust — Central Asia Travel Questions Answered",
-  description:
-    "Frequently asked questions about traveling to Central Asia with Wanderlust: booking, payments, visas, safety, tours, and practical info for Kazakhstan, Kyrgyzstan, and Uzbekistan.",
-  openGraph: {
-    title: "FAQ — Wanderlust Central Asia Travel",
-    description:
-      "Answers to common questions about booking, visas, tours, and travel to Central Asia.",
-    type: "website",
-    siteName: "Wanderlust",
-  },
-};
+import type { ReactNode } from "react";
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -35,11 +24,13 @@ function NatureDivider({ className = "" }: { className?: string }) {
   );
 }
 
-// ─── FAQ Data ────────────────────────────────────────────────────────────────
-const faqCategories = [
+// ─── FAQ Category Metadata — IDs and icons stay constant; titles/faqs come from translations ─
+type CategoryKey = "general" | "booking" | "tours" | "practical";
+
+const categoryMeta: { key: CategoryKey; id: string; icon: ReactNode }[] = [
   {
+    key: "general",
     id: "general",
-    title: "General Questions",
     icon: (
       <path
         strokeLinecap="round"
@@ -48,32 +39,10 @@ const faqCategories = [
         d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
       />
     ),
-    faqs: [
-      {
-        question: "What countries does Wanderlust operate in?",
-        answer:
-          "We specialize in Central Asia, specifically Kazakhstan, Kyrgyzstan, and Uzbekistan. These three countries offer an incredible diversity of experiences—from the ancient Silk Road cities of Uzbekistan to the nomadic traditions of Kyrgyzstan and the modern cities and stunning nature of Kazakhstan.",
-      },
-      {
-        question: "Is Central Asia safe for tourists?",
-        answer:
-          "Yes, Central Asia is generally very safe for tourists. The region has low crime rates, and locals are known for their warm hospitality toward visitors. As with any travel, we recommend standard precautions: keep valuables secure, be aware of your surroundings, and follow local customs. Our guides are with you throughout the journey to ensure your safety and comfort.",
-      },
-      {
-        question: "What languages are spoken in Central Asia?",
-        answer:
-          "Each country has its own national language (Kazakh, Kyrgyz, Uzbek), but Russian is widely understood across the region as a common second language. English is spoken in tourist areas and by younger generations in cities, but less common in rural areas. All our tours include English-speaking guides, so language won't be a barrier.",
-      },
-      {
-        question: "What is the best time to visit Central Asia?",
-        answer:
-          "The best time depends on your interests. For general sightseeing and comfortable temperatures, visit in spring (April–June) or autumn (September–October). Summer (July–August) is ideal for mountain trekking but can be very hot in Uzbekistan. Winter (December–February) offers skiing opportunities in Kazakhstan and Kyrgyzstan, plus fewer crowds at historical sites.",
-      },
-    ],
   },
   {
+    key: "booking",
     id: "booking",
-    title: "Booking & Payments",
     icon: (
       <path
         strokeLinecap="round"
@@ -82,37 +51,10 @@ const faqCategories = [
         d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
       />
     ),
-    faqs: [
-      {
-        question: "How do I book a tour?",
-        answer:
-          "You can book a tour by clicking 'Book This Tour' on any tour page, which will take you to our contact form. Alternatively, email us at info@wanderlust.com or call +1 (555) 123-4567. We'll confirm availability, answer any questions, and send you a detailed itinerary and invoice.",
-      },
-      {
-        question: "What payment methods do you accept?",
-        answer:
-          "We accept major credit cards (Visa, MasterCard, American Express), bank transfers, and PayPal. For bank transfers, we provide details for both USD and EUR accounts. All payments are processed securely.",
-      },
-      {
-        question: "What is your deposit and payment policy?",
-        answer:
-          "We require a 30% deposit to secure your booking. The remaining 70% is due 30 days before your tour start date. For bookings made within 30 days of departure, full payment is required at the time of booking.",
-      },
-      {
-        question: "What is your cancellation policy?",
-        answer:
-          "We understand plans can change. Cancellations made 60+ days before departure receive a full refund minus a $100 admin fee. Cancellations 30–59 days before departure receive a 50% refund. Cancellations less than 30 days before departure are non-refundable. We strongly recommend purchasing travel insurance.",
-      },
-      {
-        question: "Can I customize a tour or create a private trip?",
-        answer:
-          "Absolutely! We love creating custom itineraries. Tell us your interests, budget, group size, and preferred dates, and we'll design a personalized journey just for you. Private tours are available for any of our existing itineraries as well.",
-      },
-    ],
   },
   {
+    key: "tours",
     id: "tours",
-    title: "Tours & Experiences",
     icon: (
       <path
         strokeLinecap="round"
@@ -121,37 +63,10 @@ const faqCategories = [
         d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
       />
     ),
-    faqs: [
-      {
-        question: "What is included in the tour price?",
-        answer:
-          "Our tour prices typically include: accommodation, transportation within the region, English-speaking guides, entrance fees to attractions, and meals as specified in the itinerary (usually breakfast daily plus some lunches and dinners). International flights, travel insurance, visa fees (if any), and personal expenses are not included unless otherwise stated.",
-      },
-      {
-        question: "What is the group size for tours?",
-        answer:
-          "Our group sizes vary by tour type. Cultural tours typically have 6–16 participants, adventure treks have 4–8, and photography expeditions are limited to 4–8 for personalized attention. We believe smaller groups provide better experiences and more meaningful connections.",
-      },
-      {
-        question: "What fitness level is required for your tours?",
-        answer:
-          "This varies by tour. Our cultural tours are suitable for anyone who can walk for a few hours with breaks. Adventure and trekking tours require moderate to good fitness—you should be comfortable hiking 10–15km per day with elevation changes. Each tour page specifies the difficulty level (Easy, Moderate, or Challenging).",
-      },
-      {
-        question: "What type of accommodation is provided?",
-        answer:
-          "Accommodation varies by tour and location. In cities, we use 3–4 star hotels or boutique guesthouses. In rural areas, you may stay in traditional yurts, family homestays, or comfortable guesthouses. All accommodations are clean, safe, and carefully selected for authenticity and comfort.",
-      },
-      {
-        question: "Are meals included? What about dietary restrictions?",
-        answer:
-          "Most tours include breakfast daily, plus additional meals as specified. We can accommodate vegetarian, vegan, gluten-free, and other dietary requirements with advance notice. Central Asian cuisine is meat-heavy, but our team knows how to find delicious alternatives.",
-      },
-    ],
   },
   {
+    key: "practical",
     id: "practical",
-    title: "Practical Information",
     icon: (
       <path
         strokeLinecap="round"
@@ -160,38 +75,6 @@ const faqCategories = [
         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
       />
     ),
-    faqs: [
-      {
-        question: "Do I need a visa to visit Central Asia?",
-        answer:
-          "Many nationalities enjoy visa-free access. Citizens of the USA, UK, EU, Canada, Australia, and 60+ other countries can visit Kazakhstan, Kyrgyzstan, and Uzbekistan visa-free for 30–60 days. Check our Practical Info page or your country's embassy website for the most current requirements.",
-      },
-      {
-        question: "What currency should I bring?",
-        answer:
-          "US dollars are the best currency to bring—they're easily exchanged everywhere and often get the best rates. Bring clean, unmarked bills from 2009 or newer. ATMs are available in cities, and credit cards are increasingly accepted in urban areas, but cash is essential for rural regions and bazaars.",
-      },
-      {
-        question: "What should I pack for a Central Asia trip?",
-        answer:
-          "Pack layers, as temperatures can vary significantly between day and night. Comfortable walking shoes are essential. For religious sites, bring modest clothing (covering shoulders and knees). Sun protection is important at high altitudes. Check our Practical Info page for detailed packing lists by season and tour type.",
-      },
-      {
-        question: "Is travel insurance required?",
-        answer:
-          "While not technically required, we strongly recommend comprehensive travel insurance that covers medical emergencies, evacuation, trip cancellation, and lost luggage. For adventure tours involving trekking at altitude, ensure your policy covers activities up to 4,000m or higher.",
-      },
-      {
-        question: "What vaccinations do I need?",
-        answer:
-          "No vaccinations are mandatory for Central Asia. However, we recommend being up-to-date on routine vaccinations and considering Hepatitis A, Hepatitis B, and Typhoid. Consult your doctor or a travel clinic 4–6 weeks before departure for personalized advice.",
-      },
-      {
-        question: "Can I use my mobile phone in Central Asia?",
-        answer:
-          "Yes, mobile coverage is good in cities and along main routes. You can buy local SIM cards inexpensively at airports and phone shops (bring your passport). WiFi is available in most hotels and many cafes. In remote mountain areas, coverage may be limited or unavailable.",
-      },
-    ],
   },
 ];
 
@@ -199,9 +82,10 @@ const faqCategories = [
 // SECTION 1 — HERO
 // ═════════════════════════════════════════════════════════════════════════════
 function HeroSection() {
+  const { t } = useLocale();
   return (
     <section
-      aria-label="Frequently asked questions"
+      aria-label={t.faq.hero.ariaLabel}
       className="relative text-center text-white overflow-hidden"
     >
       <Image
@@ -222,22 +106,21 @@ function HeroSection() {
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <div className="flex items-center justify-center gap-4 mb-2" aria-hidden="true">
           <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
-          <span className="text-emerald-300/80 text-xs tracking-[0.3em] uppercase drop-shadow-md">Need Help?</span>
+          <span className="text-emerald-300/80 text-xs tracking-[0.3em] uppercase drop-shadow-md">{t.faq.hero.bannerLabel}</span>
           <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
         </div>
 
         <p className="text-emerald-300 text-sm font-semibold tracking-[0.2em] uppercase mb-3 drop-shadow-md">
-          Answers
+          {t.faq.hero.eyebrow}
         </p>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-md">
-          Frequently Asked{" "}
-          <span className="text-emerald-400">Questions</span>
+          {t.faq.hero.titlePrefix}{" "}
+          <span className="text-emerald-400">{t.faq.hero.titleAccent}</span>
         </h1>
 
         <p className="text-base md:text-lg text-stone-200 max-w-2xl mx-auto mb-4 leading-relaxed drop-shadow-md">
-          Everything you need to know about traveling with Wanderlust.
-          Can&apos;t find your answer? Contact us anytime.
+          {t.faq.hero.subtitle}
         </p>
 
         <NatureDivider />
@@ -250,17 +133,18 @@ function HeroSection() {
 // QUICK NAV — sticky section jump bar
 // ═════════════════════════════════════════════════════════════════════════════
 function QuickNav() {
+  const { t } = useLocale();
   return (
     <nav
-      aria-label="FAQ categories"
+      aria-label={t.faq.quickNavAriaLabel}
       className="bg-emerald-950 dark:bg-slate-950 border-b border-emerald-500/20 sticky top-16 z-40 shadow-sm"
     >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex overflow-x-auto gap-2 py-3 scrollbar-hide">
-          {faqCategories.map((category) => (
+          {categoryMeta.map((meta) => (
             <a
-              key={category.id}
-              href={`#${category.id}`}
+              key={meta.id}
+              href={`#${meta.id}`}
               className="flex items-center gap-2 px-4 py-2 border border-emerald-500/30 hover:border-emerald-500 hover:bg-emerald-500/10 text-emerald-300 hover:text-emerald-200 text-xs font-semibold uppercase tracking-[0.15em] transition-all whitespace-nowrap rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             >
               <svg
@@ -270,9 +154,9 @@ function QuickNav() {
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
-                {category.icon}
+                {meta.icon}
               </svg>
-              {category.title}
+              {t.faq.categories[meta.key].title}
             </a>
           ))}
         </div>
@@ -284,13 +168,11 @@ function QuickNav() {
 // ═════════════════════════════════════════════════════════════════════════════
 // FAQ CATEGORY
 // ═════════════════════════════════════════════════════════════════════════════
-function FAQCategory({
-  category,
-}: {
-  category: (typeof faqCategories)[0];
-}) {
+function FAQCategory({ meta }: { meta: (typeof categoryMeta)[number] }) {
+  const { t } = useLocale();
+  const category = t.faq.categories[meta.key];
   return (
-    <section id={category.id} aria-labelledby={`${category.id}-heading`} className="scroll-mt-32">
+    <section id={meta.id} aria-labelledby={`${meta.id}-heading`} className="scroll-mt-32">
       <div className="flex items-center gap-4 mb-6">
         <div className="w-12 h-12 border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center rounded-lg">
           <svg
@@ -300,15 +182,15 @@ function FAQCategory({
             viewBox="0 0 24 24"
             aria-hidden="true"
           >
-            {category.icon}
+            {meta.icon}
           </svg>
         </div>
         <div>
           <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-[10px] mb-0.5">
-            Category
+            {t.faq.categoryLabel}
           </p>
           <h2
-            id={`${category.id}-heading`}
+            id={`${meta.id}-heading`}
             className="text-2xl md:text-3xl font-bold text-stone-900 dark:text-emerald-100 font-serif"
           >
             {category.title}
@@ -350,6 +232,7 @@ function FAQCategory({
 // CONTACT CTA
 // ═════════════════════════════════════════════════════════════════════════════
 function ContactCTA() {
+  const { t } = useLocale();
   return (
     <section
       aria-labelledby="faq-cta-heading"
@@ -362,14 +245,13 @@ function ContactCTA() {
 
       <div className="relative">
         <p className="text-emerald-400/70 uppercase tracking-[0.3em] text-xs mb-2">
-          Still Stuck?
+          {t.faq.contactCta.eyebrow}
         </p>
         <h2 id="faq-cta-heading" className="text-2xl md:text-3xl font-bold mb-4 font-serif">
-          Still Have Questions?
+          {t.faq.contactCta.title}
         </h2>
         <p className="text-stone-400 mb-8 max-w-xl mx-auto leading-relaxed">
-          Our team is here to help. Reach out anytime and we&apos;ll get back to
-          you within 24 hours.
+          {t.faq.contactCta.subtitle}
         </p>
 
         <NatureDivider className="mb-8" />
@@ -379,18 +261,18 @@ function ContactCTA() {
             href="/contact"
             className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Contact Us
+            {t.faq.contactCta.contactUs}
           </Link>
 
           <a
             href="mailto:info@wanderlust.com"
             className="border-2 border-emerald-500 hover:bg-emerald-600 hover:text-white text-emerald-300 px-8 py-4 font-semibold uppercase tracking-wide transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-400/50 focus:ring-offset-2 focus:ring-offset-emerald-950"
           >
-            Email Us Directly
+            {t.faq.contactCta.emailUs}
           </a>
         </div>
         <p className="text-stone-400 text-sm mt-6">
-          Or call us at{" "}
+          {t.faq.contactCta.callUsPrefix}{" "}
           <a
             href="tel:+15551234567"
             className="text-emerald-400 hover:text-emerald-300 font-semibold focus:outline-none focus:underline"
@@ -406,90 +288,88 @@ function ContactCTA() {
 // ═════════════════════════════════════════════════════════════════════════════
 // RELATED LINKS
 // ═════════════════════════════════════════════════════════════════════════════
-function RelatedLinks() {
-  const links = [
-    {
-      title: "Practical Info",
-      description: "Visa, weather, packing lists, and more",
-      href: "/practical-info",
-      icon: (
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      ),
-    },
-    {
-      title: "Our Tours",
-      description: "Browse all available adventures",
-      href: "/tours",
-      icon: (
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        />
-      ),
-    },
-    {
-      title: "About Us",
-      description: "Learn about our team and mission",
-      href: "/about",
-      icon: (
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-        />
-      ),
-    },
-  ];
+const relatedLinkMeta = [
+  {
+    href: "/practical-info",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    ),
+  },
+  {
+    href: "/tours",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    ),
+  },
+  {
+    href: "/about",
+    icon: (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+      />
+    ),
+  },
+] as const;
 
+function RelatedLinks() {
+  const { t } = useLocale();
   return (
     <section aria-labelledby="resources-heading">
       <div className="mb-6">
         <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
-          Explore More
+          {t.faq.related.eyebrow}
         </p>
         <h2
           id="resources-heading"
           className="text-2xl font-bold text-stone-900 dark:text-emerald-100 font-serif"
         >
-          Helpful Resources
+          {t.faq.related.title}
         </h2>
       </div>
       <div className="grid md:grid-cols-3 gap-4">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className="group relative flex items-center gap-4 p-5 bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
-          >
-            <div className="w-12 h-12 border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 flex items-center justify-center transition-all shrink-0 rounded-lg">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                {link.icon}
-              </svg>
-            </div>
-            <div>
-              <h3 className="font-semibold text-stone-900 dark:text-emerald-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors font-serif">
-                {link.title}
-              </h3>
-              <p className="text-sm text-stone-600 dark:text-stone-400 mt-0.5">
-                {link.description}
-              </p>
-            </div>
-          </Link>
-        ))}
+        {relatedLinkMeta.map((meta, i) => {
+          const item = t.faq.related.items[i];
+          return (
+            <Link
+              key={meta.href}
+              href={meta.href}
+              className="group relative flex items-center gap-4 p-5 bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
+            >
+              <div className="w-12 h-12 border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white group-hover:border-emerald-500 flex items-center justify-center transition-all shrink-0 rounded-lg">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  {meta.icon}
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-stone-900 dark:text-emerald-100 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors font-serif">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-stone-600 dark:text-stone-400 mt-0.5">
+                  {item.description}
+                </p>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
@@ -506,8 +386,8 @@ export default function FAQPage() {
 
       <div className="py-16 md:py-20 px-4">
         <div className="max-w-4xl mx-auto space-y-16">
-          {faqCategories.map((category) => (
-            <FAQCategory key={category.id} category={category} />
+          {categoryMeta.map((meta) => (
+            <FAQCategory key={meta.id} meta={meta} />
           ))}
 
           <RelatedLinks />
