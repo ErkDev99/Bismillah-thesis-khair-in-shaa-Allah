@@ -1352,6 +1352,42 @@ const ru: Translations = {
     },
     backToHome: "На главную",
   },
+  voiceChat: {
+    states: {
+      idle: "Нажмите «Начать», чтобы начать",
+      connecting: "Подключение…",
+      listening: "Слушаю…",
+      recording: "Слышу вас…",
+      thinking: "Думаю…",
+      speaking: "Говорю…",
+    },
+    hero: {
+      eyebrow: "Голосовой ассистент",
+      title: "Поговорите с Wanderlust",
+    },
+    start: "Начать разговор",
+    footnote1: "Голос в реальном времени — просто говорите естественно.",
+    footnote2: "На базе OpenAI Realtime API.",
+    topBarTitle: "Wanderlust Voice",
+    end: "Завершить",
+    emptyMessages: "Начните говорить — ваш разговор появится здесь.",
+    roles: {
+      you: "Вы",
+      assistant: "Ассистент",
+    },
+    srPrefixes: {
+      you: "Вы сказали: ",
+      assistant: "Ассистент сказал: ",
+    },
+    transcribing: "Расшифровка...",
+    ariaConversation: "Голосовой разговор",
+    ariaThinking: "Ассистент думает",
+    errors: {
+      websocket: "Ошибка WebSocket. Запущен ли голосовой сервис на порту 8001?",
+      realtimeApi: "Ошибка Realtime API",
+      startFailed: "Не удалось начать разговор",
+    },
+  },
 };
 
 export default ru;

@@ -1428,6 +1428,42 @@ const en = {
     },
     backToHome: "Back to Home",
   },
+  voiceChat: {
+    states: {
+      idle: "Press Start to begin",
+      connecting: "Connecting…",
+      listening: "Listening…",
+      recording: "Hearing you…",
+      thinking: "Thinking…",
+      speaking: "Speaking…",
+    },
+    hero: {
+      eyebrow: "Voice Assistant",
+      title: "Speak with Wanderlust",
+    },
+    start: "Start Conversation",
+    footnote1: "Real-time voice — just speak naturally.",
+    footnote2: "Powered by OpenAI Realtime API.",
+    topBarTitle: "Wanderlust Voice",
+    end: "End",
+    emptyMessages: "Start speaking — your conversation will appear here.",
+    roles: {
+      you: "You",
+      assistant: "Assistant",
+    },
+    srPrefixes: {
+      you: "You said: ",
+      assistant: "Assistant said: ",
+    },
+    transcribing: "Transcribing...",
+    ariaConversation: "Voice conversation",
+    ariaThinking: "Assistant is thinking",
+    errors: {
+      websocket: "WebSocket error. Is the voice service running on port 8001?",
+      realtimeApi: "Realtime API error",
+      startFailed: "Failed to start conversation",
+    },
+  },
 };
 
 export type Translations = typeof en;

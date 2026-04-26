@@ -1,6 +1,6 @@
 # Wanderlust – Bachelor's Thesis Website
 
-*Last updated: 2026-04-26 (Session 40 — translated `/terms` page to EN/RU. Added `terms` namespace (hero + intro + 14 numbered sections + backToHome). Page converted to client component (`"use client"` + `useLocale()`); server `metadata` export removed. Plain-bullet sections (booking, conduct) typed as fixed-length tuples; cancellation list typed as a 4-tuple of `{ strong, body }` (3 with strong labels + 1 plain — empty `strong: ""` sentinel) and rendered via a new `StrongUl` helper. Contact data (legal@wanderlust.com / phone / placeholder address) kept hardcoded per the "data, not UI copy" rule — only the labels translated. 1 page remaining: voice-chat.)*
+*Last updated: 2026-04-26 (Session 41 — i18n complete: all 22 pages/files translated EN/RU.)*
 
 Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Next.js 16, React 19, Tailwind CSS v4. Evaluated as a bachelor's thesis.
 
@@ -10,47 +10,31 @@ Central Asian travel & tourism platform (Kazakhstan, Kyrgyzstan, Uzbekistan). Ne
 
 | Area | Status |
 |------|--------|
-| Phase 1 — UI/UX Restyle (16 pages + 89 real images) | ✅ Complete |
-| Design System Retheme (Art Deco → Nature/Emerald, all 19 files) | ✅ Complete |
-| Phase 2 — Accessibility (WCAG 2.1, Lighthouse 100) | ✅ Complete |
-| Phase 3 — Performance (Desktop 96/100/100/100, Mobile ~82/100/100/100) | ✅ Complete |
+| Phase 1 — UI/UX Restyle (16 pages + 89 real images) | ✅ |
+| Design System (Nature/Emerald) | ✅ |
+| Phase 2 — Accessibility (WCAG 2.1, Lighthouse 100) | ✅ |
+| Phase 3 — Performance (Desktop 96, Mobile ~82) | ✅ |
 | Phase 4 — SEO | ⏭️ Skipped (thesis, not commercial) |
 | Phase 5 — Cross-browser & Responsive | ⬜ Not started |
-| Phase 6 — Polish & Content | 🔄 6.5 trust signals done; 6.1–6.4 pending |
-| Voice Chat (`/voice-chat`, OpenAI Realtime WebSocket) | ✅ Complete |
-| ChatWidget dictation mic (Whisper STT) | ✅ Complete |
-| Dark mode (class-based Tailwind v4, ThemeProvider, FOUC-safe) | ✅ Complete |
-| Review & Rating System (`/review`, `/reviews`, social proof strip) | ✅ Complete |
-| QuickSearchBar with instant results (country → tours w/ prices) | ✅ Complete |
-| Contact page Google Map (Bishkek embed) | ✅ Complete |
-| **i18n (EN/RU)** | 🔄 Infra + Header + Footer + ChatWidget + Homepage + Tours + Destinations + About + Contact + Practical Info + FAQ + Blog + Review + Reviews + Privacy + Terms done; 1 page remaining |
+| Phase 6 — Polish & Content | 🔄 6.5 done; 6.1–6.4 pending |
+| Voice Chat + ChatWidget mic | ✅ |
+| Dark mode | ✅ |
+| Review system (`/review`, `/reviews`) | ✅ |
+| QuickSearchBar, Contact map | ✅ |
+| **i18n (EN/RU)** | ✅ All 22 pages/files |
 
 ---
 
 ## Quick Start for Next Session
 
-**Active task: i18n (EN/RU).** Infrastructure is built. Header EN|RU pill toggle, Footer, ChatWidget, Homepage, **Tours pages** (`tours/page.tsx` + `tours/[slug]/page.tsx`), **Destinations pages** (`destinations/page.tsx` + `destinations/[slug]/page.tsx`), **About page**, **Contact page**, **Practical Info page**, **FAQ page**, **Blog pages** (`blog/page.tsx` + `blog/[slug]/page.tsx`), **Review page** (`/review`), **Reviews listing** (`/reviews`), **Privacy page** (`/privacy`), and **Terms page** (`/terms`) are translated. All `[slug]` pages converted to client components — use React 19 `use(params)` to unwrap `Promise<{slug}>` — and drop `generateStaticParams` / `generateMetadata` (Phase 4 SEO skipped). Tour and Destination long-field `*Ru` siblings filled inline on the TS interfaces for all 6 tours and all 6 destinations. Blog data uses a different pattern: split into `blog.en.ts` (source of truth) + `blog.ru.ts` (slug-keyed `BlogPostRuOverride` map) with a locale-aware `blog.ts` entry point that merges them per call. Post `category` narrowed to literal union `BlogCategoryKey` so the translation dict can be indexed without an `as` cast.
+**i18n complete.** Next: **Phase 5** (cross-browser/responsive — breakpoints 375/390/768/1280/1440/1920 across Chrome/Firefox/Edge/Safari), then **Phase 6.1** (custom 404 at `src/app/not-found.tsx`), 6.2 (loading states + skeletons at `src/app/loading.tsx`), 6.3 (form validation), 6.4 (micro-interactions).
 
-**Next up:** Content pages in this order:
-1. ~~tours (listing + `[slug]`)~~ ✅ Session 31
-2. ~~destinations (listing + `[slug]`)~~ ✅ Session 32
-3. ~~about~~ ✅ Session 34
-4. ~~contact, practical-info, faq~~ ✅ Session 35
-5. ~~blog (listing + `[slug]`) — split `blog.en.ts`/`blog.ru.ts`~~ ✅ Session 36
-6. ~~review (multi-step verified form)~~ ✅ Session 37
-7. ~~reviews (verified listing + seed `*Ru` siblings)~~ ✅ Session 38
-8. ~~privacy~~ ✅ Session 39
-9. ~~terms~~ ✅ Session 40
-10. **Next:** voice-chat
-
-**Pattern per page:**
+**i18n pattern (if any new strings get added):**
 1. Add `"use client"` if missing (needed for `useLocale()`).
-2. `import { useLocale } from "@/components/LocaleProvider"` and `const { locale, t } = useLocale();`.
-3. Add a namespace to `en.ts` (e.g., `tours: {...}`) and matching RU in `ru.ts` — TypeScript fails the build if keys are missing.
+2. `import { useLocale } from "@/components/LocaleProvider"`; `const { locale, t } = useLocale();`.
+3. Add the namespace to `en.ts` and matching keys in `ru.ts` — TS fails the build if keys are missing.
 4. Replace hardcoded English with `t.<namespace>.<key>`.
-5. For data-bound text, pick by locale: `locale === "ru" && item.fieldRu ? item.fieldRu : item.field` — EN is the fallback so missing RU gracefully degrades.
-
-**After i18n:** Phase 5 (cross-browser/responsive), Phase 6.1 (custom 404), 6.2 (loading states), 6.3 (form validation), 6.4 (micro-interactions).
+5. For data-bound text: `locale === "ru" && item.fieldRu ? item.fieldRu : item.field` — EN is the fallback.
 
 ---
 
@@ -201,34 +185,9 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 
 ---
 
-## i18n (EN/RU) Progress
+## i18n (EN/RU)
 
-| # | File | Status |
-|---|------|--------|
-| 1 | `src/components/LocaleProvider.tsx` | ✅ |
-| 2 | `src/lib/translations/en.ts` + `ru.ts` (`header` + `footer` + `chat` + `home` + `tourCategory` + `tours` + `destinations` + `about` + `contact` + `practicalInfo` + `faq` + `blog` + `review` + `reviews` + `privacy` + `terms` ns) | ✅ |
-| 3 | `src/app/layout.tsx` (wraps `<LocaleProvider>`) | ✅ |
-| 4 | `src/components/layout/Header.tsx` (EN\|RU toggle + nav) | ✅ |
-| 5 | `src/components/layout/Footer.tsx` | ✅ |
-| 6 | `src/components/chat/ChatWidget.tsx` | ✅ |
-| 7 | `src/app/page.tsx` (+ QuickSearchBar, AnimatedHeadline, TourCard, DestinationCard) | ✅ |
-| 8 | `src/lib/data/tours.ts` — short fields (`titleRu`/`descriptionRu`/`locationRu`/`durationRu`/`groupSizeRu`) | ✅ |
-| 8b | `src/lib/data/tours.ts` — long fields (`longDescriptionRu`/`highlightsRu`/`itineraryRu`/`includedRu`/`notIncludedRu`) | ✅ |
-| 9 | `src/lib/data/destinations.ts` — short fields (`nameRu`/`countryRu`/`descriptionRu`) | ✅ |
-| 9b | `src/lib/data/destinations.ts` — long fields (`longDescriptionRu`/`highlightsRu`/`bestTimeToVisitRu`/`weatherRu`/`languagesRu`/`currencyRu`/`quickFactsRu`/`thingsToDoRu`) | ✅ |
-| 10 | `src/app/tours/page.tsx` + `[slug]/page.tsx` | ✅ |
-| 11 | `src/app/destinations/page.tsx` + `[slug]/page.tsx` | ✅ |
-| 12 | `src/app/about/page.tsx` | ✅ |
-| 13 | `src/app/contact/page.tsx` | ✅ |
-| 14 | `src/app/practical-info/page.tsx` | ✅ |
-| 15 | `src/app/faq/page.tsx` | ✅ |
-| 16 | `src/lib/data/blog.en.ts` + `blog.ru.ts` (split per locale) + locale-aware `blog.ts` entry | ✅ |
-| 17 | `src/app/blog/page.tsx` + `[slug]/page.tsx` | ✅ |
-| 18 | `src/app/review/page.tsx` | ✅ |
-| 19 | `src/app/reviews/page.tsx` | ✅ |
-| 20 | `src/app/privacy/page.tsx` | ✅ |
-| 21 | `src/app/terms/page.tsx` | ✅ |
-| 22 | `src/app/voice-chat/page.tsx` | ⬜ **Next** |
+Complete. All 22 pages/files translated. Translation namespaces in `en.ts` / `ru.ts`: `header`, `footer`, `chat`, `home`, `tourCategory`, `tours`, `destinations`, `about`, `contact`, `practicalInfo`, `faq`, `blog`, `review`, `reviews`, `privacy`, `terms`, `voiceChat`. Tour and Destination interfaces have inline `*Ru` siblings (short fields) and inline long-field RU siblings filled for all 6 tours and 6 destinations. Blog uses a split: `blog.en.ts` (source) + `blog.ru.ts` (slug-keyed `BlogPostRuOverride` map) merged via a locale-aware `blog.ts` entry. All `[slug]` pages are client components using React 19 `use(params)`; `generateStaticParams` / `generateMetadata` dropped (Phase 4 SEO skipped).
 
 **Known limitations (acceptable for thesis):**
 - Server-rendered initial paint shows EN until `LocaleProvider` hydrates (no FOUC script — low priority).
@@ -263,19 +222,6 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 
 ## Files Reference
 
-**Pages (all complete, emerald themed):**
-- `src/app/page.tsx` — Homepage
-- `src/app/tours/page.tsx` + `[slug]/page.tsx`
-- `src/app/destinations/page.tsx` + `[slug]/page.tsx`
-- `src/app/about/page.tsx`
-- `src/app/contact/page.tsx` (Google Map iframe embed)
-- `src/app/practical-info/page.tsx`, `src/app/faq/page.tsx`
-- `src/app/blog/page.tsx` + `[slug]/page.tsx`
-- `src/app/privacy/page.tsx`, `src/app/terms/page.tsx`
-- `src/app/review/page.tsx` — multi-step verified review form (booking ref + email)
-- `src/app/reviews/page.tsx` — all reviews (6 seed + localStorage submissions)
-- `src/app/voice-chat/page.tsx`
-
 **Components:**
 - `src/components/layout/Header.tsx` — sticky nav, 7 links, Contact CTA, dark toggle, EN\|RU toggle
 - `src/components/layout/Footer.tsx` — 4-column
@@ -290,9 +236,9 @@ Remove all corner accents (`border-t-2 border-l-2`), diamond dividers, geometric
 - `src/lib/translations/ru.ts` — typed `Translations`, TS enforces key parity
 
 **Data:**
-- `src/data/tours.ts` — 6 tours with 10-day itineraries
-- `src/data/destinations.ts` — 6 destinations
-- `src/data/blog.ts` — blog posts
+- `src/lib/data/tours.ts` — 6 tours with 10-day itineraries
+- `src/lib/data/destinations.ts` — 6 destinations
+- `src/lib/data/blog.ts` + `blog.en.ts` + `blog.ru.ts` — locale-aware blog data
 
 **Mock booking credentials (for `/review` demo):**
 - `WL-2025-001 / sarah@example.com`
@@ -313,78 +259,3 @@ Pages: / · /tours · /tours/[slug] · /destinations · /destinations/[slug]
 
 Missing (out of thesis scope): real booking/payment flow, user accounts
 ```
-
----
-
-## Quality Tests — Reference
-
-### TIER 1 — Critical
-| # | Test | Status |
-|---|------|--------|
-| 1 | UI/UX & Visual Design | ✅ |
-| 2 | Above-the-Fold / First Impression | ✅ |
-| 3 | Navigation & IA | ✅ |
-| 4 | Responsiveness | ⚠️ Phase 5 |
-| 5 | Accessibility (WCAG 2.1) | ✅ Lighthouse 100 |
-| 6 | Performance (Core Web Vitals) | ✅ Desktop 96, Mobile ~82 |
-
-### TIER 2 — Important
-| # | Test | Status |
-|---|------|--------|
-| 7 | Content Quality | ✅ |
-| 8 | Cross-Browser Compatibility | ❌ Phase 5 |
-| 9 | SEO Basics | ⏭️ Skipped |
-| 10 | Form Usability & Validation | ❌ Phase 6.3 |
-| 11 | Broken Links / 404 | ❌ Phase 6.1 |
-| 12 | Consistency | ✅ |
-
-### TIER 3 — Polish
-| # | Test | Status |
-|---|------|--------|
-| 13 | Micro-interactions & Animation | ⚠️ Phase 6.4 |
-| 14 | Empty/Loading States | ❌ Phase 6.2 |
-| 15 | Typography Scale | ⚠️ |
-| 16 | Cognitive Load | ⚠️ |
-| 17 | Trust Signals | ✅ Review system |
-| 18 | Print Friendliness | ❌ |
-
----
-
-## Remaining Work
-
-**Phase 5 — Cross-Browser & Responsive**
-- 5.1 Breakpoint testing: 375, 390, 768, 1280, 1440, 1920
-- 5.2 Browser testing: Chrome, Firefox, Edge, Safari
-
-**Phase 6 — Polish & Content**
-- 6.1 Custom 404: `src/app/not-found.tsx`
-- 6.2 Loading states: `src/app/loading.tsx` + skeletons for tour/destination cards
-- 6.3 Form validation: contact form email + required fields, success/error messages
-- 6.4 Micro-interactions: smooth scroll, button press feedback, consistent hover
-- 6.5 Trust signals ✅
-
----
-
-## Design Principles
-
-1. **Clarity over cleverness** — user should never wonder what to click.
-2. **Progressive disclosure** — important first, details on demand.
-3. **Consistency** — same button/card/spacing patterns everywhere.
-4. **Whitespace is not wasted space.**
-5. **Mobile first** — design for mobile, scale up.
-6. **Real content** (no Lorem ipsum).
-7. **Speed** — a slow site feels broken.
-
----
-
-*Session 29 consolidation: `HANDOVER.md` merged into this file. Single source of truth going forward.*
-*Session 31: tours listing + `[slug]` pages translated; `tours` namespace added to `en.ts`/`ru.ts`; Tour interface gained long-field RU siblings; `[slug]/page.tsx` converted to client via React 19 `use(params)`.*
-*Session 32: destinations listing + `[slug]` pages translated; `destinations` namespace added to `en.ts`/`ru.ts`; Destination interface gained long-field RU siblings (`longDescriptionRu`/`highlightsRu`/`bestTimeToVisitRu`/`weatherRu`/`languagesRu`/`currencyRu`/`quickFactsRu`/`thingsToDoRu`); `[slug]/page.tsx` converted to client via React 19 `use(params)`.*
-*Session 33: removed heavy dark hero overlays. Replaced `bg-black/70` (and `/50` on about) on tours/destinations/contact/about hero bands with `bg-gradient-to-b from-black/15 via-black/25 to-black/45` (after first trying `from-black/40 via-transparent` and finding it too washed for compact bands). Tours/[slug] + destinations/[slug] gradient eased from `from-black/80 via-black/40` to `from-black/55 via-black/10 to-transparent`. Hero text bumped from `text-emerald-400`/`text-stone-300` to `text-emerald-300`/`text-white/90` and given `drop-shadow-md` (body) / `drop-shadow-lg` (h1). Updated Design System "Hero Images" section to document the per-shape gradient pattern + added a Lessons Learned entry. No i18n progress this session.*
-*Session 34: translated `/about` page. Added `about` namespace to `en.ts`/`ru.ts` (hero, story, mission, team, values, cta sub-sections). Converted `about/page.tsx` to client component (`"use client"` + `useLocale()`) and removed the server `metadata` export (Phase 4 SEO skipped). Team `members` and `values.items` typed as 4-tuples; SVG icons + photo paths kept as parallel const arrays in the component, indexed by position so the translation dict only carries text. Typecheck clean.*
-*Session 35: translated `/contact`, `/practical-info`, and `/faq` pages. Added `contact`, `practicalInfo`, and `faq` namespaces to `en.ts`/`ru.ts`. All three converted to client components, server `metadata` exports removed. Pattern reused from session 34: SVG icons / route paths / contact data (email/phone/address per the "data, not UI copy" rule) kept as parallel const arrays in components; translation dicts carry only text. Per-page notes: contact's `info.labels` keyed by `"email" | "phone" | "office" | "hours"` for type-safe lookup; FAQ page uses `categoryMeta: { key: CategoryKey; ... }[]` so categories are indexed by literal key into the translation dict (no string-array zip). Typecheck clean.*
-*Session 36: translated `/blog` listing + `/blog/[slug]`. Added `blog` namespace to `en.ts`/`ru.ts`. Blog data split into `src/lib/data/blog.en.ts` (full English dataset, source of truth) and `src/lib/data/blog.ru.ts` (slug-keyed `Record<string, BlogPostRuOverride>` with title/excerpt/content/authorName/authorRole/tags/readTime). `src/lib/data/blog.ts` is now a locale-aware entry point: `getAllPosts(locale)` / `getPostBySlug(slug, locale)` / `getRelatedPosts(slug, locale, limit)` / `getFeaturedPosts(locale)` / `getPostsByCategory(category, locale)` / `getUniqueCategories(): BlogCategoryKey[]` — all merge EN with RU overrides via a `localize(post, locale)` helper, with EN as the fallback. Post `category` narrowed from `string` to literal union `BlogCategoryKey = "travel-guide" | "culture" | "photography" | "food-culture" | "adventure" | "destinations"` so `t.blog.categories[post.category]` indexes the dict without an `as` cast (per the prior "tighten loose string types for i18n indexing" lesson). `blog/[slug]/page.tsx` converted to client via React 19 `use(params)`, dropping `generateStaticParams` + `generateMetadata`. Date formatting localized: `toLocaleDateString(locale === "ru" ? "ru-RU" : "en-US", ...)`. `readTime` ("8 min read" / "8 мин чтения") translated per-post in the RU override since it's free-form text per article. Author names transliterated to Cyrillic in RU. Typecheck clean.*
-*Session 37: translated `/review` (multi-step verified review form). Added `review` namespace to `en.ts`/`ru.ts` with sub-sections `hero`, `steps`, `verify` (incl. error strings + info box), `why` (3-tuple of `{strong, body}` for "why we verify"), `write` (form labels, placeholders, `ratingLabels: [string × 5]` indexed by `rating-1`, errors map), and `success`. The page was already `"use client"` so just added `useLocale()`. Inline-interpolated tour name handled via `subtitle.replace("{tour}", verifiedTourLabel)` and a split helper for the success body's `<strong>` segment. Extended `VALID_BOOKINGS` records with a `tourRu` sibling alongside `tour`, then stored `verifiedTour` as `{ en, ru }` so the displayed label tracks the current locale (using the existing tour titles from `tours.ts`). Star aria-labels use `tr.write.starAriaSingular` / `starAriaPlural` for proper Russian pluralization ("звезда" / "звёзд"). Typecheck clean.*
-*Session 38: translated `/reviews` (verified reviews listing). Added `reviews` namespace to `en.ts`/`ru.ts` with sub-sections `hero`, `stats` (avg rating + count + leave-review CTA), `card` (badges + stars aria suffix + "recently submitted" date fallback), `sections` (recently-submitted/all-reviews headers + `newCountSuffix`), and `cta` (bottom CTA). All 6 hardcoded `SEED_REVIEWS` entries gained `nameRu` / `countryRu` / `tourRu` / `titleRu` / `bodyRu` siblings (per the project `*Ru` sibling pattern); names transliterated to Cyrillic, countries translated, tour names match existing `titleRu` from `tours.ts`. `Stars` component now takes `ariaSuffix` prop so the screen-reader label reads in current locale ("5 out of 5 stars" / "5 из 5 звёзд"). `formatDate` takes `locale` + a fallback string and uses `toLocaleDateString(locale === "ru" ? "ru-RU" : "en-US")`. `ReviewCard` now takes a `labels` prop bundle + `locale` so all card chrome (New badge / Verified / Recommends / date fallback) is locale-aware. To make user-submitted reviews track locale too, extended `ReviewData` in `/review` and `StoredReview` in `/reviews` with `tourRu`; new submissions persist both, and the listing picks `locale === "ru" && review.tourRu ? review.tourRu : review.tour` (legacy entries without `tourRu` gracefully fall back to EN). Typecheck clean.*
-*Session 39: translated `/privacy`. Added `privacy` namespace to `en.ts`/`ru.ts` with sub-sections `hero` (eyebrow/titlePrefix/titleAccent/lastUpdated), `intro`, `sections` (10 numbered sub-objects: information/use/sharing/cookies/security/rights/thirdParty/children/changes/contact), and `backToHome`. Page converted from server component to `"use client"` + `useLocale()`; server `metadata` export removed. List items typed as fixed-length tuples (`[string, string, string, string]` etc.) per section so EN/RU parity is enforced at the array level — adding/removing a bullet on one side is a TS error. Replaced the old `<Ul>` JSX-children helper with a typed `<Ul items={readonly string[]} />` that maps the array. Per the "data, not UI copy" rule, the contact card values (`privacy@wanderlust.com`, `+1 (555) 123-4567`, `123 Travel Street...`) stay hardcoded; only the field labels (Email/Phone/Address) translate. RU title used "Политика конфиденциальности" (split as titlePrefix "Политика" + accent "конфиденциальности"). Typecheck clean.*
-*Session 40: translated `/terms`. Added `terms` namespace to `en.ts`/`ru.ts` mirroring privacy's shape: `hero` (eyebrow/titlePrefix/titleAccent/lastUpdated), `intro`, `sections` (14 numbered sub-objects: acceptance/services/booking/cancellation/insurance/documents/health/itinerary/liability/ip/conduct/governing/changes/contact), `backToHome`. Page converted from server component to `"use client"` + `useLocale()`; server `metadata` export + `Metadata` import removed. Plain bullet lists (booking/conduct) typed as fixed-length tuples reusing the `<Ul items={readonly string[]} />` helper from session 39. The cancellation list — 3 strong-labelled bullets ("60+ days before departure: Full refund...") + 1 plain bullet — is typed as a 4-tuple of `{ strong: string; body: string }` and rendered via a new `StrongUl` helper that conditionally emits `<strong>` only when `item.strong` is non-empty (the 4th item uses `strong: ""` as the no-strong sentinel — keeps the tuple shape uniform without an optional discriminator). Cancellation also has a `tail` field for the "we strongly recommend travel insurance" paragraph that follows the list. Per the "data, not UI copy" rule, contact card values (`legal@wanderlust.com`, phone, placeholder address) stay hardcoded; only labels (Email/Phone/Address) translate. RU title rendered as "Условия обслуживания" (split: titlePrefix "Условия" + accent "обслуживания"). Typecheck clean.*

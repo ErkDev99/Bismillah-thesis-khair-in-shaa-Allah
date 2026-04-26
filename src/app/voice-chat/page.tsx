@@ -3,6 +3,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import styles from "./sora.module.css";
+import { useLocale } from "@/components/LocaleProvider";
 
 type AppState = "idle" | "connecting" | "listening" | "recording" | "thinking" | "speaking";
 
@@ -11,15 +12,6 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
 }
-
-const STATE_LABELS: Record<AppState, string> = {
-  idle: "Press Start to begin",
-  connecting: "Connecting\u2026",
-  listening: "Listening\u2026",
-  recording: "Hearing you\u2026",
-  thinking: "Thinking\u2026",
-  speaking: "Speaking\u2026",
-};
 
 // Voice-actor FastAPI — WebSocket connects directly
 // In production, use the Render backend; locally, connect to port 8001
@@ -101,6 +93,9 @@ function SoraBall({ state }: { state: AppState }) {
 // ── Page ─────────────────────────────────────────────────────────────────────
 
 export default function VoiceChatPage() {
+  const { t } = useLocale();
+  const tr = t.voiceChat;
+
   const [appState, setAppState] = useState<AppState>("idle");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState("");
@@ -269,12 +264,12 @@ export default function VoiceChatPage() {
 
         case "error": {
           const errObj = data.error as { message?: string } | undefined;
-          setError(errObj?.message || "Realtime API error");
+          setError(errObj?.message || tr.errors.realtimeApi);
           break;
         }
       }
     },
-    [transition, stopPlayback, playChunk]
+    [transition, stopPlayback, playChunk, tr.errors.realtimeApi]
   );
 
   // ── Start conversation ──────────────────────────────────────────────────────
@@ -338,9 +333,7 @@ export default function VoiceChatPage() {
       ws.onmessage = handleWsMessage;
 
       ws.onerror = () => {
-        setError(
-          "WebSocket error. Is the voice service running on port 8001?"
-        );
+        setError(tr.errors.websocket);
         transition("idle");
       };
 
@@ -352,7 +345,7 @@ export default function VoiceChatPage() {
       };
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to start conversation"
+        err instanceof Error ? err.message : tr.errors.startFailed
       );
       transition("idle");
     }
@@ -425,10 +418,10 @@ export default function VoiceChatPage() {
         <div className="relative flex flex-col items-center justify-center flex-1 px-4 gap-4">
           <header className="text-center">
             <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-              Voice Assistant
+              {tr.hero.eyebrow}
             </p>
             <h1 className="font-serif text-2xl md:text-3xl text-stone-900 dark:text-emerald-100 mb-3">
-              Speak with Wanderlust
+              {tr.hero.title}
             </h1>
             <div className="flex items-center justify-center gap-3" aria-hidden="true">
               <div className="h-px w-12 md:w-20 bg-emerald-500/40" />
@@ -459,7 +452,7 @@ export default function VoiceChatPage() {
             role="status"
             aria-live="polite"
           >
-            {STATE_LABELS[appState]}
+            {tr.states[appState]}
           </p>
 
           <button
@@ -483,13 +476,13 @@ export default function VoiceChatPage() {
               <line x1="12" y1="19" x2="12" y2="23" />
               <line x1="8" y1="23" x2="16" y2="23" />
             </svg>
-            Start Conversation
+            {tr.start}
           </button>
 
           <p className="text-stone-500 dark:text-stone-400 text-xs text-center max-w-xs">
-            Real-time voice &mdash; just speak naturally.
+            {tr.footnote1}
             <br />
-            Powered by OpenAI Realtime API.
+            {tr.footnote2}
           </p>
 
           {error && (
@@ -521,13 +514,13 @@ export default function VoiceChatPage() {
                 </div>
               </div>
               <div>
-                <p className="text-white text-sm font-semibold font-serif">Wanderlust Voice</p>
+                <p className="text-white text-sm font-semibold font-serif">{tr.topBarTitle}</p>
                 <p
                   className="text-emerald-400/70 text-xs uppercase tracking-wider"
                   role="status"
                   aria-live="polite"
                 >
-                  {STATE_LABELS[appState]}
+                  {tr.states[appState]}
                 </p>
               </div>
             </div>
@@ -545,7 +538,7 @@ export default function VoiceChatPage() {
               >
                 <rect x="4" y="4" width="16" height="16" rx="2" />
               </svg>
-              End
+              {tr.end}
             </button>
           </div>
 
@@ -566,12 +559,12 @@ export default function VoiceChatPage() {
             className="flex-1 min-h-0 overflow-y-auto px-4 py-6 scroll-smooth"
             role="log"
             aria-live="polite"
-            aria-label="Voice conversation"
+            aria-label={tr.ariaConversation}
           >
             <div className="max-w-2xl mx-auto space-y-4">
               {messages.length === 0 && (
                 <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-12">
-                  Start speaking — your conversation will appear here.
+                  {tr.emptyMessages}
                 </p>
               )}
 
@@ -594,18 +587,18 @@ export default function VoiceChatPage() {
                           : "text-emerald-600 dark:text-emerald-400"
                       }`}
                     >
-                      {msg.role === "user" ? "You" : "Assistant"}
+                      {msg.role === "user" ? tr.roles.you : tr.roles.assistant}
                     </p>
                     {msg.content ? (
                       <p className="text-sm leading-relaxed">
                         <span className="sr-only">
-                          {msg.role === "user" ? "You said: " : "Assistant said: "}
+                          {msg.role === "user" ? tr.srPrefixes.you : tr.srPrefixes.assistant}
                         </span>
                         {msg.content}
                       </p>
                     ) : (
                       <p className="text-sm leading-relaxed italic opacity-60">
-                        Transcribing...
+                        {tr.transcribing}
                       </p>
                     )}
                   </div>
@@ -617,9 +610,9 @@ export default function VoiceChatPage() {
                 <div className="flex justify-start">
                   <div className="max-w-[85%] sm:max-w-[75%] px-4 py-3 bg-white dark:bg-slate-800 text-stone-800 dark:text-stone-200 shadow-sm border border-stone-200 dark:border-slate-700 rounded-lg">
                     <p className="uppercase tracking-[0.2em] text-[10px] mb-1 font-medium text-emerald-600 dark:text-emerald-400">
-                      Assistant
+                      {tr.roles.assistant}
                     </p>
-                    <div className="flex gap-1.5" aria-label="Assistant is thinking">
+                    <div className="flex gap-1.5" aria-label={tr.ariaThinking}>
                       <span className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" />
                       <span
                         className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce"
