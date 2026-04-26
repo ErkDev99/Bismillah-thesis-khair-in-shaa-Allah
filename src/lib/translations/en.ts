@@ -1211,6 +1211,223 @@ const en = {
       backToHome: "Back to Home",
     },
   },
+  reviews: {
+    hero: {
+      eyebrow: "Verified Traveler Reviews",
+      titlePrefix: "What Our",
+      titleAccent: "Travelers Say",
+      subtitle:
+        "Every review on this page comes from a verified customer who traveled with Wanderlust. No filters, no edits — genuine experiences from real adventurers.",
+    },
+    stats: {
+      outOf: "out of 5",
+      verifiedReviewsCount: "verified reviews",
+      leaveReview: "Leave a Review",
+    },
+    card: {
+      newBadge: "New",
+      verified: "Verified",
+      recommends: "Recommends",
+      starsAriaSuffix: "out of 5 stars",
+      recentlySubmitted: "Recently submitted",
+    },
+    sections: {
+      recentlySubmitted: "Recently Submitted",
+      newCountSuffix: "new",
+      allReviews: "All Verified Reviews",
+    },
+    cta: {
+      title: "Traveled with Wanderlust?",
+      body: "Share your experience and help future travelers choose the right adventure. Your booking reference and email are all you need to get started.",
+      writeReview: "Write a Review",
+      backToHome: "Back to Home",
+    },
+  },
+  privacy: {
+    hero: {
+      eyebrow: "Legal",
+      titlePrefix: "Privacy",
+      titleAccent: "Policy",
+      lastUpdated: "Last updated: January 29, 2025",
+    },
+    intro:
+      "At Wanderlust, we are committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information when you use our website and services.",
+    sections: {
+      information: {
+        title: "1. Information We Collect",
+        directIntro: "We collect information you provide directly to us, including:",
+        directItems: [
+          "Name, email address, and phone number when you contact us or book a tour",
+          "Payment information when you make a purchase (processed securely by our payment providers)",
+          "Travel preferences and requirements you share with us",
+          "Communications you send to us via email, chat, or contact forms",
+        ] as [string, string, string, string],
+        autoIntro: "We automatically collect certain information when you visit our website:",
+        autoItems: [
+          "IP address and browser type",
+          "Pages visited and time spent on our site",
+          "Referring website or source",
+          "Device information",
+        ] as [string, string, string, string],
+      },
+      use: {
+        title: "2. How We Use Your Information",
+        intro: "We use the information we collect to:",
+        items: [
+          "Process and manage your tour bookings",
+          "Communicate with you about your inquiries and reservations",
+          "Send you marketing communications (with your consent)",
+          "Improve our website and services",
+          "Comply with legal obligations",
+        ] as [string, string, string, string, string],
+      },
+      sharing: {
+        title: "3. Information Sharing",
+        intro: "We do not sell your personal information. We may share your information with:",
+        items: [
+          "Tour operators and accommodation providers necessary to fulfill your booking",
+          "Payment processors to handle transactions securely",
+          "Service providers who assist with our website operations",
+          "Legal authorities when required by law",
+        ] as [string, string, string, string],
+      },
+      cookies: {
+        title: "4. Cookies",
+        body: "We use cookies and similar technologies to enhance your browsing experience, analyze website traffic, and personalize content. You can control cookies through your browser settings.",
+      },
+      security: {
+        title: "5. Data Security",
+        body: "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.",
+      },
+      rights: {
+        title: "6. Your Rights",
+        intro: "You have the right to:",
+        items: [
+          "Access the personal information we hold about you",
+          "Request correction of inaccurate information",
+          "Request deletion of your information (subject to legal requirements)",
+          "Opt out of marketing communications",
+          "Withdraw consent where processing is based on consent",
+        ] as [string, string, string, string, string],
+      },
+      thirdParty: {
+        title: "7. Third-Party Links",
+        body: "Our website may contain links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to review their privacy policies.",
+      },
+      children: {
+        title: "8. Children's Privacy",
+        body: "Our services are not directed to individuals under 18 years of age. We do not knowingly collect personal information from children.",
+      },
+      changes: {
+        title: "9. Changes to This Policy",
+        body: "We may update this privacy policy from time to time. We will notify you of any significant changes by posting the new policy on this page with an updated revision date.",
+      },
+      contact: {
+        title: "10. Contact Us",
+        intro: "If you have any questions about this privacy policy or our data practices, please contact us:",
+        emailLabel: "Email:",
+        phoneLabel: "Phone:",
+        addressLabel: "Address:",
+      },
+    },
+    backToHome: "Back to Home",
+  },
+  terms: {
+    hero: {
+      eyebrow: "Legal",
+      titlePrefix: "Terms of",
+      titleAccent: "Service",
+      lastUpdated: "Last updated: January 29, 2025",
+    },
+    intro:
+      "Welcome to Wanderlust. By accessing our website and using our services, you agree to be bound by these Terms of Service. Please read them carefully.",
+    sections: {
+      acceptance: {
+        title: "1. Acceptance of Terms",
+        body: "By accessing or using the Wanderlust website and services, you agree to comply with and be bound by these Terms of Service and our Privacy Policy. If you do not agree to these terms, please do not use our services.",
+      },
+      services: {
+        title: "2. Services Description",
+        body: "Wanderlust provides travel planning, tour booking, and related tourism services for destinations in Central Asia, including Kazakhstan, Kyrgyzstan, and Uzbekistan. We act as an intermediary between travelers and local service providers including hotels, transport operators, and tour guides.",
+      },
+      booking: {
+        title: "3. Booking and Payment",
+        items: [
+          "A 30% deposit is required to confirm your booking",
+          "The remaining balance is due 30 days before the tour start date",
+          "Bookings made within 30 days of departure require full payment",
+          "All prices are in USD unless otherwise stated",
+          "Prices are subject to change until booking is confirmed",
+        ] as [string, string, string, string, string],
+      },
+      cancellation: {
+        title: "4. Cancellation Policy",
+        intro: "Our cancellation policy is as follows:",
+        items: [
+          { strong: "60+ days before departure:", body: "Full refund minus $100 administrative fee" },
+          { strong: "30-59 days before departure:", body: "50% refund" },
+          { strong: "Less than 30 days before departure:", body: "No refund" },
+          { strong: "", body: "Cancellations must be submitted in writing via email" },
+        ] as [
+          { strong: string; body: string },
+          { strong: string; body: string },
+          { strong: string; body: string },
+          { strong: string; body: string },
+        ],
+        tail: "We strongly recommend purchasing comprehensive travel insurance to protect against unforeseen cancellations.",
+      },
+      insurance: {
+        title: "5. Travel Insurance",
+        body: "Travel insurance is strongly recommended and may be required for certain adventure tours. Your insurance should cover medical emergencies, evacuation, trip cancellation, and lost luggage. For trekking tours, ensure coverage extends to activities at altitude (4,000m+).",
+      },
+      documents: {
+        title: "6. Travel Documents",
+        body: "You are responsible for ensuring you have valid travel documents including passports, visas, and any required vaccinations. Wanderlust is not liable for any issues arising from inadequate documentation. We recommend checking entry requirements at least 8 weeks before travel.",
+      },
+      health: {
+        title: "7. Health and Fitness",
+        body: "Some tours require a reasonable level of fitness. You are responsible for assessing your own fitness for your chosen tour and disclosing any medical conditions that may affect your participation. We reserve the right to exclude participants whose condition may pose a risk to themselves or others.",
+      },
+      itinerary: {
+        title: "8. Itinerary Changes",
+        body: "While we make every effort to operate tours as described, we reserve the right to modify itineraries due to weather conditions, safety concerns, local regulations, or circumstances beyond our control. Alternative arrangements of similar value will be provided where possible.",
+      },
+      liability: {
+        title: "9. Limitation of Liability",
+        body: "Wanderlust acts as an agent for hotels, transport providers, and other service suppliers. We are not liable for any injury, damage, loss, delay, or inconvenience caused by these third parties or by events beyond our reasonable control, including but not limited to natural disasters, civil unrest, or pandemic restrictions.",
+      },
+      ip: {
+        title: "10. Intellectual Property",
+        body: "All content on this website, including text, images, logos, and design, is owned by Wanderlust or our licensors and is protected by copyright laws. You may not reproduce, distribute, or use any content without our written permission.",
+      },
+      conduct: {
+        title: "11. User Conduct",
+        intro: "When using our website and services, you agree not to:",
+        items: [
+          "Provide false or misleading information",
+          "Use the website for any unlawful purpose",
+          "Attempt to interfere with the website's operation",
+          "Infringe on the rights of others",
+        ] as [string, string, string, string],
+      },
+      governing: {
+        title: "12. Governing Law",
+        body: "These Terms of Service shall be governed by and construed in accordance with applicable laws. Any disputes arising from these terms shall be resolved through good-faith negotiation or, if necessary, binding arbitration.",
+      },
+      changes: {
+        title: "13. Changes to Terms",
+        body: "We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting to this page. Your continued use of our services after changes constitutes acceptance of the modified terms.",
+      },
+      contact: {
+        title: "14. Contact Information",
+        intro: "For questions about these Terms of Service, please contact us:",
+        emailLabel: "Email:",
+        phoneLabel: "Phone:",
+        addressLabel: "Address:",
+      },
+    },
+    backToHome: "Back to Home",
+  },
 };
 
 export type Translations = typeof en;

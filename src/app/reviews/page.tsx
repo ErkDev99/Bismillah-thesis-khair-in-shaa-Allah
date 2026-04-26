@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -26,11 +27,16 @@ function NatureDivider({ className = "" }: { className?: string }) {
 interface SeedReview {
   id: string;
   name: string;
+  nameRu: string;
   country: string;
+  countryRu: string;
   tour: string;
+  tourRu: string;
   rating: number;
   title: string;
+  titleRu: string;
   body: string;
+  bodyRu: string;
   recommend: boolean;
   date: string;
 }
@@ -39,66 +45,102 @@ const SEED_REVIEWS: SeedReview[] = [
   {
     id: "seed-1",
     name: "Emma B.",
+    nameRu: "Эмма Б.",
     country: "United Kingdom",
+    countryRu: "Великобритания",
     tour: "Silk Road Adventure",
+    tourRu: "Приключение по Шёлковому пути",
     rating: 5,
     title: "Trip of a lifetime",
+    titleRu: "Путешествие всей жизни",
     body: "The Silk Road tour was the trip of a lifetime. Our guide's knowledge of local history was extraordinary — I learned more in 10 days than in years of reading. Every stop felt carefully chosen to give us maximum insight into this ancient civilization. The combination of history, landscape, and local hospitality was unlike anything I have experienced before.",
+    bodyRu:
+      "Тур по Шёлковому пути стал путешествием всей моей жизни. Знания нашего гида о местной истории были выдающимися — за 10 дней я узнала больше, чем за годы чтения. Каждая остановка казалась тщательно продуманной, чтобы дать максимум информации об этой древней цивилизации. Сочетание истории, пейзажей и местного гостеприимства было ни на что не похоже.",
     recommend: true,
     date: "2025-09-20",
   },
   {
     id: "seed-2",
     name: "Lars M.",
+    nameRu: "Ларс М.",
     country: "Germany",
+    countryRu: "Германия",
     tour: "Nomadic Life Experience",
+    tourRu: "Жизнь кочевников",
     rating: 5,
     title: "Unforgettable nights under the stars",
+    titleRu: "Незабываемые ночи под звёздами",
     body: "Sleeping in a traditional yurt under a sky full of stars in Kyrgyzstan is something I will carry with me forever. Wanderlust made it feel effortless — every logistical detail was handled so we could fully absorb the experience. The nomadic family we stayed with were incredibly welcoming and generous. A truly human connection across cultures.",
+    bodyRu:
+      "Ночёвка в традиционной юрте под звёздным небом Кыргызстана — это то, что останется со мной навсегда. Wanderlust сделали всё легко: каждая логистическая деталь была продумана, чтобы мы могли полностью погрузиться в опыт. Семья кочевников, у которой мы гостили, была невероятно радушной и щедрой. Настоящая человеческая связь через культуры.",
     recommend: true,
     date: "2025-08-25",
   },
   {
     id: "seed-3",
     name: "Hana K.",
+    nameRu: "Хана К.",
     country: "Japan",
+    countryRu: "Япония",
     tour: "Mountain Expedition",
+    tourRu: "Горная экспедиция",
     rating: 5,
     title: "Perfectly balanced adventure",
+    titleRu: "Идеально сбалансированное приключение",
     body: "The small group meant we got to know everyone deeply. The itinerary was perfectly balanced — adventurous but never rushed. Absolutely perfect. I came back not just with memories but with real friendships. The mountain scenery in Kyrgyzstan rivals anything I have seen in the Alps or in Japan.",
+    bodyRu:
+      "Маленькая группа позволила нам по-настоящему узнать друг друга. Программа была идеально сбалансирована — насыщенная, но без спешки. Просто идеально. Я вернулась не только с воспоминаниями, но и с настоящими друзьями. Горные пейзажи Кыргызстана не уступают ничему, что я видела в Альпах или в Японии.",
     recommend: true,
     date: "2025-07-15",
   },
   {
     id: "seed-4",
     name: "Maria R.",
+    nameRu: "Мария Р.",
     country: "Spain",
+    countryRu: "Испания",
     tour: "Cultural Heritage Tour",
+    tourRu: "Тур по культурному наследию",
     rating: 5,
     title: "Uzbekistan surpassed all expectations",
+    titleRu: "Узбекистан превзошёл все ожидания",
     body: "I had been to many countries but Uzbekistan truly surprised me. The architecture of Samarkand is jaw-dropping, and our guide brought it all to life with stories and historical context that no guidebook could match. The ceramics workshops and bazaar visits added a hands-on dimension that made the culture feel tangible, not just observed.",
+    bodyRu:
+      "Я бывала во многих странах, но Узбекистан меня по-настоящему удивил. Архитектура Самарканда поражает воображение, а наш гид оживлял её рассказами и историческим контекстом, которые не найти в путеводителях. Мастерские керамики и посещения базаров добавили практический элемент: культуру можно было не только наблюдать, но и потрогать.",
     recommend: true,
     date: "2024-11-10",
   },
   {
     id: "seed-5",
     name: "John P.",
+    nameRu: "Джон П.",
     country: "United States",
+    countryRu: "США",
     tour: "Photography Expedition",
+    tourRu: "Фотоэкспедиция",
     rating: 4,
     title: "Incredible light, incredible landscapes",
+    titleRu: "Невероятный свет, невероятные пейзажи",
     body: "As a photographer I was looking for locations that would challenge and inspire me. This tour delivered on both counts. The golden hour light at the Tian Shan mountains alone was worth the entire trip. One or two logistics hiccups kept it from being a perfect five stars, but the overall experience and the quality of access to remote locations was outstanding. Would come back for more.",
+    bodyRu:
+      "Как фотограф я искал локации, которые бросят мне вызов и вдохновят. Этот тур оправдал оба ожидания. Один только золотой час в горах Тянь-Шаня стоил всей поездки. Пара логистических заминок не позволила поставить идеальные пять звёзд, но общий опыт и доступ к отдалённым локациям были выдающимися. Вернусь ещё.",
     recommend: true,
     date: "2024-10-18",
   },
   {
     id: "seed-6",
     name: "Elena V.",
+    nameRu: "Елена В.",
     country: "France",
+    countryRu: "Франция",
     tour: "Winter Wonderland",
+    tourRu: "Зимняя сказка",
     rating: 5,
     title: "Kazakhstan in winter — a hidden gem",
+    titleRu: "Казахстан зимой — скрытая жемчужина",
     body: "Everyone told me Central Asia in winter was a bad idea. They were completely wrong. The frozen steppe, the snow-covered mountains, the steaming beshbarmak in a warm yurt — it was a side of Kazakhstan that most travelers never see. Wanderlust made it feel safe, warm, and magical all at once. The ice fishing and eagle hunting demonstrations were extraordinary.",
+    bodyRu:
+      "Все говорили, что Центральная Азия зимой — плохая идея. Они ошибались. Замёрзшая степь, заснеженные горы, дымящийся бешбармак в тёплой юрте — это та сторона Казахстана, которую большинство путешественников не видят. Wanderlust создали ощущение безопасности, тепла и волшебства одновременно. Демонстрации зимней рыбалки и охоты с беркутом были потрясающими.",
     recommend: true,
     date: "2025-01-22",
   },
@@ -107,6 +149,7 @@ const SEED_REVIEWS: SeedReview[] = [
 // ─── LocalStorage review shape (from /review page) ───────────────────────────
 interface StoredReview {
   tour: string;
+  tourRu?: string;
   rating: number;
   title: string;
   body: string;
@@ -116,9 +159,9 @@ interface StoredReview {
 }
 
 // ─── Star display ─────────────────────────────────────────────────────────────
-function Stars({ rating }: { rating: number }) {
+function Stars({ rating, ariaSuffix }: { rating: number; ariaSuffix: string }) {
   return (
-    <div className="flex items-center gap-0.5" aria-label={`${rating} out of 5 stars`}>
+    <div className="flex items-center gap-0.5" aria-label={`${rating} ${ariaSuffix}`}>
       {[1, 2, 3, 4, 5].map((i) => (
         <svg
           key={i}
@@ -135,16 +178,16 @@ function Stars({ rating }: { rating: number }) {
 }
 
 // ─── Format date ──────────────────────────────────────────────────────────────
-function formatDate(dateStr: string | undefined): string {
-  if (!dateStr) return "Recently submitted";
+function formatDate(dateStr: string | undefined, locale: "en" | "ru", fallback: string): string {
+  if (!dateStr) return fallback;
   try {
-    return new Date(dateStr).toLocaleDateString("en-US", {
+    return new Date(dateStr).toLocaleDateString(locale === "ru" ? "ru-RU" : "en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
   } catch {
-    return "Recently submitted";
+    return fallback;
   }
 }
 
@@ -159,6 +202,8 @@ function ReviewCard({
   recommend,
   date,
   isNew,
+  labels,
+  locale,
 }: {
   rating: number;
   title: string;
@@ -169,23 +214,31 @@ function ReviewCard({
   recommend: boolean;
   date?: string;
   isNew?: boolean;
+  labels: {
+    newBadge: string;
+    verified: string;
+    recommends: string;
+    starsAriaSuffix: string;
+    recentlySubmitted: string;
+  };
+  locale: "en" | "ru";
 }) {
   return (
     <article className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-6 flex flex-col hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-300 rounded-xl">
       {/* Top row: stars + verified badge */}
       <div className="flex items-start justify-between gap-2 mb-3">
-        <Stars rating={rating} />
+        <Stars rating={rating} ariaSuffix={labels.starsAriaSuffix} />
         <div className="flex items-center gap-1.5 shrink-0">
           {isNew && (
             <span className="text-[10px] uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 font-semibold rounded-lg">
-              New
+              {labels.newBadge}
             </span>
           )}
           <span className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
-            Verified
+            {labels.verified}
           </span>
         </div>
       </div>
@@ -215,11 +268,11 @@ function ReviewCard({
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
               </svg>
-              Recommends
+              {labels.recommends}
             </span>
           )}
         </div>
-        <p className="text-[11px] text-stone-400 dark:text-stone-500">{formatDate(date)}</p>
+        <p className="text-[11px] text-stone-400 dark:text-stone-500">{formatDate(date, locale, labels.recentlySubmitted)}</p>
       </div>
     </article>
   );
@@ -227,6 +280,8 @@ function ReviewCard({
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ReviewsPage() {
+  const { locale, t } = useLocale();
+  const tr = t.reviews;
   const [lsReviews, setLsReviews] = useState<StoredReview[]>([]);
   const [mounted, setMounted] = useState(false);
 
@@ -249,6 +304,14 @@ export default function ReviewsPage() {
       ) / totalCount) * 10
     ) / 10;
 
+  const cardLabels = {
+    newBadge: tr.card.newBadge,
+    verified: tr.card.verified,
+    recommends: tr.card.recommends,
+    starsAriaSuffix: tr.card.starsAriaSuffix,
+    recentlySubmitted: tr.card.recentlySubmitted,
+  };
+
   return (
     <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       {/* Page Header */}
@@ -259,14 +322,13 @@ export default function ReviewsPage() {
         />
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 text-center">
           <p className="text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            Verified Traveler Reviews
+            {tr.hero.eyebrow}
           </p>
           <h1 className="text-3xl md:text-4xl font-bold font-serif mb-3">
-            What Our <span className="text-emerald-400">Travelers Say</span>
+            {tr.hero.titlePrefix} <span className="text-emerald-400">{tr.hero.titleAccent}</span>
           </h1>
           <p className="text-stone-400 max-w-xl mx-auto">
-            Every review on this page comes from a verified customer who traveled with Wanderlust.
-            No filters, no edits — genuine experiences from real adventurers.
+            {tr.hero.subtitle}
           </p>
           <NatureDivider className="mt-5" />
         </div>
@@ -288,7 +350,7 @@ export default function ReviewsPage() {
                     </svg>
                   ))}
                 </div>
-                <span className="text-xs text-stone-500">out of 5</span>
+                <span className="text-xs text-stone-500">{tr.stats.outOf}</span>
               </div>
             </div>
             <div className="h-8 w-px bg-stone-300 dark:bg-slate-700 hidden sm:block" aria-hidden="true" />
@@ -297,7 +359,7 @@ export default function ReviewsPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               <span>
-                <strong className="text-stone-900 dark:text-emerald-100">{mounted ? totalCount : SEED_REVIEWS.length}</strong> verified reviews
+                <strong className="text-stone-900 dark:text-emerald-100">{mounted ? totalCount : SEED_REVIEWS.length}</strong> {tr.stats.verifiedReviewsCount}
               </span>
             </div>
           </div>
@@ -305,7 +367,7 @@ export default function ReviewsPage() {
             href="/review"
             className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-6 py-2.5 font-semibold uppercase tracking-wide text-sm transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
           >
-            Leave a Review
+            {tr.stats.leaveReview}
           </Link>
         </div>
       </div>
@@ -317,10 +379,10 @@ export default function ReviewsPage() {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-6">
               <h2 className="text-lg font-bold text-stone-900 dark:text-emerald-100 font-serif">
-                Recently Submitted
+                {tr.sections.recentlySubmitted}
               </h2>
               <span className="text-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 px-2 py-0.5 font-semibold uppercase tracking-wider rounded-lg">
-                {lsReviews.length} new
+                {lsReviews.length} {tr.sections.newCountSuffix}
               </span>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -331,10 +393,12 @@ export default function ReviewsPage() {
                   title={review.title}
                   body={review.body}
                   name={review.name}
-                  tour={review.tour}
+                  tour={locale === "ru" && review.tourRu ? review.tourRu : review.tour}
                   recommend={review.recommend}
                   date={review.date}
                   isNew
+                  labels={cardLabels}
+                  locale={locale}
                 />
               ))}
             </div>
@@ -348,7 +412,7 @@ export default function ReviewsPage() {
         <div>
           {mounted && lsReviews.length > 0 && (
             <h2 className="text-lg font-bold text-stone-900 dark:text-emerald-100 font-serif mb-6">
-              All Verified Reviews
+              {tr.sections.allReviews}
             </h2>
           )}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -356,13 +420,15 @@ export default function ReviewsPage() {
               <ReviewCard
                 key={review.id}
                 rating={review.rating}
-                title={review.title}
-                body={review.body}
-                name={review.name}
-                country={review.country}
-                tour={review.tour}
+                title={locale === "ru" ? review.titleRu : review.title}
+                body={locale === "ru" ? review.bodyRu : review.body}
+                name={locale === "ru" ? review.nameRu : review.name}
+                country={locale === "ru" ? review.countryRu : review.country}
+                tour={locale === "ru" ? review.tourRu : review.tour}
                 recommend={review.recommend}
                 date={review.date}
+                labels={cardLabels}
+                locale={locale}
               />
             ))}
           </div>
@@ -374,24 +440,23 @@ export default function ReviewsPage() {
         <div className="max-w-2xl mx-auto px-4 py-12 text-center">
           <NatureDivider className="mb-6" />
           <h2 className="text-2xl font-bold text-stone-900 dark:text-emerald-100 font-serif mb-2">
-            Traveled with Wanderlust?
+            {tr.cta.title}
           </h2>
           <p className="text-stone-600 dark:text-stone-400 mb-6 text-sm">
-            Share your experience and help future travelers choose the right adventure.
-            Your booking reference and email are all you need to get started.
+            {tr.cta.body}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/review"
               className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-3 font-semibold uppercase tracking-wide text-sm transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
             >
-              Write a Review
+              {tr.cta.writeReview}
             </Link>
             <Link
               href="/"
               className="border-2 border-stone-300 dark:border-slate-600 hover:border-emerald-500 text-stone-700 dark:text-stone-300 px-8 py-3 font-semibold uppercase tracking-wide text-sm transition-all rounded-lg focus:outline-none focus:ring-4 focus:ring-emerald-300"
             >
-              Back to Home
+              {tr.cta.backToHome}
             </Link>
           </div>
         </div>

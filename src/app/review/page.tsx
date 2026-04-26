@@ -72,6 +72,7 @@ type Step = "verify" | "review" | "success";
 
 interface ReviewData {
   tour: string;
+  tourRu: string;
   rating: number;
   title: string;
   body: string;
@@ -171,6 +172,7 @@ export default function ReviewPage() {
 
     const newReview: ReviewData = {
       tour: verifiedTour.en,
+      tourRu: verifiedTour.ru,
       rating,
       title: reviewTitle.trim(),
       body: reviewBody.trim(),

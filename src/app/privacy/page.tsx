@@ -1,19 +1,14 @@
 // src/app/privacy/page.tsx
 // ─────────────────────────────────────────────────────────────────────────────
-// Server Component — no "use client" needed.
+// Client Component (needs useLocale).
 // Style: Nature / Travel Magazine — emerald + cream palette, rounded corners,
 // leaf dividers, bright photography, dark mode throughout.
 // ─────────────────────────────────────────────────────────────────────────────
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import type { Metadata } from "next";
-
-// ─── SEO Metadata ─────────────────────────────────────────────────────────────
-export const metadata: Metadata = {
-  title: "Privacy Policy | Wanderlust",
-  description:
-    "Learn how Wanderlust collects, uses, and protects your personal information.",
-};
+import { useLocale } from "@/components/LocaleProvider";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -32,9 +27,12 @@ function NatureDivider({ className = "" }: { className?: string }) {
 // HERO SECTION
 // ═════════════════════════════════════════════════════════════════════════════
 function HeroSection() {
+  const { t } = useLocale();
+  const tr = t.privacy.hero;
+
   return (
     <section
-      aria-label="Privacy policy"
+      aria-label={`${tr.titlePrefix} ${tr.titleAccent}`}
       className="relative text-center text-white overflow-hidden"
     >
       <Image
@@ -54,13 +52,13 @@ function HeroSection() {
 
       <div className="relative z-10 px-4 max-w-4xl mx-auto py-4 md:py-6">
         <p className="text-emerald-300 text-xs font-semibold tracking-[0.3em] uppercase mb-2 drop-shadow-md">
-          Legal
+          {tr.eyebrow}
         </p>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3 font-serif drop-shadow-md">
-          Privacy <span className="text-emerald-400">Policy</span>
+          {tr.titlePrefix} <span className="text-emerald-400">{tr.titleAccent}</span>
         </h1>
         <p className="text-stone-300 text-sm uppercase tracking-[0.2em] drop-shadow-md">
-          Last updated: January 29, 2025
+          {tr.lastUpdated}
         </p>
         <NatureDivider className="mt-4" />
       </div>
@@ -87,10 +85,12 @@ function P({ children, className = "" }: { children: React.ReactNode; className?
   );
 }
 
-function Ul({ children }: { children: React.ReactNode }) {
+function Ul({ items }: { items: readonly string[] }) {
   return (
     <ul className="list-disc pl-6 text-stone-600 dark:text-stone-400 mb-6 space-y-2 marker:text-emerald-500">
-      {children}
+      {items.map((item, i) => (
+        <li key={i}>{item}</li>
+      ))}
     </ul>
   );
 }
@@ -99,6 +99,10 @@ function Ul({ children }: { children: React.ReactNode }) {
 // PAGE ROOT
 // ═════════════════════════════════════════════════════════════════════════════
 export default function PrivacyPolicyPage() {
+  const { t } = useLocale();
+  const tr = t.privacy;
+  const s = tr.sections;
+
   return (
     <div className="min-h-screen bg-emerald-50 dark:bg-slate-950">
       <HeroSection />
@@ -106,102 +110,47 @@ export default function PrivacyPolicyPage() {
       <section className="py-12 md:py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="relative bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-800 p-8 md:p-12 shadow-sm rounded-xl">
-            <P className="text-lg">
-              At Wanderlust, we are committed to protecting your privacy. This
-              policy explains how we collect, use, and safeguard your personal
-              information when you use our website and services.
-            </P>
+            <P className="text-lg">{tr.intro}</P>
 
-            <H2>1. Information We Collect</H2>
-            <P>We collect information you provide directly to us, including:</P>
-            <Ul>
-              <li>Name, email address, and phone number when you contact us or book a tour</li>
-              <li>Payment information when you make a purchase (processed securely by our payment providers)</li>
-              <li>Travel preferences and requirements you share with us</li>
-              <li>Communications you send to us via email, chat, or contact forms</li>
-            </Ul>
+            <H2>{s.information.title}</H2>
+            <P>{s.information.directIntro}</P>
+            <Ul items={s.information.directItems} />
+            <P>{s.information.autoIntro}</P>
+            <Ul items={s.information.autoItems} />
 
-            <P>We automatically collect certain information when you visit our website:</P>
-            <Ul>
-              <li>IP address and browser type</li>
-              <li>Pages visited and time spent on our site</li>
-              <li>Referring website or source</li>
-              <li>Device information</li>
-            </Ul>
+            <H2>{s.use.title}</H2>
+            <P>{s.use.intro}</P>
+            <Ul items={s.use.items} />
 
-            <H2>2. How We Use Your Information</H2>
-            <P>We use the information we collect to:</P>
-            <Ul>
-              <li>Process and manage your tour bookings</li>
-              <li>Communicate with you about your inquiries and reservations</li>
-              <li>Send you marketing communications (with your consent)</li>
-              <li>Improve our website and services</li>
-              <li>Comply with legal obligations</li>
-            </Ul>
+            <H2>{s.sharing.title}</H2>
+            <P>{s.sharing.intro}</P>
+            <Ul items={s.sharing.items} />
 
-            <H2>3. Information Sharing</H2>
-            <P>We do not sell your personal information. We may share your information with:</P>
-            <Ul>
-              <li>Tour operators and accommodation providers necessary to fulfill your booking</li>
-              <li>Payment processors to handle transactions securely</li>
-              <li>Service providers who assist with our website operations</li>
-              <li>Legal authorities when required by law</li>
-            </Ul>
+            <H2>{s.cookies.title}</H2>
+            <P>{s.cookies.body}</P>
 
-            <H2>4. Cookies</H2>
-            <P>
-              We use cookies and similar technologies to enhance your browsing
-              experience, analyze website traffic, and personalize content. You
-              can control cookies through your browser settings.
-            </P>
+            <H2>{s.security.title}</H2>
+            <P>{s.security.body}</P>
 
-            <H2>5. Data Security</H2>
-            <P>
-              We implement appropriate technical and organizational measures to
-              protect your personal information against unauthorized access,
-              alteration, disclosure, or destruction. However, no method of
-              transmission over the internet is 100% secure.
-            </P>
+            <H2>{s.rights.title}</H2>
+            <P>{s.rights.intro}</P>
+            <Ul items={s.rights.items} />
 
-            <H2>6. Your Rights</H2>
-            <P>You have the right to:</P>
-            <Ul>
-              <li>Access the personal information we hold about you</li>
-              <li>Request correction of inaccurate information</li>
-              <li>Request deletion of your information (subject to legal requirements)</li>
-              <li>Opt out of marketing communications</li>
-              <li>Withdraw consent where processing is based on consent</li>
-            </Ul>
+            <H2>{s.thirdParty.title}</H2>
+            <P>{s.thirdParty.body}</P>
 
-            <H2>7. Third-Party Links</H2>
-            <P>
-              Our website may contain links to third-party websites. We are not
-              responsible for the privacy practices of these external sites. We
-              encourage you to review their privacy policies.
-            </P>
+            <H2>{s.children.title}</H2>
+            <P>{s.children.body}</P>
 
-            <H2>8. Children&apos;s Privacy</H2>
-            <P>
-              Our services are not directed to individuals under 18 years of age.
-              We do not knowingly collect personal information from children.
-            </P>
+            <H2>{s.changes.title}</H2>
+            <P>{s.changes.body}</P>
 
-            <H2>9. Changes to This Policy</H2>
-            <P>
-              We may update this privacy policy from time to time. We will notify
-              you of any significant changes by posting the new policy on this
-              page with an updated revision date.
-            </P>
-
-            <H2>10. Contact Us</H2>
-            <P>
-              If you have any questions about this privacy policy or our data
-              practices, please contact us:
-            </P>
+            <H2>{s.contact.title}</H2>
+            <P>{s.contact.intro}</P>
             <ul className="list-none text-stone-600 dark:text-stone-400 mb-6 space-y-2">
               <li>
                 <strong className="text-stone-900 dark:text-emerald-100 uppercase tracking-[0.15em] text-xs">
-                  Email:
+                  {s.contact.emailLabel}
                 </strong>{" "}
                 <a
                   href="mailto:privacy@wanderlust.com"
@@ -212,7 +161,7 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong className="text-stone-900 dark:text-emerald-100 uppercase tracking-[0.15em] text-xs">
-                  Phone:
+                  {s.contact.phoneLabel}
                 </strong>{" "}
                 <a
                   href="tel:+15551234567"
@@ -223,7 +172,7 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong className="text-stone-900 dark:text-emerald-100 uppercase tracking-[0.15em] text-xs">
-                  Address:
+                  {s.contact.addressLabel}
                 </strong>{" "}
                 123 Travel Street, Adventure City, AC 12345
               </li>
@@ -243,7 +192,7 @@ export default function PrivacyPolicyPage() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Back to Home
+                {tr.backToHome}
               </Link>
             </div>
           </div>
