@@ -10,13 +10,15 @@ export type SearchTour = {
   id: number;
   slug: string;
   title: string;
+  titleRu?: string;
   destination: string;
   duration: string;
+  durationRu?: string;
   durationDays: number;
   price: number;
   rating: number;
   image: string;
-  difficulty: string;
+  difficulty: "Easy" | "Moderate" | "Challenging";
 };
 
 type Props = {
@@ -25,18 +27,21 @@ type Props = {
 
 export default function QuickSearchBar({ tours }: Props) {
   const router = useRouter();
-  const { t } = useLocale();
+  const { locale, t } = useLocale();
   const [destination, setDestination] = useState("");
   const [duration, setDuration] = useState("");
 
-  // Unique countries from tour data
+  // Unique countries from tour data — labels run through translation dict
   const countries = useMemo(() => {
-    const unique = [...new Set(tours.map((t) => t.destination))];
-    return unique.map((d) => ({
-      value: d,
-      label: d.charAt(0).toUpperCase() + d.slice(1),
-    }));
-  }, [tours]);
+    const unique = [...new Set(tours.map((tr) => tr.destination))];
+    return unique.map((d) => {
+      const capitalized = d.charAt(0).toUpperCase() + d.slice(1);
+      return {
+        value: d,
+        label: t.destinations.countries[capitalized] ?? capitalized,
+      };
+    });
+  }, [tours, t]);
 
   // Filter tours based on current selection
   const filteredTours = useMemo(() => {
@@ -172,7 +177,15 @@ export default function QuickSearchBar({ tours }: Props) {
 
             {filteredTours.length > 0 ? (
               <div className="space-y-2">
-                {filteredTours.map((tour) => (
+                {filteredTours.map((tour) => {
+                  const title =
+                    locale === "ru" && tour.titleRu ? tour.titleRu : tour.title;
+                  const tourDuration =
+                    locale === "ru" && tour.durationRu
+                      ? tour.durationRu
+                      : tour.duration;
+                  const difficultyLabel = t.home.difficulty[tour.difficulty];
+                  return (
                   <Link
                     key={tour.id}
                     href={`/tours/${tour.slug}`}
@@ -192,10 +205,10 @@ export default function QuickSearchBar({ tours }: Props) {
                     {/* Tour name + meta */}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-semibold text-emerald-100 group-hover:text-emerald-400 transition-colors font-serif truncate">
-                        {tour.title}
+                        {title}
                       </h3>
                       <p className="text-xs text-stone-400 mt-0.5">
-                        {tour.duration} · {tour.difficulty}
+                        {tourDuration} · {difficultyLabel}
                       </p>
                     </div>
 
@@ -225,7 +238,8 @@ export default function QuickSearchBar({ tours }: Props) {
                       />
                     </svg>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-stone-500 text-sm text-center py-4">
