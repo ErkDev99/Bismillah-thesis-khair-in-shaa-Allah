@@ -554,6 +554,20 @@ const en = {
       success:
         "Thank you! Your message has been sent. We will get back to you within 24 hours.",
       error: "Something went wrong. Please try again or email us directly.",
+      errors: {
+        nameRequired: "Please enter your full name.",
+        nameTooLong: "Name is too long (max 100 characters).",
+        emailRequired: "Please enter your email address.",
+        emailInvalid: "Please enter a valid email address.",
+        phoneTooLong: "Phone number is too long.",
+        subjectInvalid: "Please select a subject.",
+        messageTooShort: "Please write a message of at least 10 characters.",
+        messageTooLong: "Message is too long (max 5000 characters).",
+        rateLimited: "Too many requests. Please wait an hour before trying again.",
+        sendFailed: "We could not send your message right now. Please try again later or email info@wanderlust.com.",
+        invalidPayload: "Invalid request. Please refresh the page and try again.",
+        network: "Network error. Please check your connection and try again.",
+      },
     },
     map: {
       eyebrow: "Our Location",

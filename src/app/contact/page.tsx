@@ -10,6 +10,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useLocale } from "@/components/LocaleProvider";
+import type { Translations } from "@/lib/translations/en";
 
 // ─── Nature Divider — leaf ornament ─────────────────────────────────────────
 function NatureDivider({ className = "" }: { className?: string }) {
@@ -125,6 +126,8 @@ function HeroSection() {
 // ═════════════════════════════════════════════════════════════════════════════
 // CONTACT FORM
 // ═════════════════════════════════════════════════════════════════════════════
+type ErrorKey = keyof Translations["contact"]["form"]["errors"];
+
 function ContactForm() {
   const { t } = useLocale();
   const [formData, setFormData] = useState({
@@ -133,8 +136,10 @@ function ContactForm() {
     phone: "",
     subject: "",
     message: "",
+    website: "", // honeypot — must stay empty for real users
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorKey, setErrorKey] = useState<ErrorKey | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -148,10 +153,30 @@ function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("loading");
-    setTimeout(() => {
-      setStatus("success");
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    }, 1000);
+    setErrorKey(null);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const json = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+
+      if (res.ok && json?.ok) {
+        setStatus("success");
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "", website: "" });
+        return;
+      }
+
+      const apiKey = json?.error;
+      const known = apiKey && apiKey in t.contact.form.errors;
+      setErrorKey(known ? (apiKey as ErrorKey) : "sendFailed");
+      setStatus("error");
+    } catch {
+      setErrorKey("network");
+      setStatus("error");
+    }
   };
 
   const inputClasses =
@@ -256,6 +281,22 @@ function ContactForm() {
         />
       </div>
 
+      {/* Honeypot — hidden from sighted users + screen readers + keyboard.
+          Bots fill in every field; if this is non-empty the server silently
+          discards the submission. */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", top: "auto", width: "1px", height: "1px", overflow: "hidden" }}>
+        <label htmlFor="website">Website (leave blank)</label>
+        <input
+          type="text"
+          id="website"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={formData.website}
+          onChange={handleChange}
+        />
+      </div>
+
       <button
         type="submit"
         disabled={status === "loading"}
@@ -280,7 +321,7 @@ function ContactForm() {
           aria-live="assertive"
           className="relative bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 text-red-800 dark:text-red-200 rounded-lg px-4 py-3 text-center text-sm"
         >
-          {t.contact.form.error}
+          {errorKey ? t.contact.form.errors[errorKey] : t.contact.form.error}
         </div>
       )}
     </form>
