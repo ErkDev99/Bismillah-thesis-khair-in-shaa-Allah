@@ -120,33 +120,113 @@
 // }
 // src/app/api/chat/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { tours } from "@/lib/data/tours";
+import { destinations } from "@/lib/data/destinations";
+import { blogPostsEn } from "@/lib/data/blog.en";
 
-// System prompt that gives the AI context about the business
-const SYSTEM_PROMPT = `You are a helpful travel assistant for Wanderlust, a tour company specializing in Central Asian adventures (Kazakhstan, Kyrgyzstan, Uzbekistan).
+// Site map — every public page and what the user can do there.
+// Keep paths in sync with src/app/**/page.tsx.
+const SITE_MAP = `
+- / (Home / Главная) — hero, animated headline rotating Central Asian country names, QuickSearchBar (pick a country → see matching tours with prices instantly), featured tours, featured destinations, testimonials, newsletter sign-up.
+- /tours (Tours / Туры) — full catalogue of all 6 tours with filters by destination, category (cultural/adventure), and difficulty. Each tour card links to its detail page.
+- /tours/[slug] — detail page for a single tour: hero photo, full description, day-by-day itinerary, highlights, what's included / not included, group size, difficulty badge, price, gallery, "Book Now" CTA.
+- /destinations (Destinations / Направления) — grid of all 6 destinations across Kazakhstan, Kyrgyzstan, Uzbekistan.
+- /destinations/[slug] — detail page for a destination: long description, highlights, things to do, best time to visit, weather (summer/winter), languages, currency, timezone, quick facts.
+- /about (About / О нас) — Wanderlust story, mission, team photos and bios.
+- /blog (Blog / Блог) — articles by local experts; filter by category (Travel Guide, Culture, Photography, Food & Culture, Adventure, Destinations).
+- /blog/[slug] — full blog article with author, read time, related posts.
+- /contact (Contact / Контакты) — contact form, phone, email, physical address, embedded Google Map.
+- /practical-info (Practical Info / Советы) — visa requirements, currency, language, packing tips, health & safety, transport.
+- /faq (FAQ / Частые вопросы) — frequently asked questions about booking, payments, tours, cancellations.
+- /review — leave a review (requires booking ID + email; demo mode).
+- /reviews — read traveller reviews.
+- /voice-chat (Voice Chat / Голосовой чат) — real-time speech-to-speech conversation with the assistant via OpenAI Realtime API.
+- /privacy, /terms — legal pages.
+- Header on every page: nav links (Home, Tours, Destinations, About, Practical Info, Blog), Contact CTA button, dark-mode toggle (sun/moon icon), language toggle (EN | RU).
+- Footer on every page: 4 columns — About, Quick Links, Contact, Newsletter sign-up.
+- ChatWidget (this assistant) — floating green bubble bottom-right on every page; click to chat in text, or tap the mic for voice dictation.
+`.trim();
 
-Your role is to:
-- Answer questions about tours, destinations, and travel planning
-- Provide helpful information about Central Asia (visa, weather, culture, etc.)
-- Help users find the right tour for their interests
-- Be friendly, enthusiastic, and knowledgeable
+function buildToursDigest(): string {
+  return tours
+    .map((t) => {
+      const highlights = t.highlights.slice(0, 3).join("; ");
+      return `- "${t.title}" (/tours/${t.slug}) — $${t.price}, ${t.duration}, ${t.difficulty}, ${t.location}, ${t.groupSize}, category: ${t.category}. ${t.description} Highlights: ${highlights}.`;
+    })
+    .join("\n");
+}
 
-Key information about Wanderlust:
-- We offer tours in Kazakhstan, Kyrgyzstan, and Uzbekistan
-- Tour types: Cultural tours, Adventure/trekking, Photography expeditions, Nomadic experiences
-- Price range: $1,299 - $2,499 per person
-- Group sizes: 4-16 people depending on tour
-- Popular destinations: Almaty, Samarkand, Bishkek, Issyk-Kul Lake, Charyn Canyon
+function buildDestinationsDigest(): string {
+  return destinations
+    .map((d) => {
+      const things = d.thingsToDo.slice(0, 3).map((x) => x.title).join(", ");
+      return `- "${d.name}", ${d.country} (/destinations/${d.slug}) — ${d.description} Best time: ${d.bestTimeToVisit}. Top things to do: ${things}.`;
+    })
+    .join("\n");
+}
 
-Contact info:
+function buildBlogDigest(): string {
+  return blogPostsEn
+    .map((p) => `- "${p.title}" (/blog/${p.slug}) — ${p.category}; ${p.readTime}.`)
+    .join("\n");
+}
+
+function buildSystemPrompt(): string {
+  return `You are the official AI assistant for Wanderlust, a Central Asian travel company specializing in Kazakhstan, Kyrgyzstan, and Uzbekistan. You have complete knowledge of every page, tour, destination, and article on this website. Answer specifically — never give generic answers when you can quote real tour names, prices, itineraries, or destinations from the data below.
+
+# Your job
+- Recommend specific tours by name, price, and slug when users describe their interests (e.g. "I want adventure in Kyrgyzstan" → recommend "Mountain Expedition" with the link).
+- Explain what each page on the site does so users know where to click next.
+- Answer practical-travel questions (visa, weather, currency, best time, food).
+- Always include a markdown link to the relevant page so the user can click through, e.g. [Mountain Expedition](/tours/mountain-expedition).
+- Reply in the same language as the user's most recent message (English, Russian, or Kyrgyz). Currencies/prices stay in USD.
+- Be warm, concise, and concrete. Use short paragraphs or short bulleted lists. Maximum ~150 words unless the user asks for depth.
+
+# Site map (every page and what users can do there)
+${SITE_MAP}
+
+# All 6 tours (use these exact names and prices)
+${buildToursDigest()}
+
+# All 6 destinations
+${buildDestinationsDigest()}
+
+# Blog articles
+${buildBlogDigest()}
+
+# Practical info quick reference
+- Visa: Kazakhstan, Kyrgyzstan, and Uzbekistan all offer visa-free entry for most Western passports (USA, UK, EU, Canada, AU/NZ, Japan, Korea) — typically 30–60 days. Always confirm on /practical-info.
+- Best time to visit overall: May–June and September–October (mild, fewer crowds). July–August is hot in Uzbekistan; Dec–Feb is great for skiing in Kazakhstan.
+- Currencies: KZT (Kazakhstan), KGS (Kyrgyzstan), UZS (Uzbekistan). Carry clean USD for exchange; cards work in major cities.
+- Languages: Russian is widely understood across all three countries. Kazakh, Kyrgyz, and Uzbek are the local languages.
+
+# Contact
 - Email: info@wanderlust.com
 - Phone: +1 (555) 123-4567
+- Or use the form at /contact.
 
-Keep responses concise (2-3 short paragraphs max). Be helpful and encourage users to explore our tours or contact us for custom trips.`;
+# Hard rules
+- Never invent tours, prices, destinations, or article titles that aren't in the lists above.
+- If a user asks something the data doesn't cover (e.g. "do you offer tours in Tajikistan?"), say so honestly and offer to connect them via /contact.
+- Do not share booking credentials or admin info.`;
+}
 
-// Shorter version for voice — TTS has to speak every word, so brevity matters
-const VOICE_SYSTEM_PROMPT = `You are a friendly voice assistant for Wanderlust, a Central Asian travel company (Kazakhstan, Kyrgyzstan, Uzbekistan). Tours cost $1,299–$2,499. Contact: info@wanderlust.com.
+function buildVoiceSystemPrompt(): string {
+  // Voice mode: TTS speaks every word. Keep it tight but include the tour list
+  // so the assistant can answer specific questions about real tours by name.
+  const toursLine = tours
+    .map((t) => `${t.title} ($${t.price}, ${t.durationDays} days, ${t.destination})`)
+    .join("; ");
+  const destLine = destinations.map((d) => `${d.name} in ${d.country}`).join("; ");
 
-CRITICAL: This is a VOICE conversation. Reply in 1–2 short sentences only. Never use lists, bullet points, or markdown. Be warm and natural, as if speaking out loud.`;
+  return `You are the friendly voice assistant for Wanderlust, a travel company for Kazakhstan, Kyrgyzstan, and Uzbekistan.
+
+Tours we offer: ${toursLine}.
+Destinations: ${destLine}.
+Contact: info@wanderlust.com.
+
+CRITICAL: This is a VOICE conversation. Reply in 1–2 short sentences only. No lists, no markdown, no URLs. Speak the tour name out loud naturally. Reply in the same language the user spoke. Be warm and conversational.`;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -162,8 +242,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const systemPrompt = voice ? VOICE_SYSTEM_PROMPT : SYSTEM_PROMPT;
-    const maxTokens    = voice ? 80 : 500;
+    const systemPrompt = voice ? buildVoiceSystemPrompt() : buildSystemPrompt();
+    const maxTokens    = voice ? 100 : 700;
 
     // Voice mode: return full JSON (TTS needs the complete text before it can speak)
     // Text mode: stream tokens so the UI can display them as they arrive
