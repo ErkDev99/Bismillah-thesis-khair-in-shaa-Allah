@@ -21,6 +21,7 @@ import {
 } from "@/lib/data/destinations";
 import QuickSearchBar from "@/components/home/QuickSearchBar";
 import { AnimatedHeadline } from "@/components/home/AnimatedHeadline";
+import { Reveal } from "@/components/Reveal";
 import { useLocale } from "@/components/LocaleProvider";
 import type { Translations } from "@/lib/translations/en";
 
@@ -129,13 +130,13 @@ function HeroSection() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/tours"
-            className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-8 py-3 rounded-lg font-semibold text-base tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
+            className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 active:scale-[0.98] text-white px-8 py-3 rounded-lg font-semibold text-base tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-transparent shadow-lg"
           >
             {t.home.hero.browseTours}
           </Link>
           <Link
             href="/destinations"
-            className="border-2 border-white/60 hover:bg-white hover:text-emerald-800 text-white px-8 py-3 rounded-lg font-semibold text-base tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent backdrop-blur-sm"
+            className="border-2 border-white/60 hover:bg-white hover:text-emerald-800 active:scale-[0.98] text-white px-8 py-3 rounded-lg font-semibold text-base tracking-wide transition-all focus:outline-none focus:ring-4 focus:ring-white/50 focus:ring-offset-2 focus:ring-offset-transparent backdrop-blur-sm"
           >
             {t.home.hero.exploreDestinations}
           </Link>
@@ -186,23 +187,25 @@ function WhyChooseUsSection() {
       className="py-16 px-4 bg-emerald-50 dark:bg-slate-950"
     >
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            {t.home.whyUs.eyebrow}
-          </p>
-          <h2
-            id="why-us-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
-          >
-            {t.home.whyUs.title}
-          </h2>
-          <p className="text-stone-600 dark:text-stone-400 max-w-xl mx-auto">
-            {t.home.whyUs.subtitle}
-          </p>
-          <NatureDivider className="mt-5" />
-        </div>
+        <Reveal>
+          <div className="text-center mb-12">
+            <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
+              {t.home.whyUs.eyebrow}
+            </p>
+            <h2
+              id="why-us-heading"
+              className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
+            >
+              {t.home.whyUs.title}
+            </h2>
+            <p className="text-stone-600 dark:text-stone-400 max-w-xl mx-auto">
+              {t.home.whyUs.subtitle}
+            </p>
+            <NatureDivider className="mt-5" />
+          </div>
+        </Reveal>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <Reveal delay={0.15} className="grid md:grid-cols-3 gap-6">
           {t.home.whyUs.items.map((item, i) => (
             <div
               key={item.title}
@@ -227,7 +230,7 @@ function WhyChooseUsSection() {
               </p>
             </div>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -413,37 +416,39 @@ function FeaturedToursSection({ tours }: { tours: Tour[] }) {
       className="py-16 px-4 bg-stone-50 dark:bg-slate-900"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
-          <div>
-            <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
-              {t.home.featuredTours.eyebrow}
-            </p>
-            <h2
-              id="tours-heading"
-              className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif"
+        <Reveal>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
+            <div>
+              <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
+                {t.home.featuredTours.eyebrow}
+              </p>
+              <h2
+                id="tours-heading"
+                className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif"
+              >
+                {t.home.featuredTours.title}
+              </h2>
+              <p className="text-stone-600 dark:text-stone-400">
+                {t.home.featuredTours.subtitle}
+              </p>
+            </div>
+            <Link
+              href="/tours"
+              className="shrink-0 inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold tracking-wide text-sm group focus:outline-none focus:underline"
             >
-              {t.home.featuredTours.title}
-            </h2>
-            <p className="text-stone-600 dark:text-stone-400">
-              {t.home.featuredTours.subtitle}
-            </p>
+              {t.home.featuredTours.viewAll}
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
-          <Link
-            href="/tours"
-            className="shrink-0 inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold tracking-wide text-sm group focus:outline-none focus:underline"
-          >
-            {t.home.featuredTours.viewAll}
-            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
-        </div>
+        </Reveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Reveal delay={0.15} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {tours.map((tour) => (
             <TourCard key={tour.id} tour={tour} />
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -501,37 +506,39 @@ function FeaturedDestinationsSection({ destinations }: { destinations: Destinati
       className="py-16 px-4 bg-emerald-50 dark:bg-slate-950"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
-          <div>
-            <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
-              {t.home.featuredDestinations.eyebrow}
-            </p>
-            <h2
-              id="destinations-heading"
-              className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif"
+        <Reveal>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-3">
+            <div>
+              <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-1">
+                {t.home.featuredDestinations.eyebrow}
+              </p>
+              <h2
+                id="destinations-heading"
+                className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-2 font-serif"
+              >
+                {t.home.featuredDestinations.title}
+              </h2>
+              <p className="text-stone-600 dark:text-stone-400">
+                {t.home.featuredDestinations.subtitle}
+              </p>
+            </div>
+            <Link
+              href="/destinations"
+              className="shrink-0 inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold tracking-wide text-sm group focus:outline-none focus:underline"
             >
-              {t.home.featuredDestinations.title}
-            </h2>
-            <p className="text-stone-600 dark:text-stone-400">
-              {t.home.featuredDestinations.subtitle}
-            </p>
+              {t.home.featuredDestinations.viewAll}
+              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
-          <Link
-            href="/destinations"
-            className="shrink-0 inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold tracking-wide text-sm group focus:outline-none focus:underline"
-          >
-            {t.home.featuredDestinations.viewAll}
-            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
-        </div>
+        </Reveal>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Reveal delay={0.15} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {destinations.map((dest) => (
             <DestinationCard key={dest.id} destination={dest} />
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -548,23 +555,25 @@ function TestimonialsSection() {
       className="py-16 px-4 bg-white dark:bg-slate-900"
     >
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
-            {t.home.testimonials.eyebrow}
-          </p>
-          <h2
-            id="testimonials-heading"
-            className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
-          >
-            {t.home.testimonials.title}
-          </h2>
-          <p className="text-stone-600 dark:text-stone-400">
-            {t.home.testimonials.subtitle}
-          </p>
-          <NatureDivider className="mt-5" />
-        </div>
+        <Reveal>
+          <div className="text-center mb-12">
+            <p className="text-emerald-700 dark:text-emerald-400 uppercase tracking-[0.3em] text-xs mb-2">
+              {t.home.testimonials.eyebrow}
+            </p>
+            <h2
+              id="testimonials-heading"
+              className="text-3xl md:text-4xl font-bold text-stone-900 dark:text-emerald-100 mb-3 font-serif"
+            >
+              {t.home.testimonials.title}
+            </h2>
+            <p className="text-stone-600 dark:text-stone-400">
+              {t.home.testimonials.subtitle}
+            </p>
+            <NatureDivider className="mt-5" />
+          </div>
+        </Reveal>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <Reveal delay={0.15} className="grid md:grid-cols-3 gap-6">
           {t.home.testimonials.items.map((item) => (
             <blockquote
               key={item.name}
@@ -584,7 +593,7 @@ function TestimonialsSection() {
               </footer>
             </blockquote>
           ))}
-        </div>
+        </Reveal>
 
         {/* Reviews CTAs */}
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">

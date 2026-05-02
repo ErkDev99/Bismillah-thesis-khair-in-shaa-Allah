@@ -1156,6 +1156,9 @@ const en = {
       emailPlaceholder: "The email you used when booking",
       submit: "Verify Booking",
       verifying: "Verifying...",
+      errorBookingRefFormat:
+        "Booking reference must look like WL-YYYY-NNN (e.g. WL-2025-001).",
+      errorEmailFormat: "Please enter a valid email address.",
       errorNotFound:
         "Booking reference not found. Please check your confirmation email for the correct reference number. Demo references: WL-2025-001 through WL-2025-006.",
       errorEmailMismatch:
@@ -1211,7 +1214,9 @@ const en = {
       errors: {
         rating: "Please select a star rating.",
         title: "Please add a title for your review.",
+        titleMin: "Title must be at least 5 characters.",
         bodyMin: "Please write at least 20 characters in your review.",
+        bodyMax: "Your review is too long (5000 characters maximum).",
         name: "Please enter your name.",
       },
     },
@@ -1441,6 +1446,38 @@ const en = {
       },
     },
     backToHome: "Back to Home",
+  },
+  notFound: {
+    hero: {
+      eyebrow: "Error 404",
+      code: "404",
+      titlePrefix: "This trail",
+      titleAccent: "leads nowhere",
+      subtitle:
+        "The page you were looking for has wandered off the map. Let's get you back on the path.",
+      ariaLabel: "Page not found",
+    },
+    suggestionsTitle: "Where would you like to go?",
+    suggestionsEyebrow: "Continue exploring",
+    suggestions: {
+      home: {
+        title: "Back to Home",
+        description: "Return to the start of your journey.",
+      },
+      tours: {
+        title: "Browse Tours",
+        description: "Curated journeys across Central Asia.",
+      },
+      destinations: {
+        title: "Discover Destinations",
+        description: "Kazakhstan, Kyrgyzstan, Uzbekistan and more.",
+      },
+      contact: {
+        title: "Contact Support",
+        description: "Lost? We're here to help you find your way.",
+      },
+    },
+    backHome: "Back to Home",
   },
   voiceChat: {
     states: {

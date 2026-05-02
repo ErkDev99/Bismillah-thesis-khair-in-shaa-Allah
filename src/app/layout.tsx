@@ -41,7 +41,7 @@ export default function RootLayout({
           <LocaleProvider>
             <a
               href="#main-content"
-              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white dark:focus:bg-stone-900 focus:text-amber-700 dark:focus:text-amber-400 focus:px-4 focus:py-2 focus:font-semibold focus:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white dark:focus:bg-slate-900 focus:text-emerald-700 dark:focus:text-emerald-400 focus:px-4 focus:py-2 focus:font-semibold focus:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
               Skip to main content
             </a>

@@ -90,7 +90,11 @@ export default function ReviewPage() {
   // Verification fields
   const [bookingRef, setBookingRef] = useState("");
   const [email, setEmail] = useState("");
-  const [verifyError, setVerifyError] = useState("");
+  const [verifyErrors, setVerifyErrors] = useState<{
+    bookingRef?: string;
+    email?: string;
+    lookup?: string;
+  }>({});
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifiedTour, setVerifiedTour] = useState<{ en: string; ru: string }>({
     en: "",
@@ -104,7 +108,17 @@ export default function ReviewPage() {
   const [reviewBody, setReviewBody] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [recommend, setRecommend] = useState(true);
-  const [reviewError, setReviewError] = useState("");
+  const [reviewErrors, setReviewErrors] = useState<{
+    rating?: string;
+    title?: string;
+    body?: string;
+    name?: string;
+  }>({});
+
+  const BOOKING_REF_RE = /^WL-\d{4}-\d{3}$/;
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const BODY_MAX = 5000;
+  const TITLE_MIN = 5;
 
   // Saved reviews (localStorage)
   const [savedReviews, setSavedReviews] = useState<ReviewData[]>([]);
@@ -122,23 +136,36 @@ export default function ReviewPage() {
 
   function handleVerify(e: React.FormEvent) {
     e.preventDefault();
-    setVerifyError("");
+
+    const trimmedRef = bookingRef.trim().toUpperCase();
+    const trimmedEmail = email.trim().toLowerCase();
+
+    const errs: typeof verifyErrors = {};
+    if (!BOOKING_REF_RE.test(trimmedRef)) {
+      errs.bookingRef = tr.verify.errorBookingRefFormat;
+    }
+    if (!EMAIL_RE.test(trimmedEmail)) {
+      errs.email = tr.verify.errorEmailFormat;
+    }
+    if (errs.bookingRef || errs.email) {
+      setVerifyErrors(errs);
+      return;
+    }
+
+    setVerifyErrors({});
     setIsVerifying(true);
 
     // Simulate API delay
     setTimeout(() => {
-      const trimmedRef = bookingRef.trim().toUpperCase();
-      const trimmedEmail = email.trim().toLowerCase();
-
       const booking = VALID_BOOKINGS[trimmedRef];
       if (!booking) {
-        setVerifyError(tr.verify.errorNotFound);
+        setVerifyErrors({ lookup: tr.verify.errorNotFound });
         setIsVerifying(false);
         return;
       }
 
       if (booking.email !== trimmedEmail) {
-        setVerifyError(tr.verify.errorEmailMismatch);
+        setVerifyErrors({ lookup: tr.verify.errorEmailMismatch });
         setIsVerifying(false);
         return;
       }
@@ -151,24 +178,25 @@ export default function ReviewPage() {
 
   function handleSubmitReview(e: React.FormEvent) {
     e.preventDefault();
-    setReviewError("");
 
-    if (rating === 0) {
-      setReviewError(tr.write.errors.rating);
+    const errs: typeof reviewErrors = {};
+    if (rating === 0) errs.rating = tr.write.errors.rating;
+
+    const t = reviewTitle.trim();
+    if (!t) errs.title = tr.write.errors.title;
+    else if (t.length < TITLE_MIN) errs.title = tr.write.errors.titleMin;
+
+    const b = reviewBody.trim();
+    if (b.length < 20) errs.body = tr.write.errors.bodyMin;
+    else if (b.length > BODY_MAX) errs.body = tr.write.errors.bodyMax;
+
+    if (!displayName.trim()) errs.name = tr.write.errors.name;
+
+    if (Object.keys(errs).length > 0) {
+      setReviewErrors(errs);
       return;
     }
-    if (!reviewTitle.trim()) {
-      setReviewError(tr.write.errors.title);
-      return;
-    }
-    if (!reviewBody.trim() || reviewBody.trim().length < 20) {
-      setReviewError(tr.write.errors.bodyMin);
-      return;
-    }
-    if (!displayName.trim()) {
-      setReviewError(tr.write.errors.name);
-      return;
-    }
+    setReviewErrors({});
 
     const newReview: ReviewData = {
       tour: verifiedTour.en,
@@ -299,11 +327,27 @@ export default function ReviewPage() {
                   id="booking-ref"
                   type="text"
                   value={bookingRef}
-                  onChange={(e) => setBookingRef(e.target.value)}
+                  onChange={(e) => {
+                    setBookingRef(e.target.value);
+                    if (verifyErrors.bookingRef || verifyErrors.lookup) {
+                      setVerifyErrors((prev) => ({ ...prev, bookingRef: undefined, lookup: undefined }));
+                    }
+                  }}
                   placeholder={tr.verify.bookingRefPlaceholder}
                   required
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  aria-invalid={!!verifyErrors.bookingRef}
+                  aria-describedby={verifyErrors.bookingRef ? "booking-ref-error" : undefined}
+                  className={`w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 ${
+                    verifyErrors.bookingRef
+                      ? "border-red-400 dark:border-red-500"
+                      : "border-stone-300 dark:border-slate-600"
+                  }`}
                 />
+                {verifyErrors.bookingRef && (
+                  <p id="booking-ref-error" className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {verifyErrors.bookingRef}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -314,16 +358,32 @@ export default function ReviewPage() {
                   id="booking-email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (verifyErrors.email || verifyErrors.lookup) {
+                      setVerifyErrors((prev) => ({ ...prev, email: undefined, lookup: undefined }));
+                    }
+                  }}
                   placeholder={tr.verify.emailPlaceholder}
                   required
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  aria-invalid={!!verifyErrors.email}
+                  aria-describedby={verifyErrors.email ? "booking-email-error" : undefined}
+                  className={`w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 ${
+                    verifyErrors.email
+                      ? "border-red-400 dark:border-red-500"
+                      : "border-stone-300 dark:border-slate-600"
+                  }`}
                 />
+                {verifyErrors.email && (
+                  <p id="booking-email-error" className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {verifyErrors.email}
+                  </p>
+                )}
               </div>
 
-              {verifyError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-3 text-sm text-red-700 dark:text-red-300 rounded-xl">
-                  {verifyError}
+              {verifyErrors.lookup && (
+                <div role="alert" className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-3 text-sm text-red-700 dark:text-red-300 rounded-xl">
+                  {verifyErrors.lookup}
                 </div>
               )}
 
@@ -374,12 +434,23 @@ export default function ReviewPage() {
                 <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
                   {tr.write.ratingLabel}
                 </label>
-                <div className="flex items-center gap-1" role="radiogroup" aria-label={tr.write.starRatingAriaLabel}>
+                <div
+                  className="flex items-center gap-1"
+                  role="radiogroup"
+                  aria-label={tr.write.starRatingAriaLabel}
+                  aria-invalid={!!reviewErrors.rating}
+                  aria-describedby={reviewErrors.rating ? "review-rating-error" : undefined}
+                >
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
-                      onClick={() => setRating(star)}
+                      onClick={() => {
+                        setRating(star);
+                        if (reviewErrors.rating) {
+                          setReviewErrors((prev) => ({ ...prev, rating: undefined }));
+                        }
+                      }}
                       onMouseEnter={() => setHoverRating(star)}
                       onMouseLeave={() => setHoverRating(0)}
                       className="p-0.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-transform hover:scale-110"
@@ -408,6 +479,11 @@ export default function ReviewPage() {
                     </span>
                   )}
                 </div>
+                {reviewErrors.rating && (
+                  <p id="review-rating-error" className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {reviewErrors.rating}
+                  </p>
+                )}
               </div>
 
               {/* Review Title */}
@@ -419,12 +495,28 @@ export default function ReviewPage() {
                   id="review-title"
                   type="text"
                   value={reviewTitle}
-                  onChange={(e) => setReviewTitle(e.target.value)}
+                  onChange={(e) => {
+                    setReviewTitle(e.target.value);
+                    if (reviewErrors.title) {
+                      setReviewErrors((prev) => ({ ...prev, title: undefined }));
+                    }
+                  }}
                   placeholder={tr.write.titlePlaceholder}
                   required
                   maxLength={100}
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  aria-invalid={!!reviewErrors.title}
+                  aria-describedby={reviewErrors.title ? "review-title-error" : undefined}
+                  className={`w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 ${
+                    reviewErrors.title
+                      ? "border-red-400 dark:border-red-500"
+                      : "border-stone-300 dark:border-slate-600"
+                  }`}
                 />
+                {reviewErrors.title && (
+                  <p id="review-title-error" className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {reviewErrors.title}
+                  </p>
+                )}
               </div>
 
               {/* Review Body */}
@@ -435,18 +527,42 @@ export default function ReviewPage() {
                 <textarea
                   id="review-body"
                   value={reviewBody}
-                  onChange={(e) => setReviewBody(e.target.value)}
+                  onChange={(e) => {
+                    setReviewBody(e.target.value);
+                    if (reviewErrors.body) {
+                      setReviewErrors((prev) => ({ ...prev, body: undefined }));
+                    }
+                  }}
                   placeholder={tr.write.bodyPlaceholder}
                   required
                   rows={5}
                   minLength={20}
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y"
+                  maxLength={BODY_MAX}
+                  aria-invalid={!!reviewErrors.body}
+                  aria-describedby={`review-body-counter${reviewErrors.body ? " review-body-error" : ""}`}
+                  className={`w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 resize-y ${
+                    reviewErrors.body
+                      ? "border-red-400 dark:border-red-500"
+                      : "border-stone-300 dark:border-slate-600"
+                  }`}
                 />
-                <p className="text-xs text-stone-400 mt-1">
+                <p
+                  id="review-body-counter"
+                  className={`text-xs mt-1 ${
+                    reviewBody.length > BODY_MAX
+                      ? "text-red-600 dark:text-red-400"
+                      : "text-stone-400"
+                  }`}
+                >
                   {reviewBody.length < 20
                     ? `${20 - reviewBody.length} ${tr.write.charsNeededSuffix}`
-                    : `${reviewBody.length} ${tr.write.charsSuffix}`}
+                    : `${reviewBody.length} / ${BODY_MAX} ${tr.write.charsSuffix}`}
                 </p>
+                {reviewErrors.body && (
+                  <p id="review-body-error" className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {reviewErrors.body}
+                  </p>
+                )}
               </div>
 
               {/* Display Name */}
@@ -458,12 +574,28 @@ export default function ReviewPage() {
                   id="display-name"
                   type="text"
                   value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
+                  onChange={(e) => {
+                    setDisplayName(e.target.value);
+                    if (reviewErrors.name) {
+                      setReviewErrors((prev) => ({ ...prev, name: undefined }));
+                    }
+                  }}
                   placeholder={tr.write.namePlaceholder}
                   required
                   maxLength={50}
-                  className="w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500"
+                  aria-invalid={!!reviewErrors.name}
+                  aria-describedby={reviewErrors.name ? "display-name-error" : undefined}
+                  className={`w-full px-4 py-2.5 bg-stone-50 dark:bg-slate-800 border text-stone-900 dark:text-stone-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent placeholder:text-stone-400 dark:placeholder:text-stone-500 ${
+                    reviewErrors.name
+                      ? "border-red-400 dark:border-red-500"
+                      : "border-stone-300 dark:border-slate-600"
+                  }`}
                 />
+                {reviewErrors.name && (
+                  <p id="display-name-error" className="text-sm text-red-600 dark:text-red-400 mt-1">
+                    {reviewErrors.name}
+                  </p>
+                )}
               </div>
 
               {/* Would Recommend */}
@@ -487,12 +619,6 @@ export default function ReviewPage() {
                   {tr.write.recommend}
                 </label>
               </div>
-
-              {reviewError && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-3 text-sm text-red-700 dark:text-red-300 rounded-xl">
-                  {reviewError}
-                </div>
-              )}
 
               <button
                 type="submit"
