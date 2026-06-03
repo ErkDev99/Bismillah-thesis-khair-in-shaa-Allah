@@ -29,6 +29,13 @@ app.add_middleware(
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # ========================
+# HEALTH CHECK  (liveness probe for Render / monitoring)
+# ========================
+@app.get("/healthz")
+async def healthz():
+    return {"status": "ok"}
+
+# ========================
 # TEXT → SPEECH  (OpenAI tts-1 for en/ru — fast; gTTS fallback for ky)
 # ========================
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))

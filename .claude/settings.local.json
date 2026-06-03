@@ -15,7 +15,11 @@
       "Bash(npx next:*)",
       "Bash(where npm:*)",
       "Bash(\"C:\\\\Program Files\\\\nodejs\\\\npx.cmd\" tsc --noEmit)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(python -c \"import pptx; print\\('pptx', pptx.__version__\\)\")",
+      "Bash(python -c \"import PIL; print\\('PIL', PIL.__version__\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(python build_presentation.py)"
     ]
   }
 }
