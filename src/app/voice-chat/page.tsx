@@ -218,12 +218,15 @@ export default function VoiceChatPage() {
           break;
         }
 
+        // GA Realtime renamed these (old beta names kept for safety):
         case "response.audio.delta":
+        case "response.output_audio.delta":
           if (stateRef.current !== "speaking") transition("speaking");
           if (data.delta) playChunk(data.delta as string);
           break;
 
-        case "response.audio_transcript.delta": {
+        case "response.audio_transcript.delta":
+        case "response.output_audio_transcript.delta": {
           const delta = (data.delta as string) || "";
           assistantTextRef.current += delta;
 
