@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { voiceApi } from "@/lib/voiceApi";
 import { useLocale } from "@/components/LocaleProvider";
@@ -10,6 +11,46 @@ interface Message {
   id: number;
   role: "user" | "assistant";
   content: string;
+}
+
+// Render assistant text, turning markdown links [label](url) into clickable
+// links. Internal paths (/tours/...) use Next.js client navigation; external
+// URLs open in a new tab. Everything else stays plain text (newlines preserved
+// by the parent's whitespace-pre-wrap).
+function renderWithLinks(text: string): ReactNode[] {
+  const linkClass =
+    "underline font-medium text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300";
+  const parts: ReactNode[] = [];
+  const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let key = 0;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    const [, label, url] = match;
+    if (url.startsWith("/")) {
+      parts.push(
+        <Link key={key++} href={url} className={linkClass}>
+          {label}
+        </Link>
+      );
+    } else {
+      parts.push(
+        <a
+          key={key++}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={linkClass}
+        >
+          {label}
+        </a>
+      );
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
 }
 
 export default function ChatWidget() {
@@ -503,7 +544,9 @@ export default function ChatWidget() {
                     <span className="sr-only">
                       {message.role === "user" ? t.chat.userSaidPrefix : t.chat.assistantSaidPrefix}
                     </span>
-                    {message.content}
+                    {message.role === "assistant"
+                      ? renderWithLinks(message.content)
+                      : message.content}
                   </p>
                 </div>
               </div>

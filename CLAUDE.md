@@ -60,17 +60,11 @@ Sample pages: `/`, `/tours`, `/destinations`, `/about`, `/blog`, `/contact`. Rea
 
 ---
 
-## Thesis docx — pending Lighthouse updates
+## Thesis docx — ACTIVE WORK → see `HANDOVER.md` (single source of truth)
 
-> **🚫 BLOCKED — supervisor reviewing.** Do NOT edit until user confirms file is back. When unblocked, ASK: *"Mobile dropped to 71 — cite desktop only or include with variance footnote?"*
+The thesis docx is being shrunk to 60-70 pp + truthfulness-audited + aligned to the finalized deck. **Full live state, what's done, and what's left are in `HANDOVER.md` at the repo root — read that.** Edit the docx IN PLACE via `Theses/patch_docx.py` (never rebuild).
 
-**4 spots to update** (paragraph indices verified 2026-04-30):
-- §3.7.1 table p1295–p1339 (Desktop 96→97; Mobile 82→71 per user choice)
-- Future-work bullet p1377 (delete or rephrase to "WebP/AVIF миграция")
-- КОРУТУНДУ p1555/1591/1594 (mirror new table values)
-- АННОТАЦИЯ p236 + ÖZET p242 (rephrase as "десктопто 90+", not generic)
-
-After: re-grep `(96|82|97|71)/100` → only new numbers should appear; trigger TOC + figure-list update on next Word open.
+✅ Lighthouse 82→71 is DONE (all spots fixed + honest CPU-throttle note). The old "BLOCKED — supervisor reviewing" note is obsolete (file is back; edits authorized).
 
 ---
 
