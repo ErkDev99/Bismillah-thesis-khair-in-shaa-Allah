@@ -167,7 +167,7 @@ function buildDestinationsDigest(): string {
 
 function buildBlogDigest(): string {
   return blogPostsEn
-    .map((p) => `- "${p.title}" (/blog/${p.slug}) — ${p.category}; ${p.readTime}.`)
+    .map((p) => `- "${p.title}" (/blog/${p.slug}) — ${p.category}; ${p.readTime}. ${p.excerpt}`)
     .join("\n");
 }
 
